@@ -2062,7 +2062,7 @@ class seasons:
                 date = common.parseDOM(result, "Season", attrs = { "no": season })[0]
                 date = common.parseDOM(date, "airdate")[0]
                 date = date.encode('utf-8')
-                if date == '': raise Exception()
+                if date == '' or '-00' in date: raise Exception()
                 if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
 
                 num = '%01d' % int(season)
@@ -2094,7 +2094,7 @@ class seasons:
                 date = common.parseDOM(season, "FirstAired")[0]
                 date = common.replaceHTMLCodes(date)
                 date = date.encode('utf-8')
-                if date == '': raise Exception()
+                if date == '' or '-00' in date: raise Exception()
                 if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
 
                 num = common.parseDOM(season, "SeasonNumber")[0]
@@ -2196,7 +2196,7 @@ class episodes:
                 date = common.parseDOM(episode, "airdate")[0]
                 date = common.replaceHTMLCodes(date)
                 date = date.encode('utf-8')
-                if date == '': raise Exception()
+                if date == '' or '-00' in date: raise Exception()
                 if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
 
                 title = common.parseDOM(episode, "title")[0]
@@ -2242,7 +2242,7 @@ class episodes:
                 date = common.parseDOM(episode, "FirstAired")[0]
                 date = common.replaceHTMLCodes(date)
                 date = date.encode('utf-8')
-                if date == '': raise Exception()
+                if date == '' or '-00' in date: raise Exception()
                 if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
 
                 title = common.parseDOM(episode, "EpisodeName")[0]
