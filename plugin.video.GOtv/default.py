@@ -2022,18 +2022,21 @@ class seasons:
             pass
 
         try:
+            self.list = []
             seasonList = self.tvrage_list(url, image, year, imdb, tvdb, genre, plot, show, show_alt)
             if not (seasonList == None or seasonList == []): return seasonList
         except:
             pass
 
         try:
+            self.list = []
             seasonList = self.tvdb_list(url, image, year, imdb, tvdb, genre, plot, show, show_alt)
             if not (seasonList == None or seasonList == []): return seasonList
         except:
             pass
 
         try:
+            self.list = []
             seasonList = self.imdb_list(url, image, year, imdb, '0', genre, plot, show, show)
             if not (seasonList == None or seasonList == []): return seasonList
         except:
@@ -2117,6 +2120,7 @@ class seasons:
             seasons = common.parseDOM(result, "select", attrs = { "id": "bySeason" })[0]
             seasons = common.parseDOM(seasons, "option", ret="value")
             seasons = [i for i in seasons if not i == '0']
+            seasons = [i for i in seasons if i.isdigit()]
         except:
             return
 
