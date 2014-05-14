@@ -1,4 +1,12 @@
 ------------------------
+Yify Movies HD v1.5.2 (14-May-14)
+------------------------
+
+- Fixed issues with resolver.
+- Code cosmetics.
+
+
+------------------------
 Yify Movies HD v1.5.1 (11-May-14)
 ------------------------
 

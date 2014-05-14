@@ -1514,27 +1514,24 @@ class resolver:
 
         try:
             result = getUrl(referer).result
-
             imdb = re.findall('imdb.com/title/tt(\d+)', result, re.I)[0]
-            name = common.parseDOM(result, "div", attrs = { "class": "namefilm" })[0]
-            year = common.parseDOM(name, "a", attrs = { "rel": "tag" })[0]
-            title = common.parseDOM(name, "h1")[0]
-            title = title.rsplit("Online", 1)[0]
-            title = common.replaceHTMLCodes(title)
-            title = title.strip()
-
-            url = self.movie25(title, year, imdb)
+            url = self.movie25(imdb)
             return url
         except:
             pass
 
-    def movie25(self, title, year, imdb):
+    def movie25(self, imdb):
         hostDict = ['Firedrive', 'Putlocker', 'Sockshare', 'Played', 'Promptfile', 'Mightyupload', 'Gorillavid', 'Divxstage', 'Movreel', 'Bestreams', 'Flashx', 'Vidbull', 'Daclips', 'Movpod', 'Nosvideo', 'Novamov', 'Movshare', 'Vidx', 'Sharesix', 'Videoweed', 'Sharerepo', 'Uploadc', 'Filenuke']
         self.base_link = 'http://www.movie25.so'
         self.search_link = 'http://www.movie25.so/search.php?key=%s'
 
         try:
             movie25_sources = []
+
+            result = getUrl('http://www.imdbapi.com/?i=tt%s' % imdb).result
+            result = json.loads(result)
+            title = result['Title']
+            year = result['Year']
 
             query = self.search_link % urllib.quote_plus(title)
 
