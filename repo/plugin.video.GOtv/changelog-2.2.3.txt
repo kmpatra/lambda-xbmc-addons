@@ -1,4 +1,21 @@
 ------------------------
+GOtv v2.2.3 (18-May-14)
+------------------------
+
+- Fixed issues with IMDb lists.
+- NOTE: IMDb introduced captchas during login process.
+- NOTE: Insert your user ID in addon settings.
+- NOTE: Only public lists will be available.
+- NOTE: Prefer Trakt lists, they are faster.
+- Added option for importing trending shows to subscriptions.
+- Added option for importing trending shows to library.
+- Removed watched indicators in tv show listings.
+- Removed watched indicators in season listings.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.2.2 (14-May-14)
 ------------------------
 

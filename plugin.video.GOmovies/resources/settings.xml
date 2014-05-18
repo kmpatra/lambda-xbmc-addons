@@ -76,8 +76,7 @@
 		<setting id="trakt_user" type="text" label="30101" default=""/>
 		<setting id="trakt_password" type="text" option="hidden" label="30102" default=""/>
 		<setting type="lsep" label="IMDb"/>
-		<setting id="imdb_mail" type="text" label="30103" default=""/>
-		<setting id="imdb_password" type="text" option="hidden" label="30102" default=""/>
+		<setting id="imdb_user" type="text" label="30101" default=""/>
 		<setting type="lsep" label="Noobroom"/>
 		<setting id="noobroom_mail" type="text" label="30103" default=""/>
 		<setting id="noobroom_password" type="text" option="hidden" label="30102" default=""/>
