@@ -862,9 +862,6 @@ class contextMenu:
             except: pass
         if silent == False:
             index().infoDialog(language(30311).encode("utf-8"))
-
-        return
-
         if update == True:
             xbmc.executebuiltin('UpdateLibrary(video)')
 
