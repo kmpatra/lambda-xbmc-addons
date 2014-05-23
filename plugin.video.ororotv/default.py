@@ -1296,18 +1296,20 @@ class genres:
                 result = getUrl(link().ororo_sign, post=link().ororo_key, close=False).result
                 result = getUrl(link().ororo_base).result
 
-            genres = common.parseDOM(result, "ul", attrs = { "class": "dropdown.+?genres" })[0]
-            genres = common.parseDOM(genres, "li")
+            genres = common.parseDOM(result, "select", attrs = { "id": "genre-select" })[0]
+            genres = re.compile('(<option.+?</option>)').findall(genres)
         except:
             return
 
         for genre in genres:
             try:
-                url = common.parseDOM(genre, "a", ret="data-url")[0]
+                name = common.parseDOM(genre, "option")[0]
+                name = common.replaceHTMLCodes(name)
+                name = name.encode('utf-8')
+
+                url = common.parseDOM(genre, "option", ret="value")[0]
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
-
-                name = url.title()
 
                 image = addonGenres.encode('utf-8')
 
@@ -1435,11 +1437,11 @@ class seasons:
         try:
             result = getUrl(url).result
 
-            if not "'season-tabs'" in result:
+            if not "menu season-tabs" in result:
                 result = getUrl(link().ororo_sign, post=link().ororo_key, close=False).result
                 result = getUrl(url).result
 
-            result = common.parseDOM(result, "ul", attrs = { "id": "season-tabs" })[0]
+            result = common.parseDOM(result, "ul", attrs = { "class": "ui tabular menu season-tabs" })[0]
             result = re.sub('<li\s.+?>','<li>', result)
             seasons = common.parseDOM(result, "li")
         except:
@@ -1454,7 +1456,7 @@ class seasons:
                 name = '%s %s' % ('Season', num)
                 name = name.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'genre': genre, 'plot': plot, 'show': show, 'season': num, 'sort': '%10d' % int(num)})
+                self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': genre, 'plot': plot, 'show': show, 'show_alt': show, 'season': num, 'sort': '%10d' % int(num)})
             except:
                 pass
 
@@ -1467,8 +1469,8 @@ class episodes:
 
     def get(self, name, url, image, year, imdb, genre, plot, show, idx=True):
         if idx == True:
-            #self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show)
-            self.list = cache(self.ororo_list, name, url, image, year, imdb, genre, plot, show)
+            self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show)
+            #self.list = cache(self.ororo_list, name, url, image, year, imdb, genre, plot, show)
             index().episodeList(self.list)
         else:
             self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show)
@@ -1478,14 +1480,14 @@ class episodes:
         try:
             result = getUrl(url).result
 
-            if not "'season-tabs'" in result:
+            if not "menu season-tabs" in result:
                 result = getUrl(link().ororo_sign, post=link().ororo_key, close=False).result
                 result = getUrl(url).result
 
             season = re.sub('[^0-9]', '', name)
             season = season.encode('utf-8')
 
-            episodes = common.parseDOM(result, "div", attrs = { "class": "tab-content" })[0]
+            episodes = common.parseDOM(result, "div", attrs = { "class": "tab-content episodes-tab" })[0]
             episodes = common.parseDOM(episodes, "div", attrs = { "id": season })[0]
             episodes = common.parseDOM(episodes, "li")
         except:
@@ -1517,7 +1519,7 @@ class episodes:
                 desc = common.replaceHTMLCodes(desc)
                 desc = desc.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'image': image, 'date': year, 'year': year, 'imdb': imdb, 'genre': genre, 'plot': desc, 'title': title, 'show': show, 'season': season, 'episode': num, 'sort': '%10d' % int(num)})
+                self.list.append({'name': name, 'url': url, 'image': image, 'date': year, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': genre, 'plot': desc, 'title': title, 'show': show, 'show_alt': show, 'season': season, 'episode': num, 'sort': '%10d' % int(num)})
             except:
                 pass
 
