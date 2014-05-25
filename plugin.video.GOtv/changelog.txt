@@ -1,4 +1,23 @@
 ------------------------
+GOtv v2.3.0 (25-May-14)
+------------------------
+
+- Re-work of subscriptions.
+- Re-work of Primewire source.
+- Merged "Add to Library" and "Add subscription" options.
+- Added option for automatic import of Trakt collection.
+- NOTE: First time import will have to be made from subscriptions context menu (Update subscriptions option).
+- NOTE: New TV Shows from Trakt collection will be imported after x hours (based on Subscription update interval).
+- NOTE: Subscription import will skip TV Shows already in library.
+- Tweaked detection of non-working streams in autoplay.
+- PseudoTV Live: Autoplay is now always enabled.
+- PseudoTV Live: All dialogs are now disabled (Resume, Playback info etc).
+- PseudoTV Live: All streams won't be marked as watched.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.2.3 (18-May-14)
 ------------------------
 
