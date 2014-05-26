@@ -1,4 +1,12 @@
 ------------------------
+GOtv v2.3.1 (26-May-14)
+------------------------
+
+- PseudoTV Live: Fixed issue with subtitles.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.3.0 (25-May-14)
 ------------------------
 

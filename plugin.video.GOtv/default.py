@@ -239,11 +239,7 @@ class player(xbmc.Player):
     def run(self, name, url, imdb='0'):
         self.video_info(name, imdb)
 
-        if self.PseudoTVRunning == 'True':
-            item = xbmcgui.ListItem(path=url)
-            xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
-            return
-        elif self.folderPath.startswith(sys.argv[0]):
+        if self.folderPath.startswith(sys.argv[0]) or self.PseudoTVRunning == 'True':
             item = xbmcgui.ListItem(path=url)
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
         else:

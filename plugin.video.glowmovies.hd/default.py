@@ -180,13 +180,14 @@ class Thread(threading.Thread):
 class player(xbmc.Player):
     def __init__ (self):
         self.folderPath = xbmc.getInfoLabel('Container.FolderPath')
+        self.PseudoTVRunning = index().getProperty('PseudoTVRunning')
         self.loadingStarting = time.time()
         xbmc.Player.__init__(self)
 
     def run(self, name, url, imdb='0'):
         self.video_info(name, imdb)
 
-        if self.folderPath.startswith(sys.argv[0]):
+        if self.folderPath.startswith(sys.argv[0]) or self.PseudoTVRunning == 'True':
             item = xbmcgui.ListItem(path=url)
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
         else:
@@ -289,12 +290,14 @@ class player(xbmc.Player):
         minutes, seconds = divmod(offset, 60)
         hours, minutes = divmod(minutes, 60)
         offset_time = '%02d:%02d:%02d' % (hours, minutes, seconds)
-        yes = index().yesnoDialog('%s %s' % (language(30353).encode("utf-8"), offset_time), '', self.name, language(30354).encode("utf-8"), language(30355).encode("utf-8"))
+        yes = index().yesnoDialog('%s %s' % (language(30350).encode("utf-8"), offset_time), '', self.name, language(30351).encode("utf-8"), language(30352).encode("utf-8"))
         if yes: self.seekTime(offset)
 
     def onPlayBackStarted(self):
         try: self.setSubtitles(self.subtitle)
         except: pass
+
+        if self.PseudoTVRunning == 'True': return
 
         if getSetting("playback_info") == 'true':
             elapsedTime = '%s %.2f seconds' % (language(30319).encode("utf-8"), (time.time() - self.loadingStarting))     
@@ -305,11 +308,13 @@ class player(xbmc.Player):
             self.resume_playback()
 
     def onPlayBackEnded(self):
+        if self.PseudoTVRunning == 'True': return
         self.change_watched()
         self.offset_delete()
         self.container_refresh()
 
     def onPlayBackStopped(self):
+        if self.PseudoTVRunning == 'True': return
         if self.currentTime / self.totalTime >= .9:
             self.change_watched()
         self.offset_delete()
@@ -1265,8 +1270,8 @@ class resolver:
             player().run(name, url)
             return url
         except:
-            index().infoDialog(language(30318).encode("utf-8"))
-            return
+            if not index().getProperty('PseudoTVRunning') == 'True':
+                index().infoDialog(language(30318).encode("utf-8"))
 
     def glow(self, url):
         url = url.replace(link().glow_old, link().glow_base)
@@ -1283,6 +1288,8 @@ class resolver:
             google = common.replaceHTMLCodes(google)
 
             result = getUrl(google, referer=link().glow_base).result
+            result = common.parseDOM(result, "iframe", ret="src")[0]
+            result = getUrl(result, referer=link().glow_base).result
 
             try:
                 url = re.compile('{file:"(.+?)"').findall(result)
@@ -1312,10 +1319,11 @@ class resolver:
             yandex = [i for i in yandex if '/yadi.sk/' in i][0]
 
             result = getUrl(yandex, close=False).result
-            ckey = re.compile('"ckey":"(.+?)"').findall(result)[0]
+            ckey = re.compile('"ckey_local":"(.+?)"').findall(result)[0]
             hash = re.compile('"hash":"(.+?)"').findall(result)[0]
-            post = urllib.urlencode({'_ckey': ckey, 'hash': hash, '_name': 'getLinkFileDownload'})
-            url = getUrl('https://disk.yandex.com/handlers.jsx', post=post).result
+            tld = re.compile('"tld":"(.+?)"').findall(result)[0]
+            post = urllib.urlencode({'_ckey': ckey, 'tld': tld, 'hash': hash, '_name': 'getLinkFileDownload'})
+            url = getUrl('https://yadi.sk/handlers.jsx', post=post).result
             url = json.loads(url)['data']['url']
             url = getUrl(url, output='geturl').result
             return url

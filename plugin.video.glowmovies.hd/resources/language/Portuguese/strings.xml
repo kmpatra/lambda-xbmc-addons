@@ -53,15 +53,12 @@
 	<string id="30344">Deseja fazer a Transferência novamente?</string>
 	<string id="30345">O vídeo está a transferir.</string>
 	<string id="30346">Deseja cancelar?</string>
-	<string id="30347">Esta série parece já ter terminado.</string>
-	<string id="30348">Tem a certeza que a quer adicionar?</string>
-	<string id="30349">Esta série parece já ter terminado.</string>
-	<string id="30350">Deseja removê-la?</string>
-	<string id="30351">Esta série irá manter-se na sua biblioteca.</string>
-	<string id="30352">Deseja removê-la da biblioteca?</string>
-	<string id="30353">Resumir desde</string>
-	<string id="30354">Resumir</string>
-	<string id="30355">Retomar desde o início</string>
+	<string id="30347">Filme já na biblioteca.</string>
+	<string id="30348">Série já na biblioteca.</string>
+	<string id="30349">Tem a certeza que a quer adicionar?</string>
+	<string id="30350">Resumir desde</string>
+	<string id="30351">Resumir</string>
+	<string id="30352">Retomar desde o início</string>
 	<!-- Misc -->
 	<string id="30361">Próxima página</string>
 	<string id="30362">Pesquisar</string>
