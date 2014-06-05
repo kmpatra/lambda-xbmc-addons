@@ -46,7 +46,7 @@ class getUrl(object):
         if mobile == True:
             request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
+            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
             request.add_header('Referer', referer)
         if not cookie is None:
@@ -64,14 +64,29 @@ class getUrl(object):
 
 class resolvers:
     def get(self, url):
-        if '/vk.com' in url: url = self.vk(url)
-        elif 'mail.ru' in url: url = self.mailru(url)
-        elif 'firedrive.com' in url: url = self.firedrive(url)
-        elif 'movreel.com' in url: url = self.movreel(url)
-        elif 'billionuploads.com' in url: url = self.billionuploads(url)
-        elif '180upload.com' in url: url = self._180upload(url)
-        elif 'hugefiles.net' in url: url = self.hugefiles(url)
-        return url
+        try:
+            if '/vk.com' in url:              url = self.vk(url)
+            elif 'mail.ru' in url:            url = self.mailru(url)
+            elif 'videomega.tv' in url:       url = self.videomega(url)
+            elif 'docs.google.com' in url:    url = self.googledocs(url)
+            elif 'youtube.com' in url:        url = self.youtube(url)
+            elif 'ishared.eu' in url:         url = self.ishared(url)
+            elif 'firedrive.com' in url:      url = self.firedrive(url)
+            elif 'movreel.com' in url:        url = self.movreel(url)
+            elif 'billionuploads.com' in url: url = self.billionuploads(url)
+            elif '180upload.com' in url:      url = self._180upload(url)
+            elif 'hugefiles.net' in url:      url = self.hugefiles(url)
+
+            else:
+                import urlresolver
+                host = urlresolver.HostedMediaFile(url)
+                if host: resolver = urlresolver.resolve(url)
+                if not resolver.startswith('http://'): return
+                if not resolver == url: return resolver
+
+            return url
+        except:
+            return
 
     def vk(self, url):
         try:
@@ -104,6 +119,57 @@ class resolvers:
             result = getUrl(url).result
             url = re.compile('videoSrc = "(.+?)"').findall(result)[0]
             url = getUrl(url, output='geturl').result
+            return url
+        except:
+            return
+
+    def videomega(self, url):
+        try:
+            url = url.replace('/?ref=', '/iframe.php?ref=')
+            result = getUrl(url).result
+            url = re.compile('document.write.unescape."(.+?)"').findall(result)[0]
+            url = urllib.unquote_plus(url)
+            url = re.compile('file: "(.+?)"').findall(url)[0]
+            return url
+        except:
+            return
+
+    def googledocs(self, url):
+        try:
+            try:    import json
+            except: import simplejson as json
+            url = getUrl(url).result
+            url = re.findall('("fmt_stream_map":".+?")', url, re.I)[0]
+            url = json.loads('{' + url + '}')['fmt_stream_map']
+            url = [i.split('|')[-1] for i in url.split(',')]
+            if url == []: return
+            try: url = [i for i in url if not any(x in i for x in ['&itag=43&', '&itag=35&', '&itag=34&', '&itag=5&'])][0]
+            except: url = url[0]
+            return url
+        except:
+            return
+
+    def youtube(self, url):
+        try:
+            id = url.split("?v=")[-1].split("/")[-1].split("?")[0].split("&")[0]
+            result = getUrl('http://gdata.youtube.com/feeds/api/videos/%s?v=2' % id).result
+
+            state, reason = None, None
+            try: state = common.parseDOM(result, "yt:state", ret="name")[0]
+            except: pass
+            try: reason = common.parseDOM(result, "yt:state", ret="reasonCode")[0]
+            except: pass
+            if state == 'deleted' or state == 'rejected' or state == 'failed' or reason == 'requesterRegion' : return
+
+            url = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % id
+            return url
+        except:
+            return
+
+    def ishared(self, url):
+        try:
+            result = getUrl(url).result
+            url = re.compile('path:"(.+?)"').findall(result)[0]
             return url
         except:
             return

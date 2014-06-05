@@ -32,7 +32,7 @@ class main:
                     update = abs(t2 - t1) > datetime.timedelta(hours=hoursList[interval])
                     if update is False: raise Exception()
                     if not (xbmc.Player().isPlaying() or xbmc.getCondVisibility('Library.IsScanningVideo')):
-                        xbmc.executebuiltin('RunPlugin(plugin://plugin.video.GOtv/?action=subscriptions_service)')
+                        xbmc.executebuiltin('RunPlugin(plugin://plugin.video.GOtv/?action=library_service)')
                         xbmcaddon.Addon().setSetting('subscriptions_run', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
                 except:
                     pass
