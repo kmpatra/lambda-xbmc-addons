@@ -164,7 +164,7 @@ class getUrl(object):
         if mobile == True:
             request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
+            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
             request.add_header('Referer', referer)
         if not cookie is None:
@@ -895,7 +895,7 @@ class contextMenu:
             except: pass
         if silent == False:
             index().infoDialog(language(30311).encode("utf-8"))
-        if update == True:
+        if update == True and getSetting("updatelibrary") == 'true':
             xbmc.executebuiltin('UpdateLibrary(video)')
 
     def library(self, name, title, imdb, year, url, check=False):
@@ -2063,13 +2063,14 @@ class resolver:
                 if url is None: raise Exception()
                 if u is None: u == url
 
-                request = urllib2.Request(url.rsplit('|', 1)[0])
-                request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
-                request.add_header('Cookie', 'video=true')
-                response = urllib2.urlopen(request, timeout=20)
-                chunk = response.read(16 * 1024)
-                response.close()
-                if 'text/html' in str(response.info()["Content-Type"]): raise Exception()
+                if url.startswith('http://'):
+                    request = urllib2.Request(url.rsplit('|', 1)[0])
+                    request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
+                    request.add_header('Cookie', 'video=true')
+                    response = urllib2.urlopen(request, timeout=20)
+                    chunk = response.read(16 * 1024)
+                    response.close()
+                    if 'text/html' in str(response.info()["Content-Type"]): raise Exception()
 
                 self.selectedSource = i['source']
                 return url
@@ -2133,6 +2134,7 @@ class resolver:
         #'vidxden',
         #'watchfreeinhd',
         'xvidstage',
+        'youtube',
         'yourupload',
         'youwatch',
         'zalaa'
@@ -2229,8 +2231,8 @@ class primewire:
         self.base_link = 'http://www.primewire.ag'
         self.key_link = 'http://www.primewire.ag/index.php?search'
         self.search_link = 'http://www.primewire.ag/index.php?search_keywords=%s&key=%s&search_section=1'
-        self.proxy_base_link = 'http://proxy.cyberunlocker.com'
-        self.proxy_link = 'http://proxy.cyberunlocker.com/browse.php?u=%s'
+        self.proxy_base_link = 'http://9proxy.in'
+        self.proxy_link = 'http://9proxy.in/b.php?u=%s&b=28'
 
     def get(self, name, title, imdb, year, hostDict):
         try:
@@ -2246,9 +2248,9 @@ class primewire:
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.search_link % (urllib.quote_plus(re.sub('\'', '', title)), key)
                 query = self.proxy_link % urllib.quote_plus(urllib.unquote_plus(query))
+                self.base_link = self.proxy_base_link
 
-
-            result = getUrl(query, referer=query).result
+            result = getUrl(query, referer=self.base_link, close=False).result
             result = result.decode('iso-8859-1').encode('utf-8')
             result = common.parseDOM(result, "div", attrs = { "class": "index_item.+?" })
             result = [i for i in result if any(x in re.compile('title="Watch (.+?)"').findall(i)[0] for x in ['(%s)' % str(year), '(%s)' % str(int(year)+1), '(%s)' % str(int(year)-1)])]
@@ -2270,23 +2272,26 @@ class primewire:
                 except:
                     pass
 
-            if match2.startswith(self.proxy_base_link):
-                url = match2.replace(self.proxy_link % '','')
-                url = urllib.unquote_plus(url)
-                url = self.proxy_link % urllib.quote_plus(urllib.quote_plus(url))
-            else:
-                url = match2
-
+            url = match2
             result = getUrl(url, referer=url).result
             result = result.decode('iso-8859-1').encode('utf-8')
             links = common.parseDOM(result, "tbody")
 
             for i in links:
                 try:
-                    host = common.parseDOM(i, "a", ret="href", attrs = { "class": ".+?rater" })[0]
-                    host = re.compile('domain=(.+?)[.]').findall(host)[0]
+                    url = common.parseDOM(i, "a", ret="href")[0]
+                    url = urllib.unquote_plus(url)
+                    url = re.compile('url=(.+?)&').findall(url)[0]
+                    url = base64.urlsafe_b64decode(url.encode('utf-8'))
+                    if 'primewire.ag' in url: raise Exception()
+                    url = common.replaceHTMLCodes(url)
+                    url = url.encode('utf-8')
+
+                    host = common.parseDOM(i, "a", ret="href")[0]
                     host = urllib.unquote_plus(host)
-                    host = [x for x in hostDict if host.lower() == x.lower()][0]
+                    host = re.compile('domain=(.+?)&').findall(host)[0]
+                    host = base64.urlsafe_b64decode(host.encode('utf-8'))
+                    host = host.rsplit('.', 1)[0]
                     host = host.encode('utf-8')
 
                     quality = common.parseDOM(i, "span", ret="class")[0]
@@ -2294,16 +2299,6 @@ class primewire:
                     elif quality == 'quality_dvd': quality = 'SD'
                     else:  raise Exception()
                     quality = quality.encode('utf-8')
-
-                    url = common.parseDOM(i, "a", ret="href")[0]
-                    if url.startswith(self.proxy_base_link):
-                        url = url.replace(self.proxy_link % '','')
-                        url = urllib.unquote_plus(url)
-                        url = self.proxy_link % urllib.quote_plus(urllib.quote_plus(url))
-                    else:
-                        url = '%s%s' % (self.base_link, url)
-                    url = common.replaceHTMLCodes(url)
-                    url = url.encode('utf-8')
 
                     primewire_sources.append({'source': host, 'quality': quality, 'provider': 'Primewire', 'url': url})
                 except:
@@ -2317,16 +2312,9 @@ class primewire:
 
     def resolve(self, url):
         try:
-            result = getUrl(url, referer=self.proxy_base_link).result
-            url = common.parseDOM(result, "noframes")[0]
-            url = common.replaceHTMLCodes(url)
-            url = url.encode('utf-8')
-
-            import urlresolver
-            host = urlresolver.HostedMediaFile(url)
-            if host: resolver = urlresolver.resolve(url)
-            if not resolver.startswith('http://'): return
-            if not resolver == url: return resolver
+            import commonresolvers
+            url = commonresolvers.resolvers().get(url)
+            return url
         except:
             return
 
@@ -2396,11 +2384,9 @@ class movie25:
             url = [i for i in url if 'location.href' in i and 'http://' in i][0]
             url = url.split("'", 1)[-1].rsplit("'", 1)[0]
 
-            import urlresolver
-            host = urlresolver.HostedMediaFile(url)
-            if host: resolver = urlresolver.resolve(url)
-            if not resolver.startswith('http://'): return
-            if not resolver == url: return resolver
+            import commonresolvers
+            url = commonresolvers.resolvers().get(url)
+            return url
         except:
             return
 
@@ -2549,6 +2535,7 @@ class muchmovies:
     def __init__(self):
         self.base_link = 'http://www.muchmovies.org'
         self.search_link = 'http://www.muchmovies.org/search'
+        self.backup_link = 'http://123movies.me'
 
     def get(self, name, title, imdb, year, hostDict):
         try:
@@ -2575,8 +2562,8 @@ class muchmovies:
 
     def resolve(self, url):
         try:
-            result = getUrl(url, mobile=True).result
-            url = common.parseDOM(result, "a", ret="href", attrs = { "data-rel": "popup" })[0]
+            result = getUrl(url.replace(self.base_link, self.backup_link), mobile=True, timeout=30).result
+            url = common.parseDOM(result, "a", ret="href", attrs = { "id": "play" })[0]
             return url
         except:
             return
@@ -2585,7 +2572,7 @@ class muchmovies:
         try:
             start = time.clock()
             request = urllib2.Request(url)
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
+            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
             response = urllib2.urlopen(request, timeout=10)
             for i in range(0, 26):
                 chunk = response.read(16 * 1024)

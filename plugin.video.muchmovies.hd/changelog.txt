@@ -1,9 +1,16 @@
 ------------------------
+Much Movies HD v1.5.2 (8-Jun-14)
+------------------------
+
+- Fixed issues with resolver.
+- Code cosmetics.
+
+
+------------------------
 Much Movies HD v1.5.1 (6-Jun-14)
 ------------------------
 
 - Fixed issues with resolver.
-- PseudoTV Live: Autoplay is now always enabled.
 - PseudoTV Live: All dialogs are now disabled (Resume, Playback info etc).
 - PseudoTV Live: All streams won't be marked as watched.
 - Updated all translations.

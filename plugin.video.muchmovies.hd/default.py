@@ -909,6 +909,7 @@ class link:
         self.muchmovies_root = 'http://www.muchmovies.org/movies'
         self.muchmovies_search = 'http://www.muchmovies.org/search'
         self.muchmovies_genre = 'http://www.muchmovies.org/genres'
+        self.muchmovies_backup = 'http://123movies.me'
 
 class pages:
     def __init__(self):
@@ -1158,15 +1159,14 @@ class resolver:
             player().run(name, url)
             return url
         except:
-            index().infoDialog(language(30318).encode("utf-8"))
+            if not index().getProperty('PseudoTVRunning') == 'True':
+                index().infoDialog(language(30318).encode("utf-8"))
             return
 
     def muchmovies(self, url):
         try:
-            result = getUrl(url, mobile=True).result
-            url = re.compile('google_ad_uuid.+?"(.+?)"').findall(result)
-            url = [base64.urlsafe_b64decode(i) for i in url]
-            url = [i for i in url if 'muchmovies.org' in i][-1]
+            result = getUrl(url.replace(link().muchmovies_base, link().muchmovies_backup), mobile=True, timeout=30).result
+            url = common.parseDOM(result, "a", ret="href", attrs = { "id": "play" })[0]
             return url
         except:
             return

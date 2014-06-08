@@ -274,6 +274,10 @@ class resolvers:
                 data.update({'code':solution})
 
             data = urllib.urlencode(data)
+
+            u = getUrl(url, output='geturl', post=data).result
+            if not url == u: return u
+
             html = getUrl(url, post=data).result
 
             sPattern = '''<div id="player_code">.*?<script type='text/javascript'>(eval.+?)</script>'''
