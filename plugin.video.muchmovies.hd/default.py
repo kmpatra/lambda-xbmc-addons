@@ -1165,11 +1165,26 @@ class resolver:
 
     def muchmovies(self, url):
         try:
-            result = getUrl(url.replace(link().muchmovies_base, link().muchmovies_backup), mobile=True, timeout=30).result
-            url = common.parseDOM(result, "a", ret="href", attrs = { "id": "play" })[0]
+            result = getUrl(url, mobile=True).result
+            url = re.compile('google_ad_uuid.+?"(.+?)"').findall(result)
+            url = [self.decrypter(base64.b64decode(i),'<div></div>','DOMContentLoaded') for i in url]
+            url = [i for i in url if 'muchmovies.org' in i][-1]
             return url
         except:
             return
+
+    def decrypter(self, cj, cf, e):
+    	ci = ""
+    	ch = ""
+    	cg = 0
+    	lenofcf=len(cf)
+    	lenOfE=len(e)
+    	for cg in range(0,len(cj)):
+    		ci += chr(ord(cj[cg])^ord(cf[cg %lenofcf]))
+
+    	for cg in range(0,len(ci)):
+    		ch += chr(ord(ci[cg])^ord(e[cg %lenOfE]))
+    	return ch
 
 
 main()
