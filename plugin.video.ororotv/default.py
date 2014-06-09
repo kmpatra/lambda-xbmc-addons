@@ -174,7 +174,7 @@ class getUrl(object):
         if mobile == True:
             request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
+            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
             request.add_header('Referer', referer)
         if not cookie is None:
@@ -1542,6 +1542,11 @@ class resolver:
     def ororo(self, url):
         try:
             result = getUrl(url).result
+
+            if not "my_video" in result:
+                result = getUrl(link().ororo_sign, post=link().ororo_key, close=False).result
+                result = getUrl(url).result
+
             url = None
             try: url = common.parseDOM(result, "source", ret="src", attrs = { "type": "video/webm" })[0]
             except: pass
