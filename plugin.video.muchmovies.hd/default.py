@@ -1165,14 +1165,10 @@ class resolver:
 
     def muchmovies(self, url):
         try:
-            result = getUrl(url.replace(link().muchmovies_base, link().muchmovies_backup), mobile=True, timeout=30).result
-            url = re.compile('playBtn.+?href="(.+?)"').findall(result)[-1]
-            return url
-
             result = getUrl(url, mobile=True).result
-            url = re.compile('google_ad_uuid.+?"(.+?)"').findall(result)
-            url = [self.decrypter(base64.b64decode(i),'<div></div>','DOMContentLoaded') for i in url]
-            url = [i for i in url if 'muchmovies.org' in i][-1]
+            url = re.compile('google_ad_uuid = "(.+?)"').findall(result)[-1]
+            url = base64.b64decode(url)
+            url = self.decrypter(url,'I8jMnv3ONE','5IY2IqFjUJ')
             return url
         except:
             return
