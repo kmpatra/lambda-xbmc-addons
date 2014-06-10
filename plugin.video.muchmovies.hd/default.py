@@ -1166,9 +1166,14 @@ class resolver:
     def muchmovies(self, url):
         try:
             result = getUrl(url, mobile=True).result
-            url = re.compile('google_ad_uuid = "(.+?)"').findall(result)[-1]
-            url = base64.b64decode(url)
-            url = self.decrypter(url,'I8jMnv3ONE','5IY2IqFjUJ')
+            cj = re.compile('google_ad_uuid = "(.+?)"').findall(result)[-1]
+            cj = base64.b64decode(cj)
+
+            result = getUrl('http://www.muchmovies.org/js/jquery.min.js', mobile=True).result
+            cf = re.compile('valHooks[|](.+?)[|]').findall(result)[-1]
+            e = re.compile('compile[|](.+?)[|]').findall(result)[-1]
+
+            url = self.decrypter(cj, cf, e)
             return url
         except:
             return
