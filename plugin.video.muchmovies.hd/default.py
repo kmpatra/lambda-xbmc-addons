@@ -1169,9 +1169,26 @@ class resolver:
             cj = re.compile('google_ad_uuid = "(.+?)"').findall(result)[-1]
             cj = base64.b64decode(cj)
 
+            import jsunpackMM
             result = getUrl('http://www.muchmovies.org/js/jquery.min.js', mobile=True).result
-            cf = re.compile('valHooks[|](.+?)[|]').findall(result)[-1]
-            e = re.compile('compile[|](.+?)[|]').findall(result)[-1]
+            sUnpacked = jsunpackMM.unpack(result)
+            sUnpacked = jsunpackMM.unpack(sUnpacked)	
+
+            ss = sUnpacked.find('google_ad_uuid')
+            call = sUnpacked[ss:ss+100]
+            call = call.split('}')[0].split(',')
+
+            try:
+                cf = re.compile('atob[(][\'|\"](.+?)[\'|\"][)]').findall(call[1])[0]
+                cf = base64.b64decode(cf)
+            except:
+                cf = re.compile('[\'|\"](.+?)[\'|\"]').findall(call[1])[0]
+
+            try:
+                e = re.compile('atob[(][\'|\"](.+?)[\'|\"][)]').findall(call[2])[0]
+                e = base64.b64decode(e)
+            except:
+                e = re.compile('[\'|\"](.+?)[\'|\"]').findall(call[2])[0]
 
             url = self.decrypter(cj, cf, e)
             return url

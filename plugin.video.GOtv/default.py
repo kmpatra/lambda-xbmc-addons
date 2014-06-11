@@ -3079,6 +3079,11 @@ class ororotv:
     def resolve(self, url):
         try:
             result = getUrl(url).result
+
+            if not "my_video" in result:
+                result = getUrl(self.sign_link, post=self.key_link, close=False).result
+                result = getUrl(url).result
+
             url = None
             try: url = common.parseDOM(result, "source", ret="src", attrs = { "type": "video/webm" })[0]
             except: pass

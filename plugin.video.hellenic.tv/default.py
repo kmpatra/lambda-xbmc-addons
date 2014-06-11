@@ -467,12 +467,9 @@ class resolver:
 
     def madtv(self, url):
         try:
-            result = getUrl(url).result
-            url = re.compile('.*src="(.+?/youtube/.+?)"').findall(result)[0]
-            if url.startswith('//'): url = 'http:' + url
+            result = getUrl(url, timeout=30).result
 
-            result = getUrl(url).result
-            url = re.compile('/embed/(.+?)"').findall(result)[0]
+            url = re.compile('.*src=".+?youtube.+?/embed/(.+?)"').findall(result)[0]
             url = 'http://www.youtube.com/watch?v=%s' % url
 
             result = getUrl(url).result

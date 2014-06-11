@@ -2563,9 +2563,31 @@ class muchmovies:
     def resolve(self, url):
         try:
             result = getUrl(url, mobile=True).result
-            url = re.compile('google_ad_uuid.+?"(.+?)"').findall(result)
-            url = [self.decrypter(base64.b64decode(i),'<div></div>','DOMContentLoaded') for i in url]
-            url = [i for i in url if 'muchmovies.org' in i][-1]
+            cj = re.compile('google_ad_uuid = "(.+?)"').findall(result)[-1]
+            cj = base64.b64decode(cj)
+
+            import jsunpackMM
+            result = getUrl('http://www.muchmovies.org/js/jquery.min.js', mobile=True).result
+            sUnpacked = jsunpackMM.unpack(result)
+            sUnpacked = jsunpackMM.unpack(sUnpacked)	
+
+            ss = sUnpacked.find('google_ad_uuid')
+            call = sUnpacked[ss:ss+100]
+            call = call.split('}')[0].split(',')
+
+            try:
+                cf = re.compile('atob[(][\'|\"](.+?)[\'|\"][)]').findall(call[1])[0]
+                cf = base64.b64decode(cf)
+            except:
+                cf = re.compile('[\'|\"](.+?)[\'|\"]').findall(call[1])[0]
+
+            try:
+                e = re.compile('atob[(][\'|\"](.+?)[\'|\"][)]').findall(call[2])[0]
+                e = base64.b64decode(e)
+            except:
+                e = re.compile('[\'|\"](.+?)[\'|\"]').findall(call[2])[0]
+
+            url = self.decrypter(cj, cf, e)
             return url
         except:
             return

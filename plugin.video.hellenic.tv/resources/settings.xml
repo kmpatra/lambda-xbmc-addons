@@ -12,6 +12,7 @@
 		<setting id="NET" label="NET" type="bool" default="true" visible="false"/>
 		<setting id="ET3" label="ET3" type="bool" default="true" visible="true"/>
 		<setting id="NERIT" label="NERIT" type="bool" default="true" visible="true"/>
+		<setting id="NERIT SPORTS" label="NERIT SPORTS" type="bool" default="true" visible="true"/>
 		<setting id="BOYLH TV" label="BOYLH TV" type="bool" default="true" visible="true"/>
 		<setting id="EURONEWS" label="EURONEWS" type="bool" default="true" visible="true"/>
 	</category>
@@ -29,18 +30,19 @@
 		<setting id="NICKELODEON+" label="NICKELODEON+" type="bool" default="true" visible="false"/>
 		<setting id="MTV" label="MTV" type="bool" default="true" visible="false"/>
 		<setting id="MAD TV" label="MAD TV" type="bool" default="true" visible="true"/>
-		<setting id="MUSIC TV" label="MUSIC TV" type="bool" default="true" visible="true"/>
+		<setting id="MAD TV CYPRUS" label="MAD TV CYPRUS" type="bool" default="true" visible="true"/>
+		<setting id="MUSIC TV" label="MUSIC TV" type="bool" default="true" visible="false"/>
 		<setting id="GREEK CINEMA" label="GREEK CINEMA" type="bool" default="true" visible="true"/>
-		<setting id="LAMPSI TV" label="LAMPSI TV" type="bool" default="true" visible="true"/>
+		<setting id="LAMPSI TV" label="LAMPSI TV" type="bool" default="true" visible="false"/>
 		<setting id="ALPHA GATV" label="ALPHA GATV" type="bool" default="true" visible="true"/>
-		<setting id="CY SPORTS" label="CY SPORTS" type="bool" default="true" visible="true"/>
+		<setting id="CY SPORTS" label="CY SPORTS" type="bool" default="true" visible="false"/>
 		<setting id="ODIE TV" label="ODIE TV" type="bool" default="true" visible="true"/>
 	</category>
 	<category label="30060">
 		<!-- ATTICA -->
 		<setting id="KONTRA CHANNEL" label="KONTRA CHANNEL" type="bool" default="true" visible="true"/>
 		<setting id="EXTRA 3" label="EXTRA 3" type="bool" default="true" visible="true"/>
-		<setting id="ACTION 24" label="ACTION 24" type="bool" default="true" visible="true"/>
+		<setting id="ACTION 24" label="ACTION 24" type="bool" default="true" visible="false"/>
 		<setting id="ART CHANNEL" label="ART CHANNEL" type="bool" default="true" visible="true"/>
 		<setting id="ZOOM" label="ZOOM" type="bool" default="true" visible="false"/>
 		<setting id="ZOUGLA TV" label="ZOUGLA TV" type="bool" default="true" visible="true"/>

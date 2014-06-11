@@ -32,8 +32,9 @@
 	<string id="30508" ch="NET">NET is mainly a news and information channel that broadcasts daily newscasts, documentaries, talkshows and sporting events.</string>
 	<string id="30509" ch="ET3">The programming of ET3 consists of news and includes sports, movies, documentaries, tv shows, music and children's shows.</string>
 	<string id="30510" ch="NERIT">NERIT is mainly a news and information channel that broadcasts daily newscasts, documentaries, talkshows and sporting events.</string>
-	<string id="30511" ch="BOYLH TV">Vouli Television is the television network of the Greek Parliament. The program broadcasts all the inner workings of Parliament and includes various cultural programs, news, documentaries and opera.</string>
-	<string id="30512" ch="EURONEWS">Euronews is the leading international news channel covering world news from a European perspective. The channel broadcasts in Greek.</string>
+	<string id="30511" ch="NERIT SPORTS">NERIT is mainly a news and information channel that broadcasts daily newscasts, documentaries, talkshows and sporting events.</string>
+	<string id="30512" ch="BOYLH TV">Vouli Television is the television network of the Greek Parliament. The program broadcasts all the inner workings of Parliament and includes various cultural programs, news, documentaries and opera.</string>
+	<string id="30513" ch="EURONEWS">Euronews is the leading international news channel covering world news from a European perspective. The channel broadcasts in Greek.</string>
 
 	<!-- CYPRUS -->
 	<string id="30521" ch="MEGA CYPRUS">The programming of Mega Cyprus consists mainly of Greek programmes such as comedies, dramas, news and entertainment shows. Broadcasts many of the programmes of Mega Greece and several Cypriot programmes.</string>
@@ -47,12 +48,13 @@
 	<string id="30542" ch="NICKELODEON+">Nickelodeon+ is the ultimate fun destination for children and the most popular cartoon and teen series channel in the world.</string>
 	<string id="30543" ch="MTV">MTV is the largest music, entertainment and lifestyle channel in the world and it is a solid choice for young people.</string>
 	<string id="30544" ch="MAD TV">MAD TV is the first music station in Greece and it broadcasts music related programming including video clips, music news and interviews as well as concert footage.</string>
-	<string id="30545" ch="MUSIC TV">MUSIC TV is a youthful and entertainment channel in Cyprus and it broadcasts music related programming including video clips, music news and interviews.</string>
-	<string id="30546" ch="GREEK CINEMA">Greek Cinema is a channel filled with the biggest stars and memorable films of Greek cinema. Greek movies, classic and modern.</string>
-	<string id="30547" ch="LAMPSI TV">Lampsi TV is a web channel that broadcasts diverse entertainment programming including movies.</string>
-	<string id="30548" ch="ALPHA GATV">Alpha GATV is a web channel that broadcasts diverse entertainment programming including movies.</string>
-	<string id="30549" ch="CY SPORTS">CySports is a 24-hour sports channel broadcasting racing events and activities from the 64 Cypriot Athletic Federations and aims to achieve the promotion of Cypriot talent in all sporting areas.</string>
-	<string id="30550" ch="ODIE TV">ODIE TV is a television network dedicated to covering live horseracing from all  racecourses in Greece. The channel is owned by ODIE.</string>
+	<string id="30545" ch="MAD TV CYPRUS">MAD TV CYPRUS is a music station in Cyprus and it broadcasts music related programming including video clips, music news and interviews as well as concert footage.</string>
+	<string id="30546" ch="MUSIC TV">MUSIC TV is a youthful and entertainment channel in Cyprus and it broadcasts music related programming including video clips, music news and interviews.</string>
+	<string id="30547" ch="GREEK CINEMA">Greek Cinema is a channel filled with the biggest stars and memorable films of Greek cinema. Greek movies, classic and modern.</string>
+	<string id="30548" ch="LAMPSI TV">Lampsi TV is a web channel that broadcasts diverse entertainment programming including movies.</string>
+	<string id="30549" ch="ALPHA GATV">Alpha GATV is a web channel that broadcasts diverse entertainment programming including movies.</string>
+	<string id="30550" ch="CY SPORTS">CySports is a 24-hour sports channel broadcasting racing events and activities from the 64 Cypriot Athletic Federations and aims to achieve the promotion of Cypriot talent in all sporting areas.</string>
+	<string id="30551" ch="ODIE TV">ODIE TV is a television network dedicated to covering live horseracing from all  racecourses in Greece. The channel is owned by ODIE.</string>
 
 	<!-- ATTICA -->
 	<string id="30561" ch="KONTRA CHANNEL">Kontra Channel is mainly an alternative news and information channel and its programming is enhanced with two ecological zones of programmes, but also with many other programmes.</string>

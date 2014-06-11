@@ -3,8 +3,8 @@
 	<area name="PANHELLENIC">
 		<channel active="True">
 			<name>MEGA</name>
-			<type>hls</type>
-			<url>http://megahdlive1-f.akamaihd.net/i/live_1@105260/master.m3u8</url>
+			<type></type>
+			<url>rtmp://37.48.66.244:80/megaweb/megaweb.sdp pageUrl=http://www.kanalia.eu/ live=1 timeout=10</url>
 			<type2>ustream</type2>
 			<url2>http://www.ustream.tv/channel/mobile0001</url2>
 			<base>http://www.megatv.com/webtv</base>
@@ -21,8 +21,8 @@
 		</channel>
 		<channel active="True">
 			<name>STAR</name>
-			<type>ustream</type>
-			<url>http://www.ustream.tv/channel/mobile0000</url>
+			<type></type>
+			<url>rtmp://37.48.66.244:80/alterweb/alterweb.sdp pageUrl=http://www.kanalia.eu/ live=1 timeout=10</url>
 			<base></base>
 			<epg>30503</epg>
 		</channel>
@@ -72,24 +72,33 @@
 		</channel>
 		<channel active="True">
 			<name>NERIT</name>
-			<type>visionip</type>
-			<url>http://tvnetwork.new.visionip.tv/Hellenic_TV/index.php?module=playlist&amp;type=jwASX&amp;broadcastid=4267</url>
+			<type>hls</type>
+			<url>http://hprt.flashcloud.mediacdn.com/hprt-geo/live/playlist.m3u8</url>
+			<type2>visionip</type2>
+			<url2>http://tvnetwork.new.visionip.tv/Hellenic_TV/index.php?module=playlist&amp;type=jwASX&amp;broadcastid=4267</url2>
 			<base>http://www.hprt.gr/</base>
 			<epg>30510</epg>
+		</channel>
+		<channel active="True">
+			<name>NERIT SPORTS</name>
+			<type>hls</type>
+			<url>http://hprt.flashcloud.mediacdn.com/hprt-geo/nerit-2/playlist.m3u8</url>
+			<base>http://www.hprt.gr/</base>
+			<epg>30511</epg>
 		</channel>
 		<channel active="True">
 			<name>BOYLH TV</name>
 			<type>hls</type>
 			<url>http://streamer-cache.grnet.gr/parliament/parltv.sdp/master.m3u8</url>
 			<base>http://www.hellenicparliament.gr/Enimerosi/Vouli-Tileorasi</base>
-			<epg>30511</epg>
+			<epg>30512</epg>
 		</channel>
 		<channel active="True">
 			<name>EURONEWS</name>
 			<type></type>
 			<url>rtmp://fr-par-3.stream-relay.hexaglobe.net:1935/rtpeuronewslive playpath=gr_video750_rtp.sdp swfUrl=http://gr.euronews.com/media/player_live_1_14.swf live=1 timeout=10</url>
 			<base>http://gr.euronews.com/news/streaming-live/</base>
-			<epg>30512</epg>
+			<epg>30513</epg>
 		</channel>
 	</area>
 
@@ -165,46 +174,53 @@
 			<epg>30544</epg>
 		</channel>
 		<channel active="True">
+			<name>MAD TV CYPRUS</name>
+			<type></type>
+			<url>rtmp://144.76.2.213/live/livestream swfUrl=http://jwplayer.mediaserve.com/player.swf live=1 timeout=10</url>
+			<base>http://www.madtv.com.cy/</base>
+			<epg>30545</epg>
+		</channel>
+		<channel active="False">
 			<name>MUSIC TV</name>
 			<type>hls</type>
 			<url>http://musictvstream.istoikona.net/musictv.isml/manifest(format=m3u8-aapl).m3u8</url>
 			<base>http://musictv.com.cy/</base>
-			<epg>30545</epg>
+			<epg>30546</epg>
 		</channel>
 		<channel active="True">
 			<name>GREEK CINEMA</name>
 			<type>justin</type>
 			<url>http://www.justin.tv/zuganelis</url>
 			<base>http://www.justin.tv/zuganelis</base>
-			<epg>30546</epg>
+			<epg>30547</epg>
 		</channel>
-		<channel active="True">
+		<channel active="False">
 			<name>LAMPSI TV</name>
 			<type>livestream_new</type>
 			<url>http://new.livestream.com/accounts/1044356/events/2098315</url>
 			<base>http://www.gamostv.eu/</base>
-			<epg>30547</epg>
+			<epg>30548</epg>
 		</channel>
 		<channel active="True">
 			<name>ALPHA GATV</name>
 			<type>hls</type>
 			<url>http://player.stream.hostworks.com.au/alpha_dyn.m3u8</url>
 			<base>http://alphagatv.com.au/</base>
-			<epg>30548</epg>
+			<epg>30549</epg>
 		</channel>
-		<channel active="True">
+		<channel active="False">
 			<name>CY SPORTS</name>
 			<type>hls</type>
 			<url>http://stream.livenews.com.cy/cysports.isml/manifest(format=m3u8-aapl).m3u8</url>
 			<base>http://cysports.tv/</base>
-			<epg>30549</epg>
+			<epg>30550</epg>
 		</channel>
 		<channel active="True">
 			<name>ODIE TV</name>
 			<type>ustream</type>
 			<url>http://www.ustream.tv/channel/odie-tv-live</url>
 			<base>http://www.odie.tv/</base>
-			<epg>30550</epg>
+			<epg>30551</epg>
 		</channel>
 	</area>
 
@@ -223,7 +239,7 @@
 			<base>http://www.extratv.gr/</base>
 			<epg>30562</epg>
 		</channel>
-		<channel active="True">
+		<channel active="False">
 			<name>ACTION 24</name>
 			<type>livestream_new</type>
 			<url>http://new.livestream.com/accounts/6414825/events/2795057</url>
@@ -233,7 +249,7 @@
 		<channel active="True">
 			<name>ART CHANNEL</name>
 			<type>ustream</type>
-			<url>http://www.ustream.tv/channel/%CE%A4%CE%B7%CE%BB%CE%B5%CF%8C%CF%81%CE%B1%CF%83%CE%B7-%CE%91%CF%81%CF%84</url>
+			<url>http://www.ustream.tv/channel/art-tvchannel</url>
 			<base>http://www.arttv.info/</base>
 			<epg>30564</epg>
 		</channel>
@@ -823,7 +839,7 @@
 		<channel active="True">
 			<name>DIKTYO TV</name>
 			<type>justin</type>
-			<url>http://www.justin.tv/diktyotv</url>
+			<url>http://www.justin.tv/diktyo</url>
 			<base>http://diktyotv.gr/</base>
 			<epg>30801</epg>
 		</channel>

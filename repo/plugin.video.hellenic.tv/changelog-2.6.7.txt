@@ -1,4 +1,14 @@
 ------------------------
+Hellenic TV v2.6.7 (12-Jun-14)
+------------------------
+
+- Added NERIT SPORTS and MAD TV CYPRUS.
+- Updated MEGA, STAR, NERIT, MAD TV and ART CHANNEL.
+- Removed MUSIC TV, LAMPSI TV, CY SPORTS and ACTION 24.
+- Code cosmetics.
+
+
+------------------------
 Hellenic TV v2.6.6 (23-May-14)
 ------------------------
 

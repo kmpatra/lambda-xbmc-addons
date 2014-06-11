@@ -9,6 +9,7 @@ Watch a wide selection of movies from muchmovies.org
 
 Attributions
 ---------------------
+- Decrypter by shani_08 | http://www.xbmchub.com
 - Dutch translation by falos | http://www.xbmchub.com
 - French translation by nek | http://www.xbmchub.com
 - Polish translation by kodishu | http://www.xbmchub.com
