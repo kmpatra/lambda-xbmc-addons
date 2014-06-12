@@ -1,4 +1,12 @@
 ------------------------
+Much Movies HD v1.5.8 (12-Jun-14)
+------------------------
+
+- Fixed issues with resolver.
+- Code cosmetics.
+
+
+------------------------
 Much Movies HD v1.5.7 (12-Jun-14)
 ------------------------
 

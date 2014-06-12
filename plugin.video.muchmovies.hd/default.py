@@ -1178,17 +1178,15 @@ class resolver:
             call = sUnpacked[ss:ss+100]
             call = call.split('}')[0].split(',')
 
-            try:
-                cf = re.compile('atob[(][\'|\"](.+?)[\'|\"][)]').findall(call[1])[0]
-                cf = base64.b64decode(cf)
-            except:
-                cf = re.compile('[\'|\"](.+?)[\'|\"]').findall(call[1])[0]
+            cf = call[1]
+            atob = cf.count('atob')
+            cf = re.compile('[\'|\"](.+?)[\'|\"]').findall(cf)[0]
+            for i in range(0,atob): cf = base64.b64decode(cf)
 
-            try:
-                e = re.compile('atob[(][\'|\"](.+?)[\'|\"][)]').findall(call[2])[0]
-                e = base64.b64decode(e)
-            except:
-                e = re.compile('[\'|\"](.+?)[\'|\"]').findall(call[2])[0]
+            e = call[2]
+            atob = e.count('atob')
+            e = re.compile('[\'|\"](.+?)[\'|\"]').findall(e)[0]
+            for i in range(0,atob): e = base64.b64decode(e)
 
             url = self.decrypter(cj, cf, e)
             return url
