@@ -1166,60 +1166,13 @@ class resolver:
     def muchmovies(self, url):
         try:
             result = getUrl(url, mobile=True).result
-            cj = re.compile('google_ad_uuid = "(.+?)"').findall(result)[-1]
-            cj = base64.b64decode(cj)
 
-            import jsunpackMM
-            result = getUrl('http://www.muchmovies.org/js/jquery.min.js', mobile=True).result
-            for i in range(0,10):
-                result = jsunpackMM.unpack(result)
-                ss = result.find('google_ad_uuid')
-                call = result[ss:ss+100]
-                if 'google_ad_uuid' in call: break
+            url = common.parseDOM(result, "a", ret="href", attrs = { "data-role": "button" })
+            url = [i for i in url if str('.mp4') in i][0]
 
-            call = call.split('}')[0].split(',')
-
-            cf_index = call[1]
-            atob = cf_index.count('atob')
-            try: cf = re.compile('[\'|\"](.+?)[\'|\"]').findall(cf_index)[0]
-            except:
-                cf = re.compile('.*[(](.+?)[)]').findall(cf_index)[0]
-                for i in range(0,10):
-                    cf = re.compile('(.+?)\[(\d+)\]').findall(cf)[0]
-                    cf = re.compile('%s(.*?)];' % cf[0]).findall(result)[0].split(',')[int(cf[1])]
-                    if '\\x' in cf: break
-            cf = re.sub('"|\'|[\\\\x]|\s', '', cf).decode("hex")
-            for i in range(0,atob): cf = base64.b64decode(cf)
-
-            e_index = call[2]
-            atob = e_index.count('atob')
-            try: e = re.compile('[\'|\"](.+?)[\'|\"]').findall(e_index)[0]
-            except:
-                e = re.compile('.*[(](.+?)[)]').findall(e_index)[0]
-                for i in range(0,10):
-                    e = re.compile('(.+?)\[(\d+)\]').findall(e)[0]
-                    e = re.compile('%s(.*?)];' % e[0]).findall(result)[0].split(',')[int(e[1])]
-                    if '\\x' in e: break
-            e = re.sub('"|\'|[\\\\x]|\s', '', e).decode("hex")
-            for i in range(0,atob): e = base64.b64decode(e)
-
-            url = self.decrypter(cj, cf, e)
             return url
         except:
             return
-
-    def decrypter(self, cj, cf, e):
-    	ci = ""
-    	ch = ""
-    	cg = 0
-    	lenofcf=len(cf)
-    	lenOfE=len(e)
-    	for cg in range(0,len(cj)):
-    		ci += chr(ord(cj[cg])^ord(cf[cg %lenofcf]))
-
-    	for cg in range(0,len(ci)):
-    		ch += chr(ord(ci[cg])^ord(e[cg %lenOfE]))
-    	return ch
 
 
 main()
