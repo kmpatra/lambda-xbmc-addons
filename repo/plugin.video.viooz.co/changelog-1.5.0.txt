@@ -1,4 +1,16 @@
 ------------------------
+Viooz v1.5.0 (17-Jun-14)
+------------------------
+
+- Re-work of addon.
+- Re-work of resolver.
+- PseudoTV Live: All dialogs are now disabled (Resume, Playback info etc).
+- PseudoTV Live: All streams won't be marked as watched.
+- Updated all translations.
+- Code cosmetics.
+
+
+------------------------
 Viooz v1.4.2 (10-May-14)
 ------------------------
 

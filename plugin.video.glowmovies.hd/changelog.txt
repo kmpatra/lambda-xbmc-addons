@@ -1,4 +1,14 @@
 ------------------------
+Glow Movies HD v1.2.0 (17-Jun-14)
+------------------------
+
+- Re-work of addon.
+- Re-work of resolver.
+- Updated all translations.
+- Code cosmetics.
+
+
+------------------------
 Glow Movies HD v1.1.1 (26-May-14)
 ------------------------
 

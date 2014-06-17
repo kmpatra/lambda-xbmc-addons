@@ -104,7 +104,7 @@ class main:
         elif action == 'metadata_movies':           contextMenu().metadata('movie', name, url, imdb, '', '')
         elif action == 'metadata_movies2':          contextMenu().metadata2('movie', name, url, imdb, '', '')
         elif action == 'playcount_movies':          contextMenu().playcount('movie', imdb, '', '')
-        elif action == 'library':                   contextMenu().library(name, url)
+        elif action == 'library_add':               contextMenu().library_add(name, url)
         elif action == 'download':                  contextMenu().download(name, url)
         elif action == 'trailer':                   contextMenu().trailer(name, url)
         elif action == 'movies':                    movies().get(url)
@@ -143,7 +143,7 @@ class getUrl(object):
         if mobile == True:
             request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
+            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
             request.add_header('Referer', referer)
         if not cookie is None:
@@ -500,6 +500,8 @@ class index:
     def movieList(self, movieList):
         if movieList == None: return
 
+        getmeta = getSetting("meta")
+
         file = xbmcvfs.File(favData)
         favRead = file.read()
         favRead = favRead.replace(link().glow_old, link().glow_base)
@@ -515,7 +517,7 @@ class index:
                 sysname, sysurl, sysimage, systitle, sysimdb = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(imdb)
                 u = '%s?action=play&name=%s&url=%s&t=%s' % (sys.argv[0], sysname, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
 
-                if getSetting("meta") == 'true':
+                if getmeta == 'true':
                     meta = metaget.get_meta('movie', title ,year=year)
                     playcountMenu = language(30407).encode("utf-8")
                     if meta['overlay'] == 6: playcountMenu = language(30408).encode("utf-8")
@@ -526,7 +528,7 @@ class index:
                 else:
                     meta = {'label': title, 'title': title, 'year': year, 'imdb_id' : imdb, 'genre' : genre, 'plot': plot}
                     trailer, poster = sysurl, image
-                if getSetting("meta") == 'true' and getSetting("fanart") == 'true':
+                if getmeta == 'true' and getSetting("fanart") == 'true':
                     fanart = meta['backdrop_url']
                     if fanart == '': fanart = addonFanart
                 else:
@@ -538,16 +540,16 @@ class index:
                 cm.append((language(30412).encode("utf-8"), 'Action(Info)'))
                 if action == 'movies_favourites':
                     if not getSetting("fav_sort") == '2': cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
-                    if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
+                    if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
+                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30428).encode("utf-8"), 'RunPlugin(%s?action=view_movies)' % (sys.argv[0])))
                     if getSetting("fav_sort") == '2': cm.append((language(30419).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveUp&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if getSetting("fav_sort") == '2': cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveDown&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                 elif action == 'movies_search':
                     cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_from_search&name=%s&imdb=%s&url=%s&image=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage)))
                     cm.append((language(30428).encode("utf-8"), 'RunPlugin(%s?action=view_movies)' % (sys.argv[0])))
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
@@ -555,8 +557,8 @@ class index:
                     cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
                 else:
                     cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies2&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies2&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
+                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if not '"%s"' % url in favRead: cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_add&name=%s&imdb=%s&url=%s&image=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage)))
                     else: cm.append((language(30418).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30428).encode("utf-8"), 'RunPlugin(%s?action=view_movies)' % (sys.argv[0])))
@@ -796,7 +798,19 @@ class contextMenu:
         except:
             return
 
-    def library(self, name, url, silent=False):
+    def library_add(self, name, url, update=True, silent=False):
+        try:
+            self.library(name, url)
+
+            if silent == False:
+                index().container_refresh()
+                index().infoDialog(language(30311).encode("utf-8"), name)
+            if update == True:
+                xbmc.executebuiltin('UpdateLibrary(video)')
+        except:
+            return
+
+    def library(self, name, url):
         try:
             library = xbmc.translatePath(getSetting("movie_library"))
             sysname, sysurl = urllib.quote_plus(name), urllib.quote_plus(url)
@@ -808,10 +822,8 @@ class contextMenu:
             xbmcvfs.mkdir(library)
             xbmcvfs.mkdir(folder)
             file = xbmcvfs.File(stream, 'w')
-            file.write(content)
+            file.write(str(content))
             file.close()
-            if silent == False:
-                index().infoDialog(language(30311).encode("utf-8"), name)
         except:
             return
 
@@ -1263,7 +1275,7 @@ class trailer:
 class resolver:
     def run(self, url, name, download=False):
         try:
-            url = self.glow(url)
+            url = self.glow(url, name)
             if url is None: raise Exception()
 
             if download == True: return url
@@ -1272,38 +1284,30 @@ class resolver:
         except:
             if not index().getProperty('PseudoTVRunning') == 'True':
                 index().infoDialog(language(30318).encode("utf-8"))
-
-    def glow(self, url):
-        url = url.replace(link().glow_old, link().glow_base)
-
-        try:
-            r = getUrl(url).result
-            r = r.decode('iso-8859-1').encode('utf-8')
-            r = common.parseDOM(r, "div", attrs = { "class": "content" })[0]
-        except:
             return
 
+    def glow(self, url, name):
+        url = url.replace(link().glow_old, link().glow_base)
+        referer = url
+
         try:
-            google = common.parseDOM(r, "iframe", ret="src")[0]
-            google = common.replaceHTMLCodes(google)
+            url = getUrl(url).result
+            url = url.decode('iso-8859-1').encode('utf-8')
+            url = common.parseDOM(url, "iframe", ret="src", attrs = { "webkitallowfullscreen": ".+?" })[0]
+            url = getUrl(url, referer=link().glow_base).result
+            url = common.parseDOM(url, "iframe", ret="src")[0]
+            url = getUrl(url, referer=link().glow_base).result
 
-            result = getUrl(google, referer=link().glow_base).result
-            result = common.parseDOM(result, "iframe", ret="src")[0]
-            result = getUrl(result, referer=link().glow_base).result
+            u = re.compile('"((?:http|https)://redirector.googlevideo.com/.+?)"').findall(url)
+            u += re.compile('"((?:http|https)://docs.google.com/.+?)"').findall(url)
+            url = u[-1]
 
-            try:
-                url = re.compile('{file:"(.+?)"').findall(result)
-                if url == []: raise Exception()
-                url = [common.replaceHTMLCodes(i) for i in url]
-                url = [i for i in url if 'videoplayback?' in i]
-                try: url = [i for i in url if not any(x in i for x in ['&itag=43&', '&itag=35&', '&itag=34&', '&itag=5&'])][-1]
-                except: url = url[-1]
-            except:
-                url = common.parseDOM(result, "iframe", ret="src")[0]
+            if 'docs.google.com' in url:
                 url = getUrl(url).result
                 url = re.findall('("fmt_stream_map":".+?")', url, re.I)[0]
                 url = json.loads('{' + url + '}')['fmt_stream_map']
                 url = [i.split('|')[-1] for i in url.split(',')]
+                if url == []: return
                 try: url = [i for i in url if not any(x in i for x in ['&itag=43&', '&itag=35&', '&itag=34&', '&itag=5&'])][0]
                 except: url = url[0]
 
@@ -1315,41 +1319,99 @@ class resolver:
             pass
 
         try:
-            yandex = common.parseDOM(r, "a", ret="href", attrs = { "id": "dm\d+" })
-            yandex = [i for i in yandex if '/yadi.sk/' in i][0]
+            imdb = None
+            title = name.rsplit(' (', 1)[0].strip()
+            year = '%04d' % int(name.rsplit(' (', 1)[-1].split(')')[0])
 
-            result = getUrl(yandex, close=False).result
-            ckey = re.compile('"ckey_local":"(.+?)"').findall(result)[0]
-            hash = re.compile('"hash":"(.+?)"').findall(result)[0]
-            tld = re.compile('"tld":"(.+?)"').findall(result)[0]
-            post = urllib.urlencode({'_ckey': ckey, 'tld': tld, 'hash': hash, '_name': 'getLinkFileDownload'})
-            url = getUrl('https://yadi.sk/handlers.jsx', post=post).result
-            url = json.loads(url)['data']['url']
-            url = getUrl(url, output='geturl').result
+            if imdb == None:
+                try: imdb = re.findall('imdb.com/title/tt(\d+)', getUrl(referer).result, re.I)[0]
+                except: pass
+            if imdb == None:
+                try: imdb = json.loads(getUrl('http://www.imdbapi.com/?t=%s&y=%s' % (urllib.quote_plus(title), str(int(year)))).result)['imdbID']
+                except: pass
+            if imdb == None:
+                try: imdb = json.loads(getUrl('http://www.imdbapi.com/?t=%s&y=%s' % (urllib.quote_plus(title), str(int(year)-1))).result)['imdbID']
+                except: pass
+
+            imdb = re.sub('[^0-9]', '', imdb)
+            url = self.movie25(imdb)
             return url
         except:
             pass
+
+    def movie25(self, imdb):
+        hostDict = ['Firedrive', 'Putlocker', 'Sockshare', 'Played', 'Promptfile', 'Mightyupload', 'Gorillavid', 'Divxstage', 'Movreel', 'Bestreams', 'Flashx', 'Vidbull', 'Daclips', 'Movpod', 'Nosvideo', 'Novamov', 'Movshare', 'Vidx', 'Sharesix', 'Videoweed', 'Sharerepo', 'Uploadc', 'Filenuke']
+        self.base_link = 'http://www.movie25.so'
+        self.search_link = 'http://www.movie25.so/search.php?key=%s'
 
         try:
-            mailru = common.parseDOM(r, "a", ret="href", attrs = { "id": "dm\d+" })
-            mailru = [i for i in mailru if '/cloud.mail.ru/' in i][0]
+            movie25_sources = []
 
-            result = getUrl(mailru, close=False).result
-            url = re.compile('"get": "(.+?)"').findall(result)[0]
-            url = '%s|Referer=%s' % (url, urllib.quote_plus(mailru))
-            return url
+            result = getUrl('http://www.imdbapi.com/?i=tt%s' % imdb).result
+            result = json.loads(result)
+            title = result['Title']
+            year = result['Year']
+
+            query = self.search_link % urllib.quote_plus(title)
+
+            result = getUrl(query).result
+            result = result.decode('iso-8859-1').encode('utf-8')
+            result = common.parseDOM(result, "div", attrs = { "class": "movie_table" })[0]
+            result = common.parseDOM(result, "li")
+
+            match = [i for i in result if any(x in i for x in [' (%s)' % str(year), ' (%s)' % str(int(year)+1), ' (%s)' % str(int(year)-1)])]
+            match2 = [self.base_link + common.parseDOM(i, "a", ret="href")[0] for i in match]
+            if match2 == []: return
+            for i in match2[:10]:
+                try:
+                    result = getUrl(i).result
+                    result = result.decode('iso-8859-1').encode('utf-8')
+                    if str('tt' + imdb) in result:
+                        match3 = result
+                        break
+                except:
+                    pass
+
+            result = common.parseDOM(match3, "div", attrs = { "class": "links_quality" })[0]
+            links = common.parseDOM(result, "ul")
+            for i in links:
+                try:
+                    name = common.parseDOM(i, "a")[0]
+                    name = common.replaceHTMLCodes(name)
+                    if name.isdigit(): raise Exception()
+                    host = common.parseDOM(i, "li", attrs = { "class": "link_name" })[0]
+                    host = common.replaceHTMLCodes(host)
+                    host = host.encode('utf-8')
+                    host = [x for x in hostDict if host.lower() == x.lower()][0]
+                    url = common.parseDOM(i, "a", ret="href")[0]
+                    url = '%s%s' % (self.base_link, url)
+                    url = common.replaceHTMLCodes(url)
+                    url = url.encode('utf-8')
+                    movie25_sources.append({'source': host, 'url': url})
+                except:
+                    pass
+
+            filter = []
+            for host in hostDict: filter += [i for i in movie25_sources if i['source'].lower() == host.lower()]
+            movie25_sources = filter
         except:
-            pass
+            return
 
-        try:
-            grifthost = common.parseDOM(r, "a", ret="href", attrs = { "id": "dm\d+" })
-            grifthost = [i for i in grifthost if '/grifthost.com/' in i][0]
+        for i in movie25_sources:
+            try:
+                result = getUrl(i['url']).result
+                result = result.decode('iso-8859-1').encode('utf-8')
+                url = common.parseDOM(result, "input", ret="onclick")
+                url = [i for i in url if 'location.href' in i and 'http://' in i][0]
+                url = url.split("'", 1)[-1].rsplit("'", 1)[0]
 
-            url = getUrl(grifthost, output='geturl').result
-            if url == grifthost: raise Exception()
-            return url
-        except:
-            pass
+                import urlresolver
+                resolver = urlresolver.resolve(url)
+                xbmc.sleep(1000)
+                if not resolver.startswith('http://'): raise Exception()
+                if not resolver == url: return resolver
+            except:
+                pass
 
 
 main()

@@ -1,4 +1,17 @@
 ------------------------
+Yify Movies HD v1.6.0 (17-Jun-14)
+------------------------
+
+- Re-work of addon.
+- Re-work of resolver.
+- PseudoTV Live: All dialogs are now disabled (Resume, Playback info etc).
+- PseudoTV Live: All streams won't be marked as watched.
+- Removed YIFY lists.
+- Updated all translations.
+- Code cosmetics.
+
+
+------------------------
 Yify Movies HD v1.5.2 (14-May-14)
 ------------------------
 

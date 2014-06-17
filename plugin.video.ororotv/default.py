@@ -99,6 +99,7 @@ class main:
         except:     episode = None
 
         if action == None:                          root().get()
+        elif action == 'root_search':               root().search()
         elif action == 'item_play':                 contextMenu().item_play()
         elif action == 'item_random_play':          contextMenu().item_random_play()
         elif action == 'item_queue':                contextMenu().item_queue()
@@ -108,12 +109,6 @@ class main:
         elif action == 'favourite_delete':          contextMenu().favourite_delete(favData, name, url)
         elif action == 'favourite_moveUp':          contextMenu().favourite_moveUp(favData, name, url)
         elif action == 'favourite_moveDown':        contextMenu().favourite_moveDown(favData, name, url)
-        elif action == 'subscription_add':          contextMenu().subscription_add(name, url, image, imdb, year)
-        elif action == 'subscription_from_search':  contextMenu().subscription_from_search(name, url, image, imdb, year)
-        elif action == 'subscription_delete':       contextMenu().subscription_delete(name, url)
-        elif action == 'subscriptions_update':      contextMenu().subscriptions_update()
-        elif action == 'subscriptions_service':     contextMenu().subscriptions_update(silent=True)
-        elif action == 'subscriptions_clean':       contextMenu().subscriptions_clean()
         elif action == 'playlist_open':             contextMenu().playlist_open()
         elif action == 'settings_open':             contextMenu().settings_open()
         elif action == 'addon_home':                contextMenu().addon_home()
@@ -127,7 +122,11 @@ class main:
         elif action == 'playcount_tvshows':         contextMenu().playcount('tvshow', imdb, '', '')
         elif action == 'playcount_seasons':         contextMenu().playcount('season', imdb, season, '')
         elif action == 'playcount_episodes':        contextMenu().playcount('episode', imdb, season, episode)
-        elif action == 'library':                   contextMenu().library(name, url, imdb, year)
+        elif action == 'library_add':               contextMenu().library_add(name, url, image, imdb, year)
+        elif action == 'library_from_search':       contextMenu().library_from_search(name, url, image, imdb, year)
+        elif action == 'library_delete':            contextMenu().library_delete(name, url)
+        elif action == 'library_update':            contextMenu().library_update()
+        elif action == 'library_service':           contextMenu().library_update(silent=True)
         elif action == 'download':                  contextMenu().download(name, url)
         elif action == 'shows_favourites':          favourites().shows()
         elif action == 'shows_subscriptions':       subscriptions().shows()
@@ -211,13 +210,14 @@ class Thread(threading.Thread):
 class player(xbmc.Player):
     def __init__ (self):
         self.folderPath = xbmc.getInfoLabel('Container.FolderPath')
+        self.PseudoTVRunning = index().getProperty('PseudoTVRunning')
         self.loadingStarting = time.time()
         xbmc.Player.__init__(self)
 
     def run(self, name, url, imdb='0'):
         self.video_info(name, imdb)
 
-        if self.folderPath.startswith(sys.argv[0]):
+        if self.folderPath.startswith(sys.argv[0]) or self.PseudoTVRunning == 'True':
             item = xbmcgui.ListItem(path=url)
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
         else:
@@ -321,12 +321,14 @@ class player(xbmc.Player):
         minutes, seconds = divmod(offset, 60)
         hours, minutes = divmod(minutes, 60)
         offset_time = '%02d:%02d:%02d' % (hours, minutes, seconds)
-        yes = index().yesnoDialog('%s %s' % (language(30353).encode("utf-8"), offset_time), '', self.name, language(30354).encode("utf-8"), language(30355).encode("utf-8"))
+        yes = index().yesnoDialog('%s %s' % (language(30350).encode("utf-8"), offset_time), '', self.name, language(30351).encode("utf-8"), language(30352).encode("utf-8"))
         if yes: self.seekTime(offset)
 
     def onPlayBackStarted(self):
         try: self.setSubtitles(self.subtitle)
         except: pass
+
+        if self.PseudoTVRunning == 'True': return
 
         if getSetting("playback_info") == 'true':
             elapsedTime = '%s %.2f seconds' % (language(30319).encode("utf-8"), (time.time() - self.loadingStarting))     
@@ -337,11 +339,13 @@ class player(xbmc.Player):
             self.resume_playback()
 
     def onPlayBackEnded(self):
+        if self.PseudoTVRunning == 'True': return
         self.change_watched()
         self.offset_delete()
         self.container_refresh()
 
     def onPlayBackStopped(self):
+        if self.PseudoTVRunning == 'True': return
         if self.currentTime / self.totalTime >= .9:
             self.change_watched()
         self.offset_delete()
@@ -476,9 +480,7 @@ class index:
                 u = '%s?action=%s' % (sys.argv[0], action)
 
                 cm = []
-                if action.endswith('_subscriptions'):
-                    cm.append((language(30425).encode("utf-8"), 'RunPlugin(%s?action=subscriptions_update)' % (sys.argv[0])))
-                    cm.append((language(30426).encode("utf-8"), 'RunPlugin(%s?action=subscriptions_clean)' % (sys.argv[0])))
+                cm.append((language(30425).encode("utf-8"), 'RunPlugin(%s?action=library_update)' % (sys.argv[0])))
 
                 item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
                 item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
@@ -521,6 +523,9 @@ class index:
     def showList(self, showList):
         if showList == None: return
 
+        getmeta = getSetting("meta")
+        #if action == 'shows_search': getmeta = ''
+
         file = xbmcvfs.File(favData)
         favRead = file.read()
         file.close()
@@ -539,9 +544,10 @@ class index:
                 sysname, sysurl, sysimage, sysyear, sysimdb, sysgenre, sysplot = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(genre), urllib.quote_plus(plot)
                 u = '%s?action=seasons&url=%s&image=%s&year=%s&imdb=%s&genre=%s&plot=%s&show=%s' % (sys.argv[0], sysurl, sysimage, sysyear, sysimdb, sysgenre, sysplot, sysname)
 
-                if getSetting("meta") == 'true':
+                if getmeta == 'true':
                     if imdb == '0': imdb = metaget.get_meta('tvshow', title)['imdb_id']
                     meta = metaget.get_meta('tvshow', title, imdb_id=imdb)
+                    meta.update({'playcount': 0, 'overlay': 0})
                     playcountMenu = language(30407).encode("utf-8")
                     if meta['overlay'] == 6: playcountMenu = language(30408).encode("utf-8")
                     metaimdb = urllib.quote_plus(re.sub('[^0-9]', '', meta['imdb_id']))
@@ -552,7 +558,7 @@ class index:
                 else:
                     meta = {'label': title, 'title': title, 'tvshowtitle': title, 'year' : year, 'imdb_id' : imdb, 'genre' : genre, 'plot': plot}
                     poster, banner = image, image
-                if getSetting("meta") == 'true' and getSetting("fanart") == 'true':
+                if getmeta == 'true' and getSetting("fanart") == 'true':
                     fanart = meta['backdrop_url']
                     if fanart == '': fanart = addonFanart
                 else:
@@ -564,39 +570,35 @@ class index:
                 cm.append((language(30401).encode("utf-8"), 'RunPlugin(%s?action=item_play)' % (sys.argv[0])))
                 cm.append((language(30413).encode("utf-8"), 'Action(Info)'))
                 if action == 'shows_favourites':
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&name=%s&url=%s&imdb=%s)' % (sys.argv[0], sysname, sysurl, metaimdb)))
-                    if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
-                    if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=subscription_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
-                    else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=subscription_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, sysurl, sysimdb, sysyear)))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&name=%s&url=%s&imdb=%s)' % (sys.argv[0], sysname, sysurl, metaimdb)))
+                    #if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
+                    if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
+                    else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=library_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30429).encode("utf-8"), 'RunPlugin(%s?action=view_tvshows)' % (sys.argv[0])))
                     if getSetting("fav_sort") == '2': cm.append((language(30419).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveUp&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if getSetting("fav_sort") == '2': cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveDown&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                 elif action == 'shows_subscriptions':
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&name=%s&url=%s&imdb=%s)' % (sys.argv[0], sysname, sysurl, metaimdb)))
-                    if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
-                    if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=subscription_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
-                    else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=subscription_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-                    cm.append((language(30425).encode("utf-8"), 'RunPlugin(%s?action=subscriptions_update)' % (sys.argv[0])))
-                    cm.append((language(30426).encode("utf-8"), 'RunPlugin(%s?action=subscriptions_clean)' % (sys.argv[0])))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&name=%s&url=%s&imdb=%s)' % (sys.argv[0], sysname, sysurl, metaimdb)))
+                    #if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
+                    if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
+                    else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=library_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    cm.append((language(30425).encode("utf-8"), 'RunPlugin(%s?action=library_update)' % (sys.argv[0])))
                     if not '"%s"' % url in favRead: cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     else: cm.append((language(30418).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30429).encode("utf-8"), 'RunPlugin(%s?action=view_tvshows)' % (sys.argv[0])))
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
                 elif action.startswith('shows_search'):
-                    cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=subscription_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, sysurl, sysimdb, sysyear)))
+                    cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     cm.append((language(30429).encode("utf-8"), 'RunPlugin(%s?action=view_tvshows)' % (sys.argv[0])))
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
                     cm.append((language(30410).encode("utf-8"), 'RunPlugin(%s?action=playlist_open)' % (sys.argv[0])))
                     cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
                 else:
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows2&imdb=%s)' % (sys.argv[0], metaimdb)))
-                    if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=subscription_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
-                    else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=subscription_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, sysurl, sysimdb, sysyear)))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows2&imdb=%s)' % (sys.argv[0], metaimdb)))
+                    if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
+                    else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=library_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if not '"%s"' % url in favRead: cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     else: cm.append((language(30418).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30429).encode("utf-8"), 'RunPlugin(%s?action=view_tvshows)' % (sys.argv[0])))
@@ -654,7 +656,8 @@ class index:
                 u = '%s?action=episodes&name=%s&url=%s&image=%s&year=%s&imdb=%s&genre=%s&plot=%s&show=%s' % (sys.argv[0], sysname, sysurl, sysimage, sysyear, sysimdb, sysgenre, sysplot, sysshow)
 
                 if getSetting("meta") == 'true':
-                    meta.update({'playcount': season_meta[i]['playcount'], 'overlay': season_meta[i]['overlay']})
+                    meta.update({'playcount': 0, 'overlay': 0})
+                    #meta.update({'playcount': season_meta[i]['playcount'], 'overlay': season_meta[i]['overlay']})
                     poster = season_meta[i]['cover_url']
                     playcountMenu = language(30407).encode("utf-8")
                     if season_meta[i]['overlay'] == 6: playcountMenu = language(30408).encode("utf-8")
@@ -672,7 +675,7 @@ class index:
                 cm.append((language(30404).encode("utf-8"), 'RunPlugin(%s?action=item_queue)' % (sys.argv[0])))
                 cm.append((language(30413).encode("utf-8"), 'Action(Info)'))
                 if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_seasons&imdb=%s&season=%s)' % (sys.argv[0], metaimdb, metaseason)))
-                if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_seasons&imdb=%s&season=%s)' % (sys.argv[0], metaimdb, metaseason)))
+                #if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_seasons&imdb=%s&season=%s)' % (sys.argv[0], metaimdb, metaseason)))
                 cm.append((language(30430).encode("utf-8"), 'RunPlugin(%s?action=view_seasons)' % (sys.argv[0])))
                 cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
                 cm.append((language(30410).encode("utf-8"), 'RunPlugin(%s?action=playlist_open)' % (sys.argv[0])))
@@ -691,6 +694,9 @@ class index:
     def episodeList(self, episodeList):
         if episodeList == None: return
 
+        getmeta = getSetting("meta")
+        if action == 'episodes_calendar': getmeta = ''
+
         total = len(episodeList)
         for i in episodeList:
             try:
@@ -701,7 +707,7 @@ class index:
                 sysname, systitle, sysimdb, sysyear, sysseason, sysepisode, sysshow, sysurl = urllib.quote_plus(name), urllib.quote_plus(title), urllib.quote_plus(imdb), urllib.quote_plus(year), urllib.quote_plus(season), urllib.quote_plus(episode), urllib.quote_plus(show), urllib.quote_plus(url)
                 u = '%s?action=play&name=%s&url=%s&imdb=%s&year=%s&t=%s' % (sys.argv[0], sysname, sysurl, sysimdb, sysyear, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
 
-                if getSetting("meta") == 'true':
+                if getmeta == 'true':
                     if imdb == '0': imdb = metaget.get_meta('tvshow', show)['imdb_id']
                     imdb = re.sub('[^0-9]', '', imdb)
                     meta = metaget.get_episode_meta(title, imdb, season, episode)
@@ -722,7 +728,7 @@ class index:
                     label = season + 'x' + '%02d' % int(episode) + ' . ' + title
                     if action == 'episodes_subscriptions': label = show + ' - ' + label
                     poster = image
-                if getSetting("meta") == 'true' and getSetting("fanart") == 'true':
+                if getmeta == 'true' and getSetting("fanart") == 'true':
                     fanart = meta['backdrop_url']
                     if fanart == '': fanart = addonFanart
                 else:
@@ -733,8 +739,8 @@ class index:
                 cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=download&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                 cm.append((language(30403).encode("utf-8"), 'RunPlugin(%s?action=item_play_from_here&url=%s)' % (sys.argv[0], sysurl)))
                 cm.append((language(30414).encode("utf-8"), 'Action(Info)'))
-                if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_episodes&imdb=%s&season=%s&episode=%s)' % (sys.argv[0], metaimdb, metaseason, metaepisode)))
-                if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_episodes&imdb=%s&season=%s&episode=%s)' % (sys.argv[0], metaimdb, metaseason, metaepisode)))
+                if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_episodes&imdb=%s&season=%s&episode=%s)' % (sys.argv[0], metaimdb, metaseason, metaepisode)))
+                if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_episodes&imdb=%s&season=%s&episode=%s)' % (sys.argv[0], metaimdb, metaseason, metaepisode)))
                 cm.append((language(30431).encode("utf-8"), 'RunPlugin(%s?action=view_episodes)' % (sys.argv[0])))
                 cm.append((language(30410).encode("utf-8"), 'RunPlugin(%s?action=playlist_open)' % (sys.argv[0])))
                 cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
@@ -926,115 +932,6 @@ class contextMenu:
         except:
             return
 
-    def subscription_add(self, name, url, image, imdb, year, silent=False):
-        try:
-            status = metaget.get_meta('tvshow', name, imdb_id=imdb)['status']
-            if status == 'Ended':
-            	yes = index().yesnoDialog(language(30347).encode("utf-8"), language(30348).encode("utf-8"), name)
-            	if not yes: return
-
-            file = xbmcvfs.File(subData)
-            read = file.read()
-            file.close()
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write.append('"%s"|"%s"|"%s"|"%s"|"%s"' % (name, year, imdb, url, image))
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(subData, 'w')
-            file.write(str(write))
-            file.close()
-
-            self.library(name, url, imdb, year, silent=True)
-            if silent == False:
-                index().container_refresh()
-                index().infoDialog(language(30312).encode("utf-8"), name)
-        except:
-            return
-
-    def subscription_from_search(self, name, url, image, imdb, year):
-        try:
-            file = xbmcvfs.File(subData)
-            read = file.read()
-            file.close()
-            if '"%s"' % url in read:
-                index().infoDialog(language(30316).encode("utf-8"), name)
-                return
-            status = metaget.get_meta('tvshow', name, imdb_id=imdb)['status']
-            if status == 'Ended':
-            	yes = index().yesnoDialog(language(30347).encode("utf-8"), language(30348).encode("utf-8"), name)
-            	if not yes: return
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write.append('"%s"|"%s"|"%s"|"%s"|"%s"' % (name, year, imdb, url, image))
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(subData, 'w')
-            file.write(str(write))
-            file.close()
-            self.library(name, url, imdb, year, silent=True)
-            index().infoDialog(language(30312).encode("utf-8"), name)
-        except:
-            return
-
-    def subscription_delete(self, name, url, silent=False):
-        try:
-            file = xbmcvfs.File(subData)
-            read = file.read()
-            file.close()
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write = [i for i in write if not '"%s"' % url in i]
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(subData, 'w')
-            file.write(str(write))
-            file.close()
-
-            yes = index().yesnoDialog(language(30351).encode("utf-8"), language(30352).encode("utf-8"), name)
-            if yes:
-                library = xbmc.translatePath(getSetting("tv_library"))
-                enc_show = name.translate(None, '\/:*?"<>|')
-                folder = os.path.join(library, enc_show)
-                seasons = [os.path.join(folder, i) for i in xbmcvfs.listdir(folder)[0]]
-                for season in seasons:
-                    episodes = [os.path.join(season, i) for i in xbmcvfs.listdir(season)[1]]
-                    for episode in episodes: xbmcvfs.delete(episode)
-                    xbmcvfs.rmdir(season)
-                xbmcvfs.rmdir(folder)
-
-            if silent == False:
-                index().container_refresh()
-                index().infoDialog(language(30313).encode("utf-8"), name)
-        except:
-            return
-
-    def subscriptions_clean(self):
-        try:
-            file = xbmcvfs.File(subData)
-            read = file.read()
-            file.close()
-            match = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
-            for name, imdb, url, image in match:
-            	status = metaget.get_meta('tvshow', name, imdb_id=imdb)['status']
-            	if status == 'Ended':
-            	    yes = index().yesnoDialog(language(30349).encode("utf-8"), language(30350).encode("utf-8"), name)
-            	    if yes: self.subscription_delete(name, url, silent=True)
-            index().container_refresh()
-            index().infoDialog(language(30315).encode("utf-8"))
-        except:
-            return
-
-    def subscriptions_update(self, silent=False):
-        try:
-            file = xbmcvfs.File(subData)
-            read = file.read()
-            file.close()
-            match = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
-            for name, year, imdb, url, image in match:
-                if xbmc.abortRequested == True: sys.exit()
-                self.library(name, url, imdb, year, silent=True)
-            if getSetting("subscriptions_update") == 'true' and getSetting("subscriptions_updatelibrary") == 'true':
-                xbmc.executebuiltin('UpdateLibrary(video)')
-            if silent == False:
-                index().infoDialog(language(30314).encode("utf-8"))
-        except:
-            return
-
     def metadata(self, content, name, url, imdb, season, episode):
         try:
             list = []
@@ -1109,22 +1006,108 @@ class contextMenu:
         except:
             return
 
-    def library(self, name, url, imdb, year, silent=False):
+    def library_add(self, name, url, image, imdb, year, update=True, silent=False):
+        try:
+            file = xbmcvfs.File(subData)
+            read = file.read()
+            file.close()
+
+            self.library(name, url, imdb, year, silent=True)
+
+            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
+            write.append('"%s"|"%s"|"%s"|"%s"|"%s"' % (name, year, imdb, url, image))
+            write = '\r\n'.join(write)
+            file = xbmcvfs.File(subData, 'w')
+            file.write(str(write))
+            file.close()
+            if silent == False:
+                index().container_refresh()
+                index().infoDialog(language(30312).encode("utf-8"), name)
+            if update == True:
+                xbmc.executebuiltin('UpdateLibrary(video)')
+        except:
+            return
+
+    def library_from_search(self, name, url, image, imdb, year, update=True, silent=False):
+        try:
+            file = xbmcvfs.File(subData)
+            read = file.read()
+            file.close()
+
+            if '"%s"' % url in read:
+                index().infoDialog(language(30316).encode("utf-8"), name)
+                return
+
+            self.library(name, url, imdb, year, silent=True)
+
+            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
+            write.append('"%s"|"%s"|"%s"|"%s"|"%s"' % (name, year, imdb, url, image))
+            write = '\r\n'.join(write)
+            file = xbmcvfs.File(subData, 'w')
+            file.write(str(write))
+            file.close()
+            if silent == False:
+                index().container_refresh()
+                index().infoDialog(language(30312).encode("utf-8"), name)
+            if update == True:
+                xbmc.executebuiltin('UpdateLibrary(video)')
+        except:
+            return
+
+    def library_delete(self, name, url, silent=False):
+        try:
+            file = xbmcvfs.File(subData)
+            read = file.read()
+            file.close()
+            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
+            write = [i for i in write if not '"%s"' % url in i]
+            write = '\r\n'.join(write)
+            file = xbmcvfs.File(subData, 'w')
+            file.write(str(write))
+            file.close()
+
+            if silent == False:
+                index().container_refresh()
+                index().infoDialog(language(30313).encode("utf-8"), name)
+        except:
+            return
+
+    def library_update(self, silent=False):
+        try:
+            file = xbmcvfs.File(subData)
+            read = file.read()
+            file.close()
+            match = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
+            for name, year, imdb, url, image in match:
+                if xbmc.abortRequested == True: sys.exit()
+                self.library(name, url, imdb, year, silent=True)
+            if getSetting("updatelibrary") == 'true':
+                xbmc.executebuiltin('UpdateLibrary(video)')
+            if silent == False:
+                index().infoDialog(language(30314).encode("utf-8"))
+        except:
+            return
+
+    def library(self, name, url, imdb, year, check=False, silent=False):
         try:
             library = xbmc.translatePath(getSetting("tv_library"))
             xbmcvfs.mkdir(dataPath)
             xbmcvfs.mkdir(library)
             show = name
             seasonList = seasons().get(url, '', year, imdb, '', '', show, idx=False)
+        except:
+            return
+
+        try:
             for i in seasonList:
-                season, seasonUrl, show = i['name'], i['url'], i['show']
-                enc_show = show.translate(None, '\/:*?"<>|')
+                season, seasonUrl, show_alt, idx_data = i['name'], i['url'], i['show'], i['idx_data']
+                enc_show = show_alt.translate(None, '\/:*?"<>|')
                 folder = os.path.join(library, enc_show)
                 xbmcvfs.mkdir(folder)
                 enc_season = season.translate(None, '\/:*?"<>|')
                 seasonDir = os.path.join(folder, enc_season)
                 xbmcvfs.mkdir(seasonDir)
-                episodeList = episodes().get(season, seasonUrl, '', year, imdb, '', '', show, idx=False)
+                episodeList = episodes().get(season, seasonUrl, '', year, imdb, '', '', show_alt, idx_data, idx=False)
                 for i in episodeList:
                     name, url, imdb = i['name'], i['url'], i['imdb']
                     sysname, sysurl, sysimdb, sysyear = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(imdb), urllib.quote_plus(year)
@@ -1441,9 +1424,9 @@ class seasons:
                 result = getUrl(link().ororo_sign, post=link().ororo_key, close=False).result
                 result = getUrl(url).result
 
-            result = common.parseDOM(result, "ul", attrs = { "class": "ui tabular menu season-tabs" })[0]
-            result = re.sub('<li\s.+?>','<li>', result)
-            seasons = common.parseDOM(result, "li")
+            seasons = common.parseDOM(result, "ul", attrs = { "class": "ui tabular menu season-tabs" })[0]
+            seasons = re.sub('<li\s.+?>','<li>', seasons)
+            seasons = common.parseDOM(seasons, "li")
         except:
             return
 
@@ -1456,7 +1439,7 @@ class seasons:
                 name = '%s %s' % ('Season', num)
                 name = name.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': genre, 'plot': plot, 'show': show, 'show_alt': show, 'season': num, 'sort': '%10d' % int(num)})
+                self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': genre, 'plot': plot, 'show': show, 'show_alt': show, 'season': num, 'sort': '%10d' % int(num), 'idx_data': result})
             except:
                 pass
 
@@ -1467,18 +1450,19 @@ class episodes:
     def __init__(self):
         self.list = []
 
-    def get(self, name, url, image, year, imdb, genre, plot, show, idx=True):
+    def get(self, name, url, image, year, imdb, genre, plot, show, idx_data='', idx=True):
         if idx == True:
-            self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show)
-            #self.list = cache(self.ororo_list, name, url, image, year, imdb, genre, plot, show)
+            #self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show, idx_data)
+            self.list = cache(self.ororo_list, name, url, image, year, imdb, genre, plot, show, idx_data)
             index().episodeList(self.list)
         else:
-            self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show)
+            self.list = self.ororo_list(name, url, image, year, imdb, genre, plot, show, idx_data)
             return self.list
 
-    def ororo_list(self, name, url, image, year, imdb, genre, plot, show):
+    def ororo_list(self, name, url, image, year, imdb, genre, plot, show, idx_data):
         try:
-            result = getUrl(url).result
+            if not idx_data == '': result = idx_data
+            else: result = getUrl(url).result
 
             if not "menu season-tabs" in result:
                 result = getUrl(link().ororo_sign, post=link().ororo_key, close=False).result

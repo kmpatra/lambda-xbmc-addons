@@ -30,7 +30,6 @@ from metahandler import metahandlers
 from metahandler import metacontainers
 
 
-
 action              = None
 common              = CommonFunctions
 metaget             = metahandlers.MetaData(preparezip=False)
@@ -53,7 +52,6 @@ addonDownloads      = os.path.join(addonPath,'resources/art/Downloads.png')
 addonGenres         = os.path.join(addonPath,'resources/art/Genres.png')
 addonYears          = os.path.join(addonPath,'resources/art/Years.png')
 addonLanguages      = os.path.join(addonPath,'resources/art/Languages.png')
-addonLists          = os.path.join(addonPath,'resources/art/Lists.png')
 addonNext           = os.path.join(addonPath,'resources/art/Next.png')
 dataPath            = xbmc.translatePath('special://profile/addon_data/%s' % (addonId))
 viewData            = os.path.join(dataPath,'views.cfg')
@@ -108,8 +106,7 @@ class main:
         elif action == 'metadata_movies':           contextMenu().metadata('movie', name, url, imdb, '', '')
         elif action == 'metadata_movies2':          contextMenu().metadata2('movie', name, url, imdb, '', '')
         elif action == 'playcount_movies':          contextMenu().playcount('movie', imdb, '', '')
-        elif action == 'library_batch':             contextMenu().library_batch(url)
-        elif action == 'library':                   contextMenu().library(name, url)
+        elif action == 'library_add':               contextMenu().library_add(name, url)
         elif action == 'download':                  contextMenu().download(name, url)
         elif action == 'trailer':                   contextMenu().trailer(name, url)
         elif action == 'movies':                    movies().get(url)
@@ -124,13 +121,11 @@ class main:
         elif action == 'genres_movies':             genres().get()
         elif action == 'years_movies':              years().get()
         elif action == 'languages_movies':          languages().get()
-        elif action == 'pages_mymovies':            mymovies().pages()
-        elif action == 'mymovies':                  mymovies().index(url)
         elif action == 'play':                      resolver().run(url, name)
 
         if action is None:
             pass
-        elif action.startswith('movies') or action.startswith('mymovies'):
+        elif action.startswith('movies'):
             xbmcplugin.setContent(int(sys.argv[1]), 'movies')
             index().container_view('movies', {'skin.confluence' : 500})
         xbmcplugin.setPluginFanart(int(sys.argv[1]), addonFanart)
@@ -155,7 +150,7 @@ class getUrl(object):
         if mobile == True:
             request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
-            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
+            request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
             request.add_header('Referer', referer)
         if not cookie is None:
@@ -192,13 +187,14 @@ class Thread(threading.Thread):
 class player(xbmc.Player):
     def __init__ (self):
         self.folderPath = xbmc.getInfoLabel('Container.FolderPath')
+        self.PseudoTVRunning = index().getProperty('PseudoTVRunning')
         self.loadingStarting = time.time()
         xbmc.Player.__init__(self)
 
     def run(self, name, url, imdb='0'):
         self.video_info(name, imdb)
 
-        if self.folderPath.startswith(sys.argv[0]):
+        if self.folderPath.startswith(sys.argv[0]) or self.PseudoTVRunning == 'True':
             item = xbmcgui.ListItem(path=url)
             xbmcplugin.setResolvedUrl(int(sys.argv[1]), True, item)
         else:
@@ -301,12 +297,14 @@ class player(xbmc.Player):
         minutes, seconds = divmod(offset, 60)
         hours, minutes = divmod(minutes, 60)
         offset_time = '%02d:%02d:%02d' % (hours, minutes, seconds)
-        yes = index().yesnoDialog('%s %s' % (language(30353).encode("utf-8"), offset_time), '', self.name, language(30354).encode("utf-8"), language(30355).encode("utf-8"))
+        yes = index().yesnoDialog('%s %s' % (language(30350).encode("utf-8"), offset_time), '', self.name, language(30351).encode("utf-8"), language(30352).encode("utf-8"))
         if yes: self.seekTime(offset)
 
     def onPlayBackStarted(self):
         try: self.setSubtitles(self.subtitle)
         except: pass
+
+        if self.PseudoTVRunning == 'True': return
 
         if getSetting("playback_info") == 'true':
             elapsedTime = '%s %.2f seconds' % (language(30319).encode("utf-8"), (time.time() - self.loadingStarting))     
@@ -317,11 +315,13 @@ class player(xbmc.Player):
             self.resume_playback()
 
     def onPlayBackEnded(self):
+        if self.PseudoTVRunning == 'True': return
         self.change_watched()
         self.offset_delete()
         self.container_refresh()
 
     def onPlayBackStopped(self):
+        if self.PseudoTVRunning == 'True': return
         if self.currentTime / self.totalTime >= .9:
             self.change_watched()
         self.offset_delete()
@@ -468,19 +468,12 @@ class index:
                 name, url, image = i['name'], i['url'], i['image']
                 sysname, sysurl, sysimage = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image)
 
-                if action == 'pages_mymovies':
-                    u = '%s?action=mymovies&url=%s' % (sys.argv[0], sysurl)
-                else:
-                    u = '%s?action=movies&url=%s' % (sys.argv[0], sysurl)
-
-                cm = []
-                if action == 'pages_mymovies':
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_batch&url=%s)' % (sys.argv[0], sysurl)))
+                u = '%s?action=movies&url=%s' % (sys.argv[0], sysurl)
 
                 item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
                 item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
                 item.setProperty("Fanart_Image", addonFanart)
-                item.addContextMenuItems(cm, replaceItems=False)
+                item.addContextMenuItems([], replaceItems=False)
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=True)
             except:
                 pass
@@ -514,6 +507,8 @@ class index:
     def movieList(self, movieList):
         if movieList == None: return
 
+        getmeta = getSetting("meta")
+
         file = xbmcvfs.File(favData)
         favRead = file.read()
         file.close()
@@ -528,7 +523,7 @@ class index:
                 sysname, sysurl, sysimage, systitle, sysimdb = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(imdb)
                 u = '%s?action=play&name=%s&url=%s&t=%s' % (sys.argv[0], sysname, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
 
-                if getSetting("meta") == 'true':
+                if getmeta == 'true':
                     meta = metaget.get_meta('movie', title ,year=year)
                     playcountMenu = language(30407).encode("utf-8")
                     if meta['overlay'] == 6: playcountMenu = language(30408).encode("utf-8")
@@ -539,7 +534,7 @@ class index:
                 else:
                     meta = {'label': title, 'title': title, 'year': year, 'imdb_id' : imdb, 'genre' : genre, 'plot': plot}
                     trailer, poster = sysurl, image
-                if getSetting("meta") == 'true' and getSetting("fanart") == 'true':
+                if getmeta == 'true' and getSetting("fanart") == 'true':
                     fanart = meta['backdrop_url']
                     if fanart == '': fanart = addonFanart
                 else:
@@ -551,16 +546,16 @@ class index:
                 cm.append((language(30412).encode("utf-8"), 'Action(Info)'))
                 if action == 'movies_favourites':
                     if not getSetting("fav_sort") == '2': cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
-                    if getSetting("meta") == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
+                    if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
+                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30428).encode("utf-8"), 'RunPlugin(%s?action=view_movies)' % (sys.argv[0])))
                     if getSetting("fav_sort") == '2': cm.append((language(30419).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveUp&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if getSetting("fav_sort") == '2': cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveDown&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                 elif action == 'movies_search':
                     cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_from_search&name=%s&imdb=%s&url=%s&image=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage)))
                     cm.append((language(30428).encode("utf-8"), 'RunPlugin(%s?action=view_movies)' % (sys.argv[0])))
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
@@ -568,8 +563,8 @@ class index:
                     cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
                 else:
                     cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
-                    if getSetting("meta") == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies2&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
-                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
+                    if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies2&name=%s&url=%s&imdb=%s)' % (sys.argv[0], systitle, sysurl, metaimdb)))
+                    cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if not '"%s"' % url in favRead: cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_add&name=%s&imdb=%s&url=%s&image=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage)))
                     else: cm.append((language(30418).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     cm.append((language(30428).encode("utf-8"), 'RunPlugin(%s?action=view_movies)' % (sys.argv[0])))
@@ -809,18 +804,19 @@ class contextMenu:
         except:
             return
 
-    def library_batch(self, url, update=True, silent=False):
-        movieList = mymovies().get(url)
-        if movieList == None: return
-        for i in movieList:
-            try: self.library(i['name'], i['url'], silent=True)
-            except: pass
-        if silent == False:
-            index().infoDialog(language(30311).encode("utf-8"))
-        if update == True:
-            xbmc.executebuiltin('UpdateLibrary(video)')
+    def library_add(self, name, url, update=True, silent=False):
+        try:
+            self.library(name, url)
 
-    def library(self, name, url, silent=False):
+            if silent == False:
+                index().container_refresh()
+                index().infoDialog(language(30311).encode("utf-8"), name)
+            if update == True:
+                xbmc.executebuiltin('UpdateLibrary(video)')
+        except:
+            return
+
+    def library(self, name, url):
         try:
             library = xbmc.translatePath(getSetting("movie_library"))
             sysname, sysurl = urllib.quote_plus(name), urllib.quote_plus(url)
@@ -832,10 +828,8 @@ class contextMenu:
             xbmcvfs.mkdir(library)
             xbmcvfs.mkdir(folder)
             file = xbmcvfs.File(stream, 'w')
-            file.write(content)
+            file.write(str(content))
             file.close()
-            if silent == False:
-                index().infoDialog(language(30311).encode("utf-8"), name)
         except:
             return
 
@@ -961,9 +955,7 @@ class root:
         rootList.append({'name': 30508, 'image': 'Years.png', 'action': 'years_movies'})
         rootList.append({'name': 30509, 'image': 'Languages.png', 'action': 'languages_movies'})
         rootList.append({'name': 30510, 'image': 'Favourites.png', 'action': 'movies_favourites'})
-        if not (getSetting("yify_user") == '' or getSetting("yify_password") == ''):
-            rootList.append({'name': 30511, 'image': 'YIFY.png', 'action': 'pages_mymovies'})
-        rootList.append({'name': 30512, 'image': 'Search.png', 'action': 'movies_search'})
+        rootList.append({'name': 30511, 'image': 'Search.png', 'action': 'movies_search'})
         index().rootList(rootList)
         index().downloadList()
 
@@ -982,9 +974,6 @@ class link:
         self.yify_year = 'http://yify.tv/years'
         self.yify_language = 'http://yify.tv/languages'
         self.yify_search = 'action=ajaxy_sf&sf_value='
-        self.yify_login = 'log=%s&pwd=%s&rememberme=forever&a=login&ajax=1'
-        self.yify_posts = 'listid=%s&a=get_posts_from_list&ajax=1'
-        self.yify_lists = 'a=get_lists&ajax=1'
 
 class genres:
     def __init__(self):
@@ -1299,113 +1288,6 @@ class movies:
         except:
             return
 
-class mymovies:
-    def __init__(self):
-        self.list = []
-        self.user = getSetting("yify_user")
-        self.password = getSetting("yify_password")
-
-    def get(self, url):
-        self.list = self.yify_list2(url)
-        return self.list
-
-    def index(self, url):
-        self.list = self.yify_list2(url)
-        index().movieList(self.list)
-
-    def pages(self):
-        self.list = self.yify_list()
-        index().pageList(self.list)
-
-    def yify_list(self):
-        try:
-            post = link().yify_login % (self.user, self.password)
-            result = getUrl(link().yify_base, post=post, close=False).result
-            if 'ERROR' in result: return
-
-            post = link().yify_lists
-            result = getUrl(link().yify_base, post=post).result
-
-            listings = json.loads(result)
-        except:
-            return
-
-        for listing in listings:
-            try:
-                name = listing['titulo']
-                name = common.replaceHTMLCodes(name)
-                name = name.encode('utf-8')
-
-                url = listing['ID']
-                url = common.replaceHTMLCodes(url)
-                url = url.encode('utf-8')
-
-                image = addonLists.encode('utf-8')
-
-                self.list.append({'name': name, 'url': url, 'image': image})
-            except:
-                pass
-
-        return self.list
-
-    def yify_list2(self, url):
-        try:
-            post = link().yify_login % (self.user, self.password)
-            result = getUrl(link().yify_base, post=post, close=False).result
-            if 'ERROR' in result: return
-
-            post = link().yify_posts % url
-            result = getUrl(link().yify_base, post=post).result
-
-            movies = json.loads(result)
-            movies = movies['posts']
-        except:
-            return
-
-        for movie in movies:
-            try:
-                title = movie['title']
-                title = common.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
-
-                year = movie['year']
-                year = re.sub('[^0-9]', '', year)
-                year = year.encode('utf-8')
-
-                name = '%s (%s)' % (title, year)
-                name = common.replaceHTMLCodes(name)
-                name = name.encode('utf-8')
-
-                url = movie['link']
-                url = common.replaceHTMLCodes(url)
-                url = url.encode('utf-8')
-
-                image = movie['image']
-                image = common.replaceHTMLCodes(image)
-                image = image.encode('utf-8')
-
-                try:
-                    genre = movie['genre']
-                    genre = [i.strip() for i in genre.split(',')]
-                    genre = " / ".join(genre)
-                    genre = common.replaceHTMLCodes(genre)
-                    genre = genre.encode('utf-8')
-                except:
-                    genre = ''
-
-                try:
-                    plot = movie['post_content']
-                    plot = common.replaceHTMLCodes(plot)
-                    plot = plot.encode('utf-8')
-                except:
-                    plot = ''
-
-                self.list.append({'name': name, 'url': url, 'image': image, 'title': title, 'year': year, 'imdb': '0', 'genre': genre, 'plot': plot})
-            except:
-                pass
-
-        return self.list
-
 class trailer:
     def __init__(self):
         self.youtube_base = 'http://www.youtube.com'
@@ -1480,25 +1362,26 @@ class trailer:
 class resolver:
     def run(self, url, name, download=False):
         try:
-            url = self.yify(url)
+            url = self.yify(url, name)
             if url is None: raise Exception()
 
             if download == True: return url
             player().run(name, url)
             return url
         except:
-            index().infoDialog(language(30318).encode("utf-8"))
+            if not index().getProperty('PseudoTVRunning') == 'True':
+                index().infoDialog(language(30318).encode("utf-8"))
             return
 
-    def yify(self, url):
+    def yify(self, url, name):
         referer = url
 
         try:
-            result = getUrl(url, referer=referer, close=False).result
+            result = getUrl(url, referer=url, close=False).result
             url = re.compile('showPkPlayer[(]"(.+?)"[)]').findall(result)[0]
             url = 'http://yify.tv/reproductor2/pk/pk/plugins/player_p2.php?url=' + url
 
-            result = getUrl(url, referer=referer, close=False).result
+            result = getUrl(url, referer=url, close=False).result
             result = json.loads(result)
 
             url = [i['url'] for i in result if 'x-shockwave-flash' in i['type']]
@@ -1513,8 +1396,21 @@ class resolver:
             pass
 
         try:
-            result = getUrl(referer).result
-            imdb = re.findall('imdb.com/title/tt(\d+)', result, re.I)[0]
+            imdb = None
+            title = name.rsplit(' (', 1)[0].strip()
+            year = '%04d' % int(name.rsplit(' (', 1)[-1].split(')')[0])
+
+            if imdb == None:
+                try: imdb = re.findall('imdb.com/title/tt(\d+)', getUrl(referer).result, re.I)[0]
+                except: pass
+            if imdb == None:
+                try: imdb = json.loads(getUrl('http://www.imdbapi.com/?t=%s&y=%s' % (urllib.quote_plus(title), str(int(year)))).result)['imdbID']
+                except: pass
+            if imdb == None:
+                try: imdb = json.loads(getUrl('http://www.imdbapi.com/?t=%s&y=%s' % (urllib.quote_plus(title), str(int(year)-1))).result)['imdbID']
+                except: pass
+
+            imdb = re.sub('[^0-9]', '', imdb)
             url = self.movie25(imdb)
             return url
         except:

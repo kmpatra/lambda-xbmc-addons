@@ -17,12 +17,6 @@
 		<setting type="lsep" label="30041"/>
 	</category>
 
-	<category label="30060">
-		<setting type="lsep" label="YIFY"/>
-		<setting id="yify_user" type="text" label="30061" default=""/>
-		<setting id="yify_password" type="text" label="30062" default=""/>
-	</category>
-
 	<category label="30080">
 		<setting id="subtitles" type="bool" label="30083" default="false"/>
 		<setting type="sep"/>
