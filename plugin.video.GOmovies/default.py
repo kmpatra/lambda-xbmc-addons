@@ -85,10 +85,18 @@ class main:
         except:     image = None
         try:        query = urllib.unquote_plus(params["query"])
         except:     query = None
+        try:        source = urllib.unquote_plus(params["source"])
+        except:     source = None
+        try:        provider = urllib.unquote_plus(params["provider"])
+        except:     provider = None
         try:        title = urllib.unquote_plus(params["title"])
         except:     title = None
         try:        year = urllib.unquote_plus(params["year"])
         except:     year = None
+        try:        genre = urllib.unquote_plus(params["genre"])
+        except:     genre = None
+        try:        plot = urllib.unquote_plus(params["plot"])
+        except:     plot = None
         try:        imdb = urllib.unquote_plus(params["imdb"])
         except:     imdb = None
 
@@ -113,8 +121,7 @@ class main:
         elif action == 'library_batch':             contextMenu().library_batch(url)
         elif action == 'library_update':            contextMenu().library_update()
         elif action == 'library_service':           contextMenu().library_update(silent=True)
-        elif action == 'download':                  contextMenu().download(name, title, imdb, year, url)
-        elif action == 'sources':                   contextMenu().sources(name, title, imdb, year, url)
+        elif action == 'download':                  contextMenu().download(name, url, provider)
         elif action == 'autoplay':                  contextMenu().autoplay(name, title, imdb, year, url)
         elif action == 'trailer':                   contextMenu().trailer(name, url)
         elif action == 'movies_favourites':         favourites().movies()
@@ -133,7 +140,9 @@ class main:
         elif action == 'years_movies':              years().get()
         elif action == 'userlists_trakt':           userlists().trakt()
         elif action == 'userlists_imdb':            userlists().imdb()
-        elif action == 'play':                      resolver().run(name, title, imdb, year, url)
+        elif action == 'get_host':                  resolver().get_host(name, title, imdb, year, url, image, genre, plot)
+        elif action == 'play_host':                 resolver().play_host(name, url, imdb, source, provider)
+        elif action == 'play':                      resolver().play(name, title, imdb, year, url)
 
         if action is None:
             pass
@@ -256,7 +265,9 @@ class player(xbmc.Player):
             params = {}
             query = self.folderPath[self.folderPath.find('?') + 1:].split('&')
             for i in query: params[i.split('=')[0]] = i.split('=')[1]
-            if not params["action"].endswith('_search'): index().container_refresh()
+            if params["action"].endswith('_search'): return
+            elif params["action"] == 'get_host': return
+            index().container_refresh()
         except:
             pass
 
@@ -573,15 +584,19 @@ class index:
                 if plot == '': plot = addonDesc
                 if genre == '': genre = ' '
 
-                sysname, sysurl, sysimage, systitle, sysyear, sysimdb = urllib.quote_plus(name), urllib.quote_plus(name), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb)
-                u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                sysname, sysurl, sysimage, systitle, sysyear, sysimdb, sysgenre, sysplot = urllib.quote_plus(name), urllib.quote_plus(name), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(genre), urllib.quote_plus(plot)
+
+                if not getSetting("autoplay") == 'false':
+                    u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    isFolder = False
+                else:
+                    u = '%s?action=get_host&name=%s&title=%s&imdb=%s&year=%s&url=%s&image=%s&genre=%s&plot=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, sysimage, sysgenre, sysplot, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    isFolder = True
 
                 meta = {'Label': title, 'Title': title, 'Studio': channel, 'Duration': '1440', 'Plot': plot}
 
                 cm = []
-                if getSetting("autoplay") == 'true': cm.append((language(30432).encode("utf-8"), 'RunPlugin(%s?action=sources&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
-                else: cm.append((language(30433).encode("utf-8"), 'RunPlugin(%s?action=autoplay&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
-                cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=download&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
+                cm.append((language(30433).encode("utf-8"), 'RunPlugin(%s?action=autoplay&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
                 cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                 cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
                 cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
@@ -592,7 +607,7 @@ class index:
                 item.setProperty("Video", "true")
                 item.setProperty("Fanart_Image", addonFanart)
                 item.addContextMenuItems(cm, replaceItems=True)
-                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=False)
+                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=isFolder)
             except:
                 pass
 
@@ -613,8 +628,14 @@ class index:
                 if plot == '': plot = addonDesc
                 if genre == '': genre = ' '
 
-                sysname, sysurl, sysimage, systitle, sysyear, sysimdb = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb)
-                u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                sysname, sysurl, sysimage, systitle, sysyear, sysimdb, sysgenre, sysplot = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(genre), urllib.quote_plus(plot)
+
+                if not getSetting("autoplay") == 'false':
+                    u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    isFolder = False
+                else:
+                    u = '%s?action=get_host&name=%s&title=%s&imdb=%s&year=%s&url=%s&image=%s&genre=%s&plot=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, sysimage, sysgenre, sysplot, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    isFolder = True
 
                 if getmeta == 'true':
                     meta = metaget.get_meta('movie', title ,year=year)
@@ -634,14 +655,11 @@ class index:
                     fanart = addonFanart
 
                 cm = []
-                if getSetting("autoplay") == 'true': cm.append((language(30432).encode("utf-8"), 'RunPlugin(%s?action=sources&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
-                else: cm.append((language(30433).encode("utf-8"), 'RunPlugin(%s?action=autoplay&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
-                cm.append((language(30405).encode("utf-8"), 'RunPlugin(%s?action=item_queue)' % (sys.argv[0])))
-                cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=download&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
+                cm.append((language(30433).encode("utf-8"), 'RunPlugin(%s?action=autoplay&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
 
                 if action == 'movies_favourites':
                     if not getSetting("fav_sort") == '2': cm.append((language(30412).encode("utf-8"), 'Action(Info)'))
-                    if not getSetting("fav_sort") == '2': cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
+                    cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
                     if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
                     if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
                     cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
@@ -670,6 +688,7 @@ class index:
                     cm.append((language(30412).encode("utf-8"), 'Action(Info)'))
                     cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
                     if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies2&imdb=%s)' % (sys.argv[0], metaimdb)))
+                    if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
                     cm.append((language(30422).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&title=%s&imdb=%s&year=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl)))
                     if not '"%s"' % url in favRead: cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], systitle, sysimdb, sysurl, sysimage, sysyear)))
                     else: cm.append((language(30418).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], systitle, sysurl)))
@@ -677,6 +696,58 @@ class index:
                     cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
 
                 item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=poster)
+                item.setInfo( type="Video", infoLabels = meta )
+                item.setProperty("IsPlayable", "true")
+                item.setProperty("Video", "true")
+                item.setProperty("art(poster)", poster)
+                item.setProperty("Fanart_Image", fanart)
+                item.addContextMenuItems(cm, replaceItems=True)
+                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=isFolder)
+            except:
+                pass
+
+    def sourceList(self, sourceList):
+        if sourceList == None: return
+
+        try:
+            name, image, title, year, imdb, genre, plot = sourceList[0]['name'], sourceList[0]['image'], sourceList[0]['title'], sourceList[0]['year'], sourceList[0]['imdb'], sourceList[0]['genre'], sourceList[0]['plot']
+            if plot == '': plot = addonDesc
+            if genre == '': genre = ' '
+
+            if getSetting("meta") == 'true':
+                meta = metaget.get_meta('movie', title ,year=year)
+                meta.update({'playcount': 0, 'overlay': 0})
+                trailer, poster = urllib.quote_plus(meta['trailer_url']), meta['cover_url']
+                if trailer == '': trailer = urllib.quote_plus(name)
+                if poster == '': poster = image
+            else:
+                meta = {'label': title, 'title': title, 'year': year, 'imdb_id' : imdb, 'genre' : genre, 'plot': plot}
+                trailer, poster = urllib.quote_plus(name), image
+            if getSetting("meta") == 'true' and getSetting("fanart") == 'true':
+                fanart = meta['backdrop_url']
+                if fanart == '': fanart = addonFanart
+            else:
+                fanart = addonFanart
+        except:
+            return
+
+        total = len(sourceList)
+        for i in sourceList:
+            try:
+                url, source, provider = i['url'], i['source'], i['provider']
+                sysname, sysurl, sysimdb, syssource, sysprovider = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(imdb), urllib.quote_plus(source), urllib.quote_plus(provider)
+
+                u = '%s?action=play_host&name=%s&url=%s&imdb=%s&source=%s&provider=%s&t=%s' % (sys.argv[0], sysname, sysurl, sysimdb, syssource, sysprovider, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+
+                cm = []
+                cm.append((language(30405).encode("utf-8"), 'RunPlugin(%s?action=item_queue)' % (sys.argv[0])))
+                cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=download&name=%s&url=%s&provider=%s)' % (sys.argv[0], sysname, sysurl, sysprovider)))
+                cm.append((language(30412).encode("utf-8"), 'Action(Info)'))
+                cm.append((language(30416).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, trailer)))
+                cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
+                cm.append((language(30410).encode("utf-8"), 'RunPlugin(%s?action=playlist_open)' % (sys.argv[0])))
+
+                item = xbmcgui.ListItem(source, iconImage="DefaultVideo.png", thumbnailImage=poster)
                 item.setInfo( type="Video", infoLabels = meta )
                 item.setProperty("IsPlayable", "true")
                 item.setProperty("Video", "true")
@@ -931,7 +1002,7 @@ class contextMenu:
         except:
             return
 
-    def download(self, name, title, imdb, year, url):
+    def download(self, name, url, provider):
         try:
             property = (addonName+name)+'download'
             download = xbmc.translatePath(getSetting("downloads"))
@@ -964,12 +1035,12 @@ class contextMenu:
             	else:
             	    xbmcvfs.delete(file)
 
-            url = resolver().run(name, title, imdb, year, 'download://')
+            url = resolver().sources_resolve(url, provider)
             if url is None: return
             url = url.rsplit('|', 1)[0]
             ext = url.rsplit('/', 1)[-1].rsplit('?', 1)[0].rsplit('|', 1)[0].strip().lower()
             ext = os.path.splitext(ext)[1][1:]
-            if ext == '': ext = 'mp4'
+            if ext == '' or ext == 'php': ext = 'mp4'
             stream = os.path.join(download, enc_name + '.' + ext)
             temp = stream + '.tmp'
 
@@ -1008,22 +1079,6 @@ class contextMenu:
             xbmcvfs.delete(temp)
             sys.exit()
             return
-
-    def sources(self, name, title, imdb, year, url):
-        meta = {'title': xbmc.getInfoLabel('ListItem.title'), 'originaltitle': xbmc.getInfoLabel('ListItem.originaltitle'), 'year': xbmc.getInfoLabel('ListItem.year'), 'genre': xbmc.getInfoLabel('ListItem.genre'), 'director': xbmc.getInfoLabel('ListItem.director'), 'country': xbmc.getInfoLabel('ListItem.country'), 'rating': xbmc.getInfoLabel('ListItem.rating'), 'votes': xbmc.getInfoLabel('ListItem.votes'), 'mpaa': xbmc.getInfoLabel('ListItem.mpaa'), 'duration': xbmc.getInfoLabel('ListItem.duration'), 'trailer': xbmc.getInfoLabel('ListItem.trailer'), 'writer': xbmc.getInfoLabel('ListItem.writer'), 'studio': xbmc.getInfoLabel('ListItem.studio'), 'tagline': xbmc.getInfoLabel('ListItem.tagline'), 'plotoutline': xbmc.getInfoLabel('ListItem.plotoutline'), 'plot': xbmc.getInfoLabel('ListItem.plot')}
-        label, poster, fanart = xbmc.getInfoLabel('ListItem.label'), xbmc.getInfoLabel('ListItem.icon'), xbmc.getInfoLabel('ListItem.Property(Fanart_Image)')
-
-        sysname, systitle, sysimdb, sysyear = urllib.quote_plus(name), urllib.quote_plus(title), urllib.quote_plus(imdb), urllib.quote_plus(year)
-        u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=sources://' % (sys.argv[0], sysname, systitle, sysimdb, sysyear)
-
-        playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
-        playlist.clear()
-        item = xbmcgui.ListItem(label, iconImage="DefaultVideo.png", thumbnailImage=poster)
-        item.setInfo( type="Video", infoLabels= meta )
-        item.setProperty("IsPlayable", "true")
-        item.setProperty("Video", "true")
-        item.setProperty("Fanart_Image", fanart)
-        xbmc.Player().play(u, item)
 
     def autoplay(self, name, title, imdb, year, url):
         meta = {'title': xbmc.getInfoLabel('ListItem.title'), 'originaltitle': xbmc.getInfoLabel('ListItem.originaltitle'), 'year': xbmc.getInfoLabel('ListItem.year'), 'genre': xbmc.getInfoLabel('ListItem.genre'), 'director': xbmc.getInfoLabel('ListItem.director'), 'country': xbmc.getInfoLabel('ListItem.country'), 'rating': xbmc.getInfoLabel('ListItem.rating'), 'votes': xbmc.getInfoLabel('ListItem.votes'), 'mpaa': xbmc.getInfoLabel('ListItem.mpaa'), 'duration': xbmc.getInfoLabel('ListItem.duration'), 'trailer': xbmc.getInfoLabel('ListItem.trailer'), 'writer': xbmc.getInfoLabel('ListItem.writer'), 'studio': xbmc.getInfoLabel('ListItem.studio'), 'tagline': xbmc.getInfoLabel('ListItem.tagline'), 'plotoutline': xbmc.getInfoLabel('ListItem.plotoutline'), 'plot': xbmc.getInfoLabel('ListItem.plot')}
@@ -1875,7 +1930,34 @@ class resolver:
         self.sources_dict()
         self.sources = []
 
-    def run(self, name, title, imdb, year, url):
+    def get_host(self, name, title, imdb, year, url, image, genre, plot):
+        try:
+            self.sources = self.sources_get(name, title, imdb, year, self.hostDict)
+            self.sources = self.sources_filter()
+            if self.sources == []: raise Exception()
+
+            for i in range(0,len(self.sources)):
+                self.sources[i].update({'name': name, 'image': image, 'title': title, 'year': year, 'imdb': imdb, 'genre': genre, 'plot': plot})
+
+            index().sourceList(self.sources)
+        except:
+            return
+
+    def play_host(self, name, url, imdb, source, provider):
+        try:
+            url = self.sources_resolve(url, provider)
+            if url is None: raise Exception()
+
+            if getSetting("playback_info") == 'true':
+                index().infoDialog(source, header=name)
+
+            player().run(name, url, imdb)
+            return url
+        except:
+            index().infoDialog(language(30318).encode("utf-8"))
+            return
+
+    def play(self, name, title, imdb, year, url):
         try:
             self.sources = self.sources_get(name, title, imdb, year, self.hostDict)
             self.sources = self.sources_filter()
@@ -1889,14 +1971,13 @@ class resolver:
 
             if url == 'play://':
                 url = self.sources_direct()
-            elif url == 'sources://' or url == 'download://' or not autoplay == 'true':
+            elif not autoplay == 'true':
                 url = self.sources_dialog()
             else:
                 url = self.sources_direct()
 
 
             if url is None: raise Exception()
-            if url == 'download://': return url
             if url == 'close://': return
 
             if getSetting("playback_info") == 'true':
@@ -2029,7 +2110,7 @@ class resolver:
 
         count = 1
         for i in range(len(self.sources)):
-            self.sources[i]['source'] = '#'+ str(count) + ' | ' + self.sources[i]['provider'].upper() + ' | ' + self.sources[i]['source'].upper() + ' | ' + self.sources[i]['quality']
+            self.sources[i]['source'] = ''+ str('%02d' % count) + ' | [B]' + self.sources[i]['provider'].upper() + '[/B] | ' + self.sources[i]['source'].upper() + ' | ' + self.sources[i]['quality']
             count = count + 1
 
         return self.sources
