@@ -1,4 +1,18 @@
 ------------------------
+GOtv v2.5.0 (20-Jun-14)
+------------------------
+
+- Re-work of addon.
+- Replaced select dialog when possible.
+- Fixed issue with library update.
+- Updated Portuguese translation.
+- Tweaked TVonline source.
+- Tweaked resolvers.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.4.4 (12-Jun-14)
 ------------------------
 
