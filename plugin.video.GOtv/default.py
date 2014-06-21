@@ -682,8 +682,6 @@ class index:
                     if getSetting("fav_sort") == '2': cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=favourite_moveDown&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if getSetting("fav_sort") == '2': cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
-
-
                 elif action == 'shows_subscriptions':
                     if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=library_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
@@ -691,12 +689,9 @@ class index:
                     else: cm.append((language(30418).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                     if getmeta == 'true': cm.append((language(30415).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
                     cm.append((language(30425).encode("utf-8"), 'RunPlugin(%s?action=library_update)' % (sys.argv[0])))
-
-
                 elif action.startswith('shows_search'):
                     cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=favourite_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
-
                 else:
                     if not '"%s"' % url in subRead: cm.append((language(30423).encode("utf-8"), 'RunPlugin(%s?action=library_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysname, sysimdb, sysurl, sysimage, sysyear)))
                     else: cm.append((language(30424).encode("utf-8"), 'RunPlugin(%s?action=library_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
@@ -810,7 +805,7 @@ class index:
                     u = '%s?action=play&name=%s&title=%s&imdb=%s&tvdb=%s&year=%s&season=%s&episode=%s&show=%s&show_alt=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, systvdb, sysyear, sysseason, sysepisode, sysshow, sysshow_alt, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
                     isFolder = False
                 else:
-                    u = '%s?action=get_host&name=%s&url=%s&image=%s&date=%s&year=%s&imdb=%s&tvdb=%s&genre=%s&plot=%s&title=%s&show=%s&show_alt=%s&season=%s&episode=%s&t=%s' % (sys.argv[0], sysname, sysurl, sysimage, sysdate, sysyear, sysimdb, systvdb, sysgenre, sysplot, systitle, sysshow, sysshow_alt, sysseason, sysepisode, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    u = '%s?action=get_host&name=%s&url=%s&image=%s&date=%s&year=%s&imdb=%s&tvdb=%s&genre=%s&plot=%s&title=%s&show=%s&show_alt=%s&season=%s&episode=%s' % (sys.argv[0], sysname, sysurl, sysimage, sysdate, sysyear, sysimdb, systvdb, sysgenre, sysplot, systitle, sysshow, sysshow_alt, sysseason, sysepisode)
                     isFolder = True
 
                 if getmeta == 'true':
@@ -1166,8 +1161,11 @@ class contextMenu:
             return
 
     def library_update(self, silent=False):
-        url = link().trakt_collection % (link().trakt_key, link().trakt_user)
-        if getSetting("subscriptions_import") == 'true' and not (link().trakt_user == '' or link().trakt_password == ''):
+        if getSetting("trakt_import") == '1' and not (link().trakt_user == '' or link().trakt_password == ''):
+            url = link().trakt_collection % (link().trakt_key, link().trakt_user)
+            self.library_batch(url, silent=silent)
+        elif getSetting("trakt_import") == '2' and not (link().trakt_user == '' or link().trakt_password == ''):
+            url = link().trakt_watchlist % (link().trakt_key, link().trakt_user)
             self.library_batch(url, silent=silent)
         else:
             self.library_batch2(silent=silent)

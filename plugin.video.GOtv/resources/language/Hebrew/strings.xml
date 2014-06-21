@@ -37,10 +37,13 @@
 	<string id="30081">הרשמות תיובאנה לספרייה אם תיקייה זו מתווספת למקורות מדיה.</string>
 	<string id="30082">פרקים האחרונים זמינים בתוסף גם אם אין לך.</string>
 	<string id="30083">תיקית טלויזיה</string>
-	<string id="30084">יבוא האוטומטי של אוסף Trakt</string>
-	<string id="30085">תעדכן אוטומטית הרשמות</string>
-	<string id="30086">מרווחי עדכונים</string>
-	<string id="30087">ספריית עדכון לאחר רישום עדכונים</string>
+	<string id="30084">אוטומטי Trakt יבוא</string>
+	<string id="30085">מנוטרל</string>
+	<string id="30086">גבייה</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">תעדכן אוטומטית הרשמות</string>
+	<string id="30089">מרווחי עדכונים</string>
+	<string id="30090">ספריית עדכון לאחר רישום עדכונים</string>
 	<string id="30100">חשבונות</string>
 	<string id="30101">משתמש</string>
 	<string id="30102">ססמא</string>

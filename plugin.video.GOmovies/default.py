@@ -634,7 +634,7 @@ class index:
                     u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
                     isFolder = False
                 else:
-                    u = '%s?action=get_host&name=%s&title=%s&imdb=%s&year=%s&url=%s&image=%s&genre=%s&plot=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, sysimage, sysgenre, sysplot, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    u = '%s?action=get_host&name=%s&title=%s&imdb=%s&year=%s&url=%s&image=%s&genre=%s&plot=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, sysimage, sysgenre, sysplot)
                     isFolder = True
 
                 if getmeta == 'true':
@@ -948,8 +948,11 @@ class contextMenu:
             return
 
     def library_update(self, silent=False):
-        url = link().trakt_collection % (link().trakt_key, link().trakt_user)
-        if getSetting("library_import") == 'true' and not (link().trakt_user == '' or link().trakt_password == ''):
+        if getSetting("trakt_import") == '1' and not (link().trakt_user == '' or link().trakt_password == ''):
+            url = link().trakt_collection % (link().trakt_key, link().trakt_user)
+            self.library_batch(url, silent=silent)
+        elif getSetting("trakt_import") == '2' and not (link().trakt_user == '' or link().trakt_password == ''):
+            url = link().trakt_watchlist % (link().trakt_key, link().trakt_user)
             self.library_batch(url, silent=silent)
 
     def library_batch(self, url, update=True, silent=False):

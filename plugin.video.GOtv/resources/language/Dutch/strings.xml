@@ -36,10 +36,13 @@
 	<string id="30081">Abonnementen worden geοmporteerd in de bibliotheek indien deze map is toegevoegd.</string>
 	<string id="30082">Nieuwste afleveringen zijn altijd beschikbaar in de add-on.</string>
 	<string id="30083">TV map</string>
-	<string id="30084">Automatische import van Trakt collectie</string>
-	<string id="30085">Automatisch je abonnementen updaten</string>
-	<string id="30086">Update interval</string>
-	<string id="30087">Update bibliotheek na update abonnementen</string>
+	<string id="30084">Automatische Trakt Import</string>
+	<string id="30085">Uitgeschakeld</string>
+	<string id="30086">Collectie</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">Automatisch je abonnementen updaten</string>
+	<string id="30089">Update interval</string>
+	<string id="30090">Update bibliotheek na update abonnementen</string>
 	<string id="30100">Accounts</string>
 	<string id="30101">Gebruikersnaam</string>
 	<string id="30102">Wachtwoord</string>

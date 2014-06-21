@@ -36,9 +36,12 @@
 	<string id="30080">Library</string>
 	<string id="30081">Don't forget to add this folder to media sources.</string>
 	<string id="30082">Movies Folder</string>
-	<string id="30083">Automatic Import of Trakt collection</string>
-	<string id="30084">Update Interval</string>
-	<string id="30085">Update Library after Import</string>
+	<string id="30083">Automatic Trakt Import</string>
+	<string id="30084">Disabled</string>
+	<string id="30085">Collection</string>
+	<string id="30086">Watchlist</string>
+	<string id="30087">Update Interval</string>
+	<string id="30088">Update Library after Import</string>
 	<string id="30100">Accounts</string>
 	<string id="30101">User</string>
 	<string id="30102">Password</string>

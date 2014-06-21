@@ -36,9 +36,12 @@
 	<string id="30080">Biblioteka</string>
 	<string id="30081">Dodaj ten folder do źródeł biblioteki XBMC.</string>
 	<string id="30082">Folder Filmów</string>
-	<string id="30083">Automatyczny Import kolekcji Trakt</string>
-	<string id="30084">Częstotliwość Aktualizacji</string>
-	<string id="30085">Odśwież Bibliotekę po Import</string>
+	<string id="30083">Automatyczne Trakt importu</string>
+	<string id="30084">Nieaktywne</string>
+	<string id="30085">Kolekcja</string>
+	<string id="30086">Watchlist</string>
+	<string id="30087">Częstotliwość Aktualizacji</string>
+	<string id="30088">Odśwież Bibliotekę po Import</string>
 	<string id="30100">Logowanie</string>
 	<string id="30101">Login</string>
 	<string id="30102">Hasło</string>

@@ -36,10 +36,13 @@
 	<string id="30081">Subscriptions will be imported to library if this folder is added to media sources.</string>
 	<string id="30082">Latest episodes are available in the addon even if you don't.</string>
 	<string id="30083">TV Folder</string>
-	<string id="30084">Automatic Import of Trakt collection</string>
-	<string id="30085">Automatic Updates for Subscriptions</string>
-	<string id="30086">Subscription Update Interval</string>
-	<string id="30087">Update Library after Subscription Updates</string>
+	<string id="30084">Automatic Trakt Import</string>
+	<string id="30085">Disabled</string>
+	<string id="30086">Collection</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">Automatic Updates for Subscriptions</string>
+	<string id="30089">Subscription Update Interval</string>
+	<string id="30090">Update Library after Subscription Updates</string>
 	<string id="30100">Accounts</string>
 	<string id="30101">User</string>
 	<string id="30102">Password</string>

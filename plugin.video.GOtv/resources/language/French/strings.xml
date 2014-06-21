@@ -36,10 +36,13 @@
 	<string id="30081">Les Séries TV suivies seront ajoutées à la Médiathèque si ce dossier est ajouté aux sources de média.</string>
 	<string id="30082">Les derniers épisodes seront toujours disponibles dans cette extention.</string>
 	<string id="30083">Dossier des Séries TV</string>
-	<string id="30084">Importation automatique de collection Trakt</string>
-	<string id="30085">Mise à jour automatique des Séries TV suivies</string>
-	<string id="30086">Intervalle de la mise à jour des Séries TV suivies</string>
-	<string id="30087">Mettre la Médiathèque à jour avec les Séries TV suivies</string>
+	<string id="30084">Automatique Trakt importation</string>
+	<string id="30085">Désactivé</string>
+	<string id="30086">Collection</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">Mise à jour automatique des Séries TV suivies</string>
+	<string id="30089">Intervalle de la mise à jour des Séries TV suivies</string>
+	<string id="30090">Mettre la Médiathèque à jour avec les Séries TV suivies</string>
 	<string id="30100">Comptes</string>
 	<string id="30101">User</string>
 	<string id="30102">Password</string>

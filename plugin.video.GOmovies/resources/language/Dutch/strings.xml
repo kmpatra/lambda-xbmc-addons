@@ -36,9 +36,12 @@
 	<string id="30080">Bibliotheek</string>
 	<string id="30081">Vergeet deze bron niet toe te voegen aan je bibliotheek.</string>
 	<string id="30082">Film map</string>
-	<string id="30083">Automatische import van Trakt collectie</string>
-	<string id="30084">Update interval</string>
-	<string id="30085">Update bibliotheek na importeren</string>
+	<string id="30083">Automatische Trakt Import</string>
+	<string id="30084">Uitgeschakeld</string>
+	<string id="30085">Collectie</string>
+	<string id="30086">Watchlist</string>
+	<string id="30087">Update interval</string>
+	<string id="30088">Update bibliotheek na importeren</string>
 	<string id="30100">Accounts</string>
 	<string id="30101">Gebruikersnaam</string>
 	<string id="30102">Wachtwoord</string>

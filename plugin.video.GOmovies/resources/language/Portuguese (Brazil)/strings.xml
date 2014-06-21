@@ -5,7 +5,7 @@
 	<string id="30001">Reproduzir automaticamente</string>
 	<string id="30002">Reproduzir automaticamente (Biblioteca)</string>
 	<string id="30003">Qualidade HD</string>
-	<string id="30004">Activar Meta dados</string>
+	<string id="30004">Activar Metadados</string>
 	<string id="30005">Activar Fanart</string>
 	<string id="30006">Favoritos</string>
 	<string id="30007">Ordenar por: Título</string>
@@ -36,11 +36,14 @@
 	<string id="30080">Biblioteca</string>
 	<string id="30081">Não se esqueça de adicionar esta pasta às fontes multimedia.</string>
 	<string id="30082">Pasta de filmes</string>
-	<string id="30083">Importação Automática de coleção Trakt</string>
-	<string id="30084">Intervalo de actualização</string>
-	<string id="30085">Actualizar biblioteca após a importação</string>
+	<string id="30083">Importação Trakt Automática</string>
+	<string id="30084">Desabilitado</string>
+	<string id="30085">Colecção</string>
+	<string id="30086">Watchlist</string>
+	<string id="30087">Intervalo de actualização</string>
+	<string id="30088">Actualizar biblioteca após a importação</string>
 	<string id="30100">Contas</string>
-	<string id="30101">Utilizadores</string>
+	<string id="30101">Utilizador</string>
 	<string id="30102">Palavra-Passe</string>
 	<string id="30103">Email</string>
 	<string id="30120">Legendas</string>
@@ -67,11 +70,11 @@
 	<string id="30315">Subscrições apagadas</string>
 	<string id="30316">O item já existe nas subscrições</string>
 	<string id="30317">Não há legendas disponíveis</string>
-	<string id="30318">Stream não encontrada</string>
+	<string id="30318">Stream não encontrado</string>
 	<string id="30319">Carregado</string>
 	<!-- OK -->
 	<string id="30321">O addon Youtube não está instalado.</string>
-	<string id="30322">Esta stream necessita dele.</string>
+	<string id="30322">Este stream necessita dele.</string>
 	<string id="30323">Não adicionou nenhuma subscrição.</string>
 	<string id="30324">Os últimos episódios necessitam.</string>
 	<string id="30325">Desactivou os updates automáticos das subscrições.</string>
@@ -120,7 +123,7 @@
 	<string id="30423">Adicionar subscrição</string>
 	<string id="30424">Cancelar subscrição</string>
 	<string id="30425">Actualizar subscrição</string>
-	<string id="30426">Atualizar coleção</string>
+	<string id="30426">Actualizar colecção</string>
 	<string id="30427">Definir vista global</string>
 	<string id="30428">Definir vista de filmes</string>
 	<string id="30429">Definir vista de séries</string>
@@ -147,7 +150,7 @@
 	<string id="30521">Filmes</string>
 	<string id="30522">Atores</string>
 	<string id="30531">Lista a visualizar</string>
-	<string id="30532">Coleção</string>
+	<string id="30532">Colecção</string>
 	<string id="30533">Vistos</string>
 	<string id="30534">Nota</string>
 	<string id="30541">Lista a visualizar</string>

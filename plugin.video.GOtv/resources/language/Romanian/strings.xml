@@ -36,10 +36,13 @@
 	<string id="30081">Nu uita să adaugi directorul la Surse Media</string>
 	<string id="30082">Director filme</string>
 	<string id="30083">Director TV</string>
-	<string id="30084">Automată Import de colectare Trakt</string>
-	<string id="30085">Actualizare automată a abonamentelor</string>
-	<string id="30086">Interval de actualizare a abonamentelor</string>
-	<string id="30087">Actualizează mediateca cu abonamentele</string>
+	<string id="30084">Automat Trakt Import</string>
+	<string id="30085">Dezactivat</string>
+	<string id="30086">Colecție</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">Actualizare automată a abonamentelor</string>
+	<string id="30089">Interval de actualizare a abonamentelor</string>
+	<string id="30090">Actualizează mediateca cu abonamentele</string>
 	<string id="30100">Conturi</string>
 	<string id="30101">Utilizator</string>
 	<string id="30102">Parola</string>

@@ -71,9 +71,9 @@
 		<setting type="lsep" label="[CR]"/>
 		<setting id="trakt_user" type="text" label="" visible="false" default=""/>
 		<setting id="trakt_password" type="text" label="" visible="false" default=""/>
-		<setting id="library_import" type="bool" label="30083" enable="!eq(-1,)+!eq(-2,)" default="false"/>
-		<setting id="library_interval" type="enum" label="30084" values="1h|2h|5h|10h|15h|24h" default="0" enable="!eq(-1,false)|!eq(-2,false)"/>
-		<setting id="updatelibrary" type="bool" label="30085" default="true" enable="!eq(-2,false)|!eq(-3,false)"/>
+		<setting id="trakt_import" type="enum" label="30083" lvalues="30084|30085|30086" enable="!eq(-1,)+!eq(-2,)" default="0"/>
+		<setting id="library_interval" type="enum" label="30087" values="1h|2h|5h|10h|15h|24h" default="0" enable="!eq(-1,false)|!eq(-2,false)"/>
+		<setting id="updatelibrary" type="bool" label="30088" default="true" enable="!eq(-2,false)|!eq(-3,false)"/>
 		<setting id="library_run" type="text" default="1970-01-01 23:59:00.000000" visible="false"/>
 	</category>
 

@@ -36,10 +36,13 @@
 	<string id="30081">Subskrybcje zostaną zaimportowane do Biblioteki po dodaniu tego folderu jako źródło.</string>
 	<string id="30082">Najnowsze odcinki będa dostępne we wtyczce nawet jeśli tego nie zrobisz.</string>
 	<string id="30083">Folder TV</string>
-	<string id="30084">Automatyczny Import kolekcji Trakt</string>
-	<string id="30085">Automatyczna Aktualizacja Subskrybcji</string>
-	<string id="30086">Częstotliwość Aktualizacji Subskrybcji</string>
-	<string id="30087">Odśwież Bibliotekę po Aktualizacji Subskrybcji</string>
+	<string id="30084">Automatyczne Trakt importu</string>
+	<string id="30085">Nieaktywne</string>
+	<string id="30086">Kolekcja</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">Automatyczna Aktualizacja Subskrybcji</string>
+	<string id="30089">Częstotliwość Aktualizacji Subskrybcji</string>
+	<string id="30090">Odśwież Bibliotekę po Aktualizacji Subskrybcji</string>
 	<string id="30100">Logowanie</string>
 	<string id="30101">Login</string>
 	<string id="30102">Hasło</string>

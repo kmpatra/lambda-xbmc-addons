@@ -36,10 +36,13 @@
 	<string id="30081">As subscrições serão importadas para a biblioteca se esta pasta for adicionada às fontes multimédia.</string>
 	<string id="30082">Os últimos episódios disponíveis estão disponíveis no addon mesmo que assim não o entenda.</string>
 	<string id="30083">Pasta de TV</string>
-	<string id="30084">Importação Automática de colecção Trakt</string>
-	<string id="30085">Actualizações automáticas para subscrições</string>
-	<string id="30086">Intervalo de actualização das subscrições</string>
-	<string id="30087">Actualizar biblioteca após actualização das subscrições</string>
+	<string id="30084">Importação Trakt Automática</string>
+	<string id="30085">Desligado</string>
+	<string id="30086">Colecção</string>
+	<string id="30087">Watchlist</string>
+	<string id="30088">Actualizações automáticas para subscrições</string>
+	<string id="30089">Intervalo de actualização das subscrições</string>
+	<string id="30090">Actualizar biblioteca após actualização das subscrições</string>
 	<string id="30100">Contas</string>
 	<string id="30101">Utilizador</string>
 	<string id="30102">Palavra-Passe</string>

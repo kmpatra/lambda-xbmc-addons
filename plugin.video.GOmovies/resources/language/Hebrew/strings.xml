@@ -36,9 +36,12 @@
 	<string id="30080">ספרייה</string>
 	<string id="30081">אל תשכח להוסיף תיקייה זו לרשימת המקורות.</string>
 	<string id="30082">תיקיית סרטים</string>
-	<string id="30083">יבוא האוטומטי של אוסף Trakt</string>
-	<string id="30084">עדכון מרווח</string>
-	<string id="30085">ספריית יבוא האפקטיבית עדכון</string>
+	<string id="30083">אוטומטי Trakt יבוא</string>
+	<string id="30084">מנוטרל</string>
+	<string id="30085">גבייה</string>
+	<string id="30086">Watchlist</string>
+	<string id="30087">עדכון מרווח</string>
+	<string id="30088">ספריית יבוא האפקטיבית עדכון</string>
 	<string id="30100">חשבונות</string>
 	<string id="30101">משתמש</string>
 	<string id="30102">ססמא</string>

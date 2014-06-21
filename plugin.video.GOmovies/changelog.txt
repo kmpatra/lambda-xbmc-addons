@@ -1,4 +1,16 @@
 ------------------------
+GOmovies v2.5.1 (21-Jun-14)
+------------------------
+
+- Fixed issue with watched status.
+- Added option for automatic import of Trakt watchlist.
+- NOTE: If you have automatic import of Trakt collection ebabled, you will have to enable it again.
+- Updated all translations.
+- Tweaked resolvers.
+- Code cosmetics.
+
+
+------------------------
 GOmovies v2.5.0 (19-Jun-14)
 ------------------------
 
