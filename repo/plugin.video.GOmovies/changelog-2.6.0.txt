@@ -1,4 +1,19 @@
 ------------------------
+GOmovies v2.6.0 (24-Jun-14)
+------------------------
+
+- Added Flixanity source.
+- Added Einthusan source.
+- Removed Muchmovies source.
+- Tweaked Primewire source.
+- NOTE: Host priorities are reset because of new sources.
+- NOTE: Einthusan source is disabled by default.
+- Added selector for host and language settings.
+- Added more resolvers.
+- Code cosmetics.
+
+
+------------------------
 GOmovies v2.5.2 (22-Jun-14)
 ------------------------
 

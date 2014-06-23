@@ -65,17 +65,18 @@ class getUrl(object):
 class resolvers:
     def get(self, url):
         try:
-            if '/vk.com' in url:              url = self.vk(url)
-            elif 'mail.ru' in url:            url = self.mailru(url)
-            elif 'videomega.tv' in url:       url = self.videomega(url)
-            elif 'docs.google.com' in url:    url = self.googledocs(url)
-            elif 'youtube.com' in url:        url = self.youtube(url)
-            elif 'ishared.eu' in url:         url = self.ishared(url)
-            elif 'firedrive.com' in url:      url = self.firedrive(url)
-            elif 'movreel.com' in url:        url = self.movreel(url)
-            elif 'billionuploads.com' in url: url = self.billionuploads(url)
-            elif '180upload.com' in url:      url = self._180upload(url)
-            elif 'hugefiles.net' in url:      url = self.hugefiles(url)
+            if '/vk.com' in url:                url = self.vk(url)
+            elif 'mail.ru' in url:              url = self.mailru(url)
+            elif 'videomega.tv' in url:         url = self.videomega(url)
+            elif 'docs.google.com' in url:      url = self.googledocs(url)
+            elif 'picasaweb.google.com' in url: url = self.picasaweb(url)
+            elif 'youtube.com' in url:          url = self.youtube(url)
+            elif 'ishared.eu' in url:           url = self.ishared(url)
+            elif 'firedrive.com' in url:        url = self.firedrive(url)
+            elif 'movreel.com' in url:          url = self.movreel(url)
+            elif 'billionuploads.com' in url:   url = self.billionuploads(url)
+            elif '180upload.com' in url:        url = self._180upload(url)
+            elif 'hugefiles.net' in url:        url = self.hugefiles(url)
 
             else:
                 import urlresolver
@@ -146,6 +147,24 @@ class resolvers:
             if url == []: return
             try: url = [i for i in url if not any(x in i for x in ['&itag=43&', '&itag=35&', '&itag=34&', '&itag=5&'])][0]
             except: url = url[0]
+            return url
+        except:
+            return
+
+    def picasaweb(self, url):
+        try:
+            try:    import json
+            except: import simplejson as json
+            result = getUrl(url).result
+            group = re.compile('picasaweb.google.com/.+?/.+?authkey=.+?#(.+)').findall(url)[0]
+
+            result = re.compile('"streamIds":\["shared_group_%s"\],.+?"content":(\[.+?\])' % group).findall(result)[0]
+            result = json.loads(result)
+
+            url = [i for i in result if i['type'] == 'application/x-shockwave-flash']
+            url += [i for i in result if i['type'] == 'video/mpeg4']
+            url = url[-1]['url']
+            url = getUrl(url, output='geturl').result
             return url
         except:
             return

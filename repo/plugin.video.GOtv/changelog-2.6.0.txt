@@ -1,4 +1,18 @@
 ------------------------
+GOtv v2.6.0 (24-Jun-14)
+------------------------
+
+- Added Flixanity source.
+- Added Shush source.
+- Removed TVonline source.
+- Tweaked Primewire source.
+- NOTE: Host priorities are reset because of new sources.
+- Added selector for host and language settings.
+- Added more resolvers.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.5.2 (22-Jun-14)
 ------------------------
 
