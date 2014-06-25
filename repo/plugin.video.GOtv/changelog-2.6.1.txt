@@ -1,4 +1,16 @@
 ------------------------
+GOtv v2.6.1 (25-Jun-14)
+------------------------
+
+- PseudoTV Live: Fixed issues when autoplay is disabled.
+- Fixed issues with season listings.
+- Fixed issues with host listings.
+- Fixed issue with watched status.
+- Tweaked Shush source.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.6.0 (24-Jun-14)
 ------------------------
 

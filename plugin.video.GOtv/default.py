@@ -293,9 +293,18 @@ class player(xbmc.Player):
             params = {}
             query = self.folderPath[self.folderPath.find('?') + 1:].split('&')
             for i in query: params[i.split('=')[0]] = i.split('=')[1]
-            if params["action"].endswith('_search'): return
-            elif params["action"] == 'get_host': return
-            index().container_refresh()
+
+            if not self.folderPath.startswith(sys.argv[0]): return
+
+            if params["action"] == 'get_host':
+                for i in range(0, 250):
+                    currentPath = xbmc.getInfoLabel('Container.FolderPath')
+                    if 'action=episodes' in currentPath:
+                        index().container_refresh()
+                        return
+                    xbmc.sleep(1000)
+            elif params["action"].endswith('_search'): return
+            else: index().container_refresh()
         except:
             pass
 
@@ -787,6 +796,9 @@ class index:
     def episodeList(self, episodeList):
         if episodeList == None: return
 
+        autoplay = getSetting("autoplay")
+        if index().getProperty('PseudoTVRunning') == 'True': autoplay = 'true'
+
         getmeta = getSetting("meta")
         if action == 'episodes_calendar': getmeta = ''
 
@@ -799,7 +811,7 @@ class index:
 
                 sysname, sysurl, sysimage, sysdate, sysyear, sysimdb, systvdb, sysgenre, sysplot, systitle, sysshow, sysshow_alt, sysseason, sysepisode = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(date), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb), urllib.quote_plus(genre), urllib.quote_plus(plot), urllib.quote_plus(title), urllib.quote_plus(show), urllib.quote_plus(show_alt), urllib.quote_plus(season), urllib.quote_plus(episode)
 
-                if not getSetting("autoplay") == 'false':
+                if not autoplay == 'false':
                     u = '%s?action=play&name=%s&title=%s&imdb=%s&tvdb=%s&year=%s&season=%s&episode=%s&show=%s&show_alt=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, systvdb, sysyear, sysseason, sysepisode, sysshow, sysshow_alt, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
                     isFolder = False
                 else:
@@ -863,6 +875,7 @@ class index:
             if getSetting("meta") == 'true':
                 imdb = re.sub('[^0-9]', '', imdb)
                 meta = metaget.get_episode_meta(title, imdb, season, episode)
+                meta.update({'playcount': 0, 'overlay': 0})
                 meta.update({'tvshowtitle': show})
                 if meta['title'] == '': meta.update({'title': title})
                 if meta['episode'] == '': meta.update({'episode': episode})
@@ -2091,7 +2104,8 @@ class seasons:
         for season in seasons:
             try:
                 date = common.parseDOM(result, "Season", attrs = { "no": season })[0]
-                date = common.parseDOM(date, "airdate")[0]
+                date = common.parseDOM(date, "airdate")
+                date = [i for i in date if not '-00' in i][0]
                 date = date.encode('utf-8')
                 if date == '' or '-00' in date: raise Exception()
                 if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
@@ -3102,7 +3116,10 @@ class shush:
                 url = commonresolvers.resolvers().googledocs(url)
             elif 'picasaweb.google.com' in url:
                 url = commonresolvers.resolvers().picasaweb(url)
-            if url == None: return
+            else:
+                return
+
+            if not any(x in url for x in ['&itag=22&', '&itag=37&', '&itag=38&', '&itag=45&', '&itag=84&', '&itag=102&', '&itag=120&', '&itag=121&']): return
 
             shush_sources.append({'source': 'Shush', 'quality': 'HD', 'provider': 'Shush', 'url': url})
         except:
@@ -3113,7 +3130,13 @@ class shush:
         return title
 
     def resolve(self, url):
-        return url
+        try:
+            url = getUrl(url, output='geturl').result
+            if 'requiressl=yes' in url: url = url.replace('http://', 'https://')
+            else: url = url.replace('https://', 'http://')
+            return url
+        except:
+            return
 
 class ororotv:
     def __init__(self):

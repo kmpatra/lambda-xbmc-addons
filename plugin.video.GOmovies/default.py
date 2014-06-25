@@ -265,9 +265,19 @@ class player(xbmc.Player):
             params = {}
             query = self.folderPath[self.folderPath.find('?') + 1:].split('&')
             for i in query: params[i.split('=')[0]] = i.split('=')[1]
-            if params["action"].endswith('_search'): return
-            elif params["action"] == 'get_host': return
-            index().container_refresh()
+
+            if not self.folderPath.startswith(sys.argv[0]): return
+
+            if params["action"] == 'get_host':
+                for i in range(0, 250):
+                    currentPath = xbmc.getInfoLabel('Container.FolderPath')
+                    if 'action=movies_search' in currentPath: return
+                    elif 'action=movies' in currentPath:
+                        index().container_refresh()
+                        return
+                    xbmc.sleep(1000)
+            elif params["action"].endswith('_search'): return
+            else: index().container_refresh()
         except:
             pass
 
@@ -612,6 +622,9 @@ class index:
     def movieList(self, movieList):
         if movieList == None: return
 
+        autoplay = getSetting("autoplay")
+        if index().getProperty('PseudoTVRunning') == 'True': autoplay = 'true'
+
         getmeta = getSetting("meta")
         if action == 'movies_search': getmeta = ''
 
@@ -628,7 +641,7 @@ class index:
 
                 sysname, sysurl, sysimage, systitle, sysyear, sysimdb, sysgenre, sysplot = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(genre), urllib.quote_plus(plot)
 
-                if not getSetting("autoplay") == 'false':
+                if not autoplay == 'false':
                     u = '%s?action=play&name=%s&title=%s&imdb=%s&year=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysimdb, sysyear, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
                     isFolder = False
                 else:
@@ -3033,8 +3046,11 @@ class einthusan:
             search = 'http://www.imdbapi.com/?i=tt%s' % imdb
             search = getUrl(search).result
             search = json.loads(search)
-            language = search['Language'].lower()
-            if not any(x == language for x in ['hindi', 'tamil', 'telugu', 'malayalam']): return
+            country = [i.strip() for i in search['Country'].split(',')]
+            if not 'India' in country: return
+
+            language = [i.strip().lower() for i in search['Language'].split(',')]
+            language = [i for i in language if any(x == i for x in ['hindi', 'tamil', 'telugu', 'malayalam'])][0]
 
             query = self.search_link % (urllib.quote_plus(title), language)
 
