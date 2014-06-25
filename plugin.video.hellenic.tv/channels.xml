@@ -73,7 +73,7 @@
 		<channel active="True">
 			<name>NERIT</name>
 			<type>hls</type>
-			<url>http://hprt.flashcloud.mediacdn.com/hprt-geo/live/playlist.m3u8</url>
+			<url>http://hprt.flashcloud.mediacdn.com/hprt/nerit-1/playlist.m3u8</url>
 			<type2>visionip</type2>
 			<url2>http://tvnetwork.new.visionip.tv/Hellenic_TV/index.php?module=playlist&amp;type=jwASX&amp;broadcastid=4267</url2>
 			<base>http://www.hprt.gr/</base>
@@ -82,7 +82,7 @@
 		<channel active="True">
 			<name>NERIT SPORTS</name>
 			<type>hls</type>
-			<url>http://hprt.flashcloud.mediacdn.com/hprt-geo/nerit-2/playlist.m3u8</url>
+			<url>http://hprt.flashcloud.mediacdn.com/hprt/nerit-2/playlist.m3u8</url>
 			<base>http://www.hprt.gr/</base>
 			<epg>30511</epg>
 		</channel>
@@ -242,7 +242,7 @@
 		<channel active="False">
 			<name>ACTION 24</name>
 			<type>livestream_new</type>
-			<url>http://new.livestream.com/accounts/6414825/events/2795057</url>
+			<url>http://new.livestream.com/action24/action24</url>
 			<base>http://www.action24.gr/</base>
 			<epg>30563</epg>
 		</channel>
@@ -316,7 +316,7 @@
 		<channel active="True">
 			<name>TV 100</name>
 			<type></type>
-			<url>rtmp://eco.caststream.net:1935/tv100/tv100 live=1 timeout=10</url>
+			<url>rtmp://188.226.161.133:1935/TV100/TV100 live=1 timeout=10</url>
 			<base>http://www.fm100.gr/media/index.php</base>
 			<epg>30581</epg>
 		</channel>

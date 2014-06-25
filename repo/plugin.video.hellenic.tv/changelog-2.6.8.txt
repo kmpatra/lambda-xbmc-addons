@@ -1,4 +1,13 @@
 ------------------------
+Hellenic TV v2.6.8 (26-Jun-14)
+------------------------
+
+- Updated NERIT, NERIT SPORTS, MAD TV and TV 100.
+- Fixed ustream resolver.
+- Code cosmetics.
+
+
+------------------------
 Hellenic TV v2.6.7 (12-Jun-14)
 ------------------------
 

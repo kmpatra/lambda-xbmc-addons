@@ -468,8 +468,13 @@ class resolver:
     def madtv(self, url):
         try:
             result = getUrl(url, timeout=30).result
+            url = common.parseDOM(result, "iframe", ret="src")
+            url = [i for i in url if 'apps.' in i][0]
+            if not url.startswith('http://'): url = url.replace('//', 'http://') 
 
-            url = re.compile('.*src=".+?youtube.+?/embed/(.+?)"').findall(result)[0]
+            result = getUrl(url).result
+            url = common.parseDOM(result, "iframe", ret="src")[0]
+            url = url.split("?v=")[-1].split("/")[-1].split("?")[0].split("&")[0]
             url = 'http://www.youtube.com/watch?v=%s' % url
 
             result = getUrl(url).result
@@ -548,7 +553,8 @@ class resolver:
                 id = re.compile('ustream.tv/embed/(.+?)"').findall(result)[0]
             except:
                 id = url.split("/embed/")[-1]
-            url = 'http://iphone-streaming.ustream.tv/uhls/%s/streams/live/iphone/playlist.m3u8' % id
+            #url = 'http://iphone-streaming.ustream.tv/uhls/%s/streams/live/iphone/playlist.m3u8' % id
+            url = 'http://sjc-uhls-proxy-beta01.ustream.tv/watch/playlist.m3u8?cid=%s' % id
             for i in range(1, 51):
                 result = getUrl(url).result
                 if "EXT-X-STREAM-INF" in result: return url
