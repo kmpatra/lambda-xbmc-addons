@@ -113,7 +113,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.glowmovies.hd" name="Glow Movies HD" version="1.2.0" provider-name="lambda">
+<addon id="plugin.video.glowmovies.hd" name="Glow Movies HD" version="1.2.1" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>
@@ -151,7 +151,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.GOmovies" name="GOmovies" version="2.6.1" provider-name="lambda">
+<addon id="plugin.video.GOmovies" name="GOmovies" version="2.6.2" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>
@@ -193,7 +193,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.GOtv" name="GOtv" version="2.6.1" provider-name="lambda">
+<addon id="plugin.video.GOtv" name="GOtv" version="2.6.2" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>
@@ -353,7 +353,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.muchmovies.hd" name="Much Movies HD" version="1.6.1" provider-name="lambda">
+<addon id="plugin.video.muchmovies.hd" name="Much Movies HD" version="1.6.2" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>
@@ -462,7 +462,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.ororotv" name="Ororo TV" version="2.2.0" provider-name="lambda">
+<addon id="plugin.video.ororotv" name="Ororo TV" version="2.2.1" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>
@@ -526,7 +526,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.viooz.co" name="Viooz" version="1.5.0" provider-name="lambda">
+<addon id="plugin.video.viooz.co" name="Viooz" version="1.5.1" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>
@@ -564,7 +564,7 @@
 	</extension>
 </addon>
 
-<addon id="plugin.video.yifymovies.hd" name="Yify Movies HD" version="1.6.0" provider-name="lambda">
+<addon id="plugin.video.yifymovies.hd" name="Yify Movies HD" version="1.6.1" provider-name="lambda">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0"/>
 		<import addon="script.module.metahandler" version="1.0.0"/>

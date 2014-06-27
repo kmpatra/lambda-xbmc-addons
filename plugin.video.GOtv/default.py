@@ -198,7 +198,7 @@ class getUrl(object):
         else:
             request = urllib2.Request(url,None)
         if mobile == True:
-            request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
+            request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; CPU; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
             request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
@@ -1316,7 +1316,7 @@ class contextMenu:
             count = 0
             CHUNK = 16 * 1024
             request = urllib2.Request(url)
-            request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
+            request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; CPU; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
             request.add_header('Cookie', 'video=true')
             response = urllib2.urlopen(request, timeout=10)
             size = response.info()["Content-Length"]
@@ -1498,7 +1498,7 @@ class link:
         self.imdb_actors = 'http://m.imdb.com/name/nm%s/filmotype/%s'
 
         self.imdb_userlists = 'http://akas.imdb.com/user/%s/lists?tab=all&sort=modified:desc&filter=titles'
-        self.imdb_watchlist ='http://akas.imdb.com/user/%s/watchlist?view=detail&count=100&sort=listorian:asc&start=1'
+        self.imdb_watchlist ='http://akas.imdb.com/user/%s/watchlist?sort=list_order,desc&mode=detail&page=1'
         self.imdb_list ='http://akas.imdb.com/list/%s/?view=detail&count=100&sort=listorian:asc&start=1'
         self.imdb_user = 'ur' + getSetting("imdb_user").replace('ur', '')
 
@@ -1726,7 +1726,7 @@ class shows:
             self.list = self.imdb_list3(link().imdb_watchlist % link().imdb_user)
             self.list = sorted(self.list, key=itemgetter('name'))
         else:
-            self.list = self.imdb_list3(link().imdb_list % url)
+            self.list = self.imdb_list4(link().imdb_list % url)
             self.list = sorted(self.list, key=itemgetter('name'))
 
         if idx == False: return self.list
@@ -1891,6 +1891,83 @@ class shows:
 
     def imdb_list3(self, url):
         try:
+            URL = url.replace(link().imdb_base, link().imdb_akas)
+            url = 'http://9proxy.in/b.php?u=%s&b=28' % urllib.quote_plus(urllib.unquote_plus(url))
+            result = getUrl(url, referer=url).result
+
+            try:
+                threads = []
+                pages = common.parseDOM(result, "div", attrs = { "class": "desc" })
+                pages = [re.compile('of (\d+) titles').findall(i)[0] for i in pages][0]
+                pages = (int(pages)+100)/100
+                for i in range(1, int(pages)):
+                    self.data.append('')
+                    showsUrl = URL.replace('&page=1', '&page=%s' % str(i+1))
+                    showsUrl = 'http://9proxy.in/b.php?u=%s&b=28' % urllib.quote_plus(urllib.unquote_plus(showsUrl))
+                    threads.append(Thread(self.thread, showsUrl, i-1))
+                [i.start() for i in threads]
+                [i.join() for i in threads]
+                for i in self.data: result += i
+            except:
+                pass
+
+            result = result.replace('\n','')
+            shows = common.parseDOM(result, "div", attrs = { "class": "lister-item mode-detail" })
+        except:
+            return
+
+        for show in shows:
+            try:
+                name = common.parseDOM(show, "h3", attrs = { "class": "lister-item-header" })[0]
+                name = common.parseDOM(name, "a")[0]
+                name = common.replaceHTMLCodes(name)
+                name = name.encode('utf-8')
+
+                year = common.parseDOM(show, "span", attrs = { "class": "lister-item-year.+?" })[0]
+                year = re.compile('[(](.+?)[)]').findall(year)[-1]
+                if year.isdigit(): raise Exception()
+                year = re.compile('(\d{4}).+').findall(year)[0]
+                year = year.encode('utf-8')
+
+                if int(year) > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y")): raise Exception()
+
+                imdb = common.parseDOM(show, "img", ret="data-tconst")[0]
+                imdb = re.sub('[^0-9]', '', str(imdb))
+                imdb = imdb.encode('utf-8')
+
+                url = link().imdb_title % imdb
+                url = common.replaceHTMLCodes(url)
+                url = url.encode('utf-8')
+
+                try:
+                    image = common.parseDOM(show, "img", ret="src")[0]
+                    image = urllib.unquote_plus(image)
+                    image = image[image.find('?') + 1:].split('&')
+                    image = [i.split('=', 1)[-1] for i in image if i.startswith('u=')][0]
+                    image = 'http' + image.split('http' , 1)[-1]
+                    if not ('_SX' in image or '_SY' in image): raise Exception()
+                    image = image.rsplit('_SX', 1)[0].rsplit('_SY', 1)[0] + '_SX500.' + image.rsplit('.', 1)[-1]
+                except:
+                    image = link().imdb_image
+                image = common.replaceHTMLCodes(image)
+                image = image.encode('utf-8')
+
+                try:
+                    plot = common.parseDOM(show, "p", attrs = { "class": "" })[0]
+                    plot = plot.rsplit('<span>', 1)[0].rsplit('<a href', 1)[0].strip()
+                    plot = common.replaceHTMLCodes(plot)
+                    plot = plot.encode('utf-8')
+                except:
+                    plot = ''
+
+                self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'genre': '', 'plot': plot})
+            except:
+                pass
+
+        return self.list
+
+    def imdb_list4(self, url):
+        try:
             url = url.replace(link().imdb_base, link().imdb_akas)
             result = getUrl(url).result
 
@@ -2024,7 +2101,7 @@ class shows:
 
     def thread(self, url, i):
         try:
-            result = getUrl(url).result
+            result = getUrl(url, referer=url).result
             self.data[i] = result
         except:
             return

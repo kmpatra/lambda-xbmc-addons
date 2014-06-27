@@ -1,4 +1,12 @@
 ------------------------
+Ororo TV v2.2.1 (27-Jun-14)
+------------------------
+
+- Added selector for subtitle settings.
+- Code cosmetics.
+
+
+------------------------
 Ororo TV v2.2.0 (17-Jun-14)
 ------------------------
 

@@ -1,4 +1,12 @@
 ------------------------
+Yify Movies HD v1.6.1 (27-Jun-14)
+------------------------
+
+- Added selector for subtitle settings.
+- Code cosmetics.
+
+
+------------------------
 Yify Movies HD v1.6.0 (17-Jun-14)
 ------------------------
 
