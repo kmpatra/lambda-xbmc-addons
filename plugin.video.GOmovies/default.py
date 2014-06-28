@@ -1186,7 +1186,9 @@ class link:
         self.imdb_actors = 'http://m.imdb.com/name/nm%s/filmotype/%s'
 
         self.imdb_userlists = 'http://akas.imdb.com/user/%s/lists?tab=all&sort=modified:desc&filter=titles'
-        self.imdb_watchlist ='http://akas.imdb.com/user/%s/watchlist?sort=list_order,desc&mode=detail&page=1'
+        self.imdb_watchlist ='http://akas.imdb.com/user/%s/watchlist?sort=moviemeter,asc&mode=detail&page=1'
+        self.imdb_watchadded ='http://akas.imdb.com/user/%s/watchlist?sort=date_added,desc&mode=detail&page=1'
+        self.imdb_watchtitle ='http://akas.imdb.com/user/%s/watchlist?sort=alpha,asc&mode=detail&page=1'
         self.imdb_list ='http://akas.imdb.com/list/%s/?view=detail&count=100&sort=listorian:asc&start=1'
         self.imdb_user = 'ur' + getSetting("imdb_user").replace('ur', '')
 
@@ -1494,11 +1496,9 @@ class movies:
         elif url == 'watchlist':
             self.list = self.imdb_list3(link().imdb_watchlist % link().imdb_user)
         elif url == 'watchadded':
-            self.list = self.imdb_list3(link().imdb_watchlist % link().imdb_user)
-            self.list = self.list[::-1]
+            self.list = self.imdb_list3(link().imdb_watchadded % link().imdb_user)
         elif url == 'watchtitle':
-            self.list = self.imdb_list3(link().imdb_watchlist % link().imdb_user)
-            self.list = sorted(self.list, key=itemgetter('name'))
+            self.list = self.imdb_list3(link().imdb_watchtitle % link().imdb_user)
         else:
             self.list = self.imdb_list4(link().imdb_list % url)
             self.list = sorted(self.list, key=itemgetter('name'))
