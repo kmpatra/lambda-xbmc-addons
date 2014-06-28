@@ -64,6 +64,7 @@ subData             = os.path.join(dataPath,'subscriptions.cfg')
 class main:
     def __init__(self):
         global action
+        cacheToDisc = True
         index().container_data()
         index().settings_reset()
         params = {}
@@ -178,8 +179,9 @@ class main:
         elif action.startswith('episodes'):
             xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
             index().container_view('episodes', {'skin.confluence' : 504})
+            cacheToDisc = False
         xbmcplugin.setPluginFanart(int(sys.argv[1]), addonFanart)
-        xbmcplugin.endOfDirectory(int(sys.argv[1]))
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
         return
 
 class getUrl(object):
@@ -288,26 +290,6 @@ class player(xbmc.Player):
         self.episode = '%01d' % int(name.rsplit(' ', 1)[-1].split('E')[-1])
         self.subtitle = subtitles().get(self.name, self.imdb, self.season, self.episode)
 
-    def container_refresh(self):
-        try:
-            params = {}
-            query = self.folderPath[self.folderPath.find('?') + 1:].split('&')
-            for i in query: params[i.split('=')[0]] = i.split('=')[1]
-
-            if not self.folderPath.startswith(sys.argv[0]): return
-
-            if params["action"] == 'get_host':
-                for i in range(0, 250):
-                    currentPath = xbmc.getInfoLabel('Container.FolderPath')
-                    if 'action=episodes' in currentPath:
-                        index().container_refresh()
-                        return
-                    xbmc.sleep(1000)
-            elif params["action"].endswith('_search'): return
-            else: index().container_refresh()
-        except:
-            pass
-
     def offset_add(self):
         try:
             file = xbmcvfs.File(offData)
@@ -380,7 +362,6 @@ class player(xbmc.Player):
         if self.PseudoTVRunning == 'True': return
         self.change_watched()
         self.offset_delete()
-        self.container_refresh()
 
     def onPlayBackStopped(self):
         if self.PseudoTVRunning == 'True': return
@@ -388,7 +369,6 @@ class player(xbmc.Player):
             self.change_watched()
         self.offset_delete()
         self.offset_add()
-        self.container_refresh()
 
 class subtitles:
     def get(self, name, imdb, season, episode):
@@ -1174,12 +1154,15 @@ class contextMenu:
     def library_update(self, silent=False):
         if getSetting("trakt_import") == '1' and not (link().trakt_user == '' or link().trakt_password == ''):
             url = link().trakt_collection % (link().trakt_key, link().trakt_user)
-            self.library_batch(url, silent=silent)
+            self.library_batch2(url)
         elif getSetting("trakt_import") == '2' and not (link().trakt_user == '' or link().trakt_password == ''):
             url = link().trakt_watchlist % (link().trakt_key, link().trakt_user)
-            self.library_batch(url, silent=silent)
-        else:
-            self.library_batch2(silent=silent)
+            self.library_batch2(url)
+        self.library_batch3()
+        if getSetting("updatelibrary") == 'true':
+            xbmc.executebuiltin('UpdateLibrary(video)')
+        if silent == False:
+            index().infoDialog(language(30314).encode("utf-8"))
 
     def library_batch(self, url, update=True, silent=False):
         try:
@@ -1208,7 +1191,28 @@ class contextMenu:
         if update == True and getSetting("updatelibrary") == 'true':
             xbmc.executebuiltin('UpdateLibrary(video)')
 
-    def library_batch2(self, silent=False):
+    def library_batch2(self, url):
+        try:
+            file = xbmcvfs.File(subData)
+            read = file.read()
+            file.close()
+        except:
+            return
+
+        if url == 'shows_trending':
+            showList = shows().trending(idx=False)
+        else:
+            showList = shows().get(url, idx=False)
+
+        if showList == None: return
+        for i in showList:
+            if xbmc.abortRequested == True: sys.exit()
+            show = re.sub('\s(|[(])(UK|US|AU|\d{4})(|[)])$', '', i['name'])
+            if not '"%s"' % i['url'] in read:
+                try: self.library_add(show, i['url'], i['image'], i['imdb'], i['year'], update=False, silent=True)
+                except: pass
+
+    def library_batch3(self):
         try:
             file = xbmcvfs.File(subData)
             read = file.read()
@@ -1217,10 +1221,6 @@ class contextMenu:
             for name, year, imdb, url, image in match:
                 if xbmc.abortRequested == True: sys.exit()
                 self.library(name, url, imdb, year, silent=True)
-            if getSetting("updatelibrary") == 'true':
-                xbmc.executebuiltin('UpdateLibrary(video)')
-            if silent == False:
-                index().infoDialog(language(30314).encode("utf-8"))
         except:
             return
 

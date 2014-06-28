@@ -63,6 +63,7 @@ favData             = os.path.join(dataPath,'favourites.cfg')
 class main:
     def __init__(self):
         global action
+        cacheToDisc = True
         index().container_data()
         index().settings_reset()
         params = {}
@@ -149,10 +150,12 @@ class main:
         elif action.startswith('movies'):
             xbmcplugin.setContent(int(sys.argv[1]), 'movies')
             index().container_view('movies', {'skin.confluence' : 500})
+            if not action.endswith('_search'): cacheToDisc = False
         elif action.startswith('channels'):
             xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+            cacheToDisc = False
         xbmcplugin.setPluginFanart(int(sys.argv[1]), addonFanart)
-        xbmcplugin.endOfDirectory(int(sys.argv[1]))
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
         return
 
 class getUrl(object):
@@ -260,27 +263,6 @@ class player(xbmc.Player):
         self.imdb = re.sub('[^0-9]', '', imdb)
         self.subtitle = subtitles().get(self.name, self.imdb, '', '')
 
-    def container_refresh(self):
-        try:
-            params = {}
-            query = self.folderPath[self.folderPath.find('?') + 1:].split('&')
-            for i in query: params[i.split('=')[0]] = i.split('=')[1]
-
-            if not self.folderPath.startswith(sys.argv[0]): return
-
-            if params["action"] == 'get_host':
-                for i in range(0, 250):
-                    currentPath = xbmc.getInfoLabel('Container.FolderPath')
-                    if 'action=movies_search' in currentPath: return
-                    elif 'action=movies' in currentPath:
-                        index().container_refresh()
-                        return
-                    xbmc.sleep(1000)
-            elif params["action"].endswith('_search'): return
-            else: index().container_refresh()
-        except:
-            pass
-
     def offset_add(self):
         try:
             file = xbmcvfs.File(offData)
@@ -353,7 +335,6 @@ class player(xbmc.Player):
         if self.PseudoTVRunning == 'True': return
         self.change_watched()
         self.offset_delete()
-        self.container_refresh()
 
     def onPlayBackStopped(self):
         if self.PseudoTVRunning == 'True': return
@@ -361,7 +342,6 @@ class player(xbmc.Player):
             self.change_watched()
         self.offset_delete()
         self.offset_add()
-        self.container_refresh()
 
 class subtitles:
     def get(self, name, imdb, season, episode):

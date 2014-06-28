@@ -1,4 +1,13 @@
 ------------------------
+GOtv v2.6.4 (28-Jun-14)
+------------------------
+
+- Fixed issues with subscriptions.
+- Fixed issues with watched status.
+- Code cosmetics.
+
+
+------------------------
 GOtv v2.6.3 (28-Jun-14)
 ------------------------
 
