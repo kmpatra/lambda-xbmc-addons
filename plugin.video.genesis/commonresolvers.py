@@ -21,6 +21,7 @@
 import urllib,urllib2,re,os,cookielib,xbmc,xbmcgui
 try:    import CommonFunctions
 except: import commonfunctionsdummy as CommonFunctions
+common = CommonFunctions
 
 puzzlepath = xbmc.translatePath('special://temp/puzzles')
 try: os.makedirs(puzzlepath)
