@@ -1,4 +1,14 @@
 ------------------------
+Genesis v1.0.1 (7-Jul-14)
+------------------------
+
+- Tweaked season listings.
+- Tweaked episode listings.
+- Tweaked firedrive resolver.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.0.0 (7-Jul-14)
 ------------------------
 

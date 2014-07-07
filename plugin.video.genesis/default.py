@@ -2882,6 +2882,11 @@ class seasons:
             tvdbUrl = link().tvdb_episodes % (link().tvdb_key, tvdb)
             result = getUrl(tvdbUrl).result
 
+            type = common.parseDOM(result, "Genre")[0]
+            type = [i for i in type.split('|')]
+            type = [i for i in type if any(x == i for x in ['Reality', 'Game Show', 'Talk Show'])]
+            if not len(type) == 0: return
+
             seasons = common.parseDOM(result, "Episode")
             seasons = [i for i in seasons if common.parseDOM(i, "EpisodeNumber")[0] == '1']
             seasons = [i for i in seasons if not common.parseDOM(i, "SeasonNumber")[0] == '0']
@@ -2922,7 +2927,7 @@ class seasons:
             tvrage = result['tvrage_id']
 
             tvrageUrl = link().tvrage_info % tvrage
-            result = getUrl(tvrageUrl).result
+            result = getUrl(tvrageUrl, timeout=20).result
 
             seasons = common.parseDOM(result, "Season", ret="no")
             seasons = [i for i in seasons if not i == '0']

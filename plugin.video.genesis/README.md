@@ -4,7 +4,7 @@ Genesis XBMC Addon
 
 About
 -----
-The Origins of Streaming
+The origins of streaming
 
 
 Attributions

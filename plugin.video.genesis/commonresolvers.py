@@ -19,6 +19,8 @@
 '''
 
 import urllib,urllib2,re,os,cookielib,xbmc,xbmcgui
+try:    import CommonFunctions
+except: import commonfunctionsdummy as CommonFunctions
 
 puzzlepath = xbmc.translatePath('special://temp/puzzles')
 try: os.makedirs(puzzlepath)
@@ -44,7 +46,7 @@ class getUrl(object):
         else:
             request = urllib2.Request(url,None)
         if mobile == True:
-            request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
+            request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; CPU; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
             request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.57 Safari/537.36')
         if not referer is None:
@@ -73,6 +75,7 @@ class resolvers:
             elif 'youtube.com' in url:          url = self.youtube(url)
             elif 'ishared.eu' in url:           url = self.ishared(url)
             elif 'firedrive.com' in url:        url = self.firedrive(url)
+            elif 'putlocker.com' in url:        url = self.firedrive(url)
             elif 'movreel.com' in url:          url = self.movreel(url)
             elif 'billionuploads.com' in url:   url = self.billionuploads(url)
             elif '180upload.com' in url:        url = self._180upload(url)
@@ -196,6 +199,7 @@ class resolvers:
 
     def firedrive(self, url):
         try:
+            url = url.replace('putlocker.com', 'firedrive.com')
             url = url.replace('/embed/', '/file/')
 
             result = getUrl(url).result
@@ -209,11 +213,11 @@ class resolvers:
             url = None
             try: url = re.compile("file:.+?'(.+?)'").findall(result)[0]
             except: pass
-            try: url = re.compile('.*href="(.+?)".+?id=\'external_download\'').findall(result)[0]
+            try: url = common.parseDOM(result, "a", ret="href", attrs = { "id": "external_download" })[0]
             except: pass
-            try: url = re.compile('.*href="(.+?)".+?id=\'top_external_download\'').findall(result)[0]
+            try: url = common.parseDOM(result, "a", ret="href", attrs = { "id": "top_external_download" })[0]
             except: pass
-            try: url = re.compile("id='fd_vid_btm_download_front'.+?href='(.+?)'").findall(result)[0]
+            try: url = common.parseDOM(result, "a", ret="href", attrs = { "id": "fd_vid_btm_download_front" })[0]
             except: pass
 
             url = urllib.unquote_plus(url)
