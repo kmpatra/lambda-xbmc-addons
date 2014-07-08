@@ -1,4 +1,15 @@
 ------------------------
+Genesis v1.0.3 (8-Jul-14)
+------------------------
+
+- Tweaked season listings.
+- Tweaked episode listings.
+- Fixed missing episode listings.
+- Fixed issue with playback offset.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.0.2 (8-Jul-14)
 ------------------------
 

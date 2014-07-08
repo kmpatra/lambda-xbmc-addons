@@ -382,12 +382,12 @@ class player(xbmc.Player):
                 except:
                     pass
                 try:
-                    while xbmc.getInfoLabel('Container.FolderPath').startswith(sys.argv[0]) or xbmc.getInfoLabel('Container.FolderPath') == '': xbmc.sleep(1000)
                     meta = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.GetMovies", "params": {"filter":{"or": [{"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}, {"field": "year", "operator": "is", "value": "%s"}]}, "properties" : ["file"]}, "id": 1}' % (self.year, str(int(self.year)+1), str(int(self.year)-1)))
                     meta = unicode(meta, 'utf-8', errors='ignore')
                     meta = json.loads(meta)
                     meta = meta['result']['movies']
                     meta = [i for i in meta if i['file'].endswith(self.file)][0]
+                    while xbmc.getInfoLabel('Container.FolderPath').startswith(sys.argv[0]) or xbmc.getInfoLabel('Container.FolderPath') == '': xbmc.sleep(1000)
                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.SetMovieDetails", "params": {"movieid" : %s, "playcount" : 1 }, "id": 1 }' % str(meta['movieid']))
                 except:
                     pass
@@ -404,12 +404,12 @@ class player(xbmc.Player):
                 except:
                     pass
                 try:
-                    while xbmc.getInfoLabel('Container.FolderPath').startswith(sys.argv[0]) or xbmc.getInfoLabel('Container.FolderPath') == '': xbmc.sleep(1000)
                     meta = xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.GetEpisodes", "params": {"filter":{"and": [{"field": "season", "operator": "is", "value": "%s"}, {"field": "episode", "operator": "is", "value": "%s"}]}, "properties": ["file"]}, "id": 1}' % (self.season, self.episode))
                     meta = unicode(meta, 'utf-8', errors='ignore')
                     meta = json.loads(meta)
                     meta = meta['result']['episodes']
                     meta = [i for i in meta if i['file'].endswith(self.file)][0]
+                    while xbmc.getInfoLabel('Container.FolderPath').startswith(sys.argv[0]) or xbmc.getInfoLabel('Container.FolderPath') == '': xbmc.sleep(1000)
                     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "VideoLibrary.SetEpisodeDetails", "params": {"episodeid" : %s, "playcount" : 1 }, "id": 1 }' % str(meta['episodeid']))
                 except:
                     pass
@@ -444,15 +444,15 @@ class player(xbmc.Player):
 
     def onPlayBackEnded(self):
         if PseudoTV == 'True': return
-        self.change_watched()
         self.offset_delete()
+        self.change_watched()
 
     def onPlayBackStopped(self):
         if PseudoTV == 'True': return
-        if self.currentTime / self.totalTime >= .9:
-            self.change_watched()
         self.offset_delete()
         self.offset_add()
+        if self.currentTime / self.totalTime >= .9:
+            self.change_watched()
 
 class subtitles:
     def get(self, name, imdb, season, episode):
@@ -1007,7 +1007,7 @@ class index:
                 sysname, systitle, sysyear, sysimdb, systvdb, sysurl, sysimage, sysgenre, sysplot, sysdate, sysshow, sysshow_alt, sysseason, sysepisode = urllib.quote_plus(name), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb), urllib.quote_plus(url), urllib.quote_plus(image), urllib.quote_plus(genre), urllib.quote_plus(plot), urllib.quote_plus(date), urllib.quote_plus(show), urllib.quote_plus(show_alt), urllib.quote_plus(season), urllib.quote_plus(episode)
 
                 if not autoplay == 'false':
-                    u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&show=%s&show_alt=%s&date=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, systvdb, sysseason, sysepisode, sysshow, sysshow_alt, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
+                    u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&show=%s&show_alt=%s&date=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, systvdb, sysseason, sysepisode, sysshow, sysshow_alt, sysdate, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
                     isFolder = False
                 else:
                     u = '%s?action=get_host&name=%s&title=%s&year=%s&imdb=%s&url=%s&image=%s&genre=%s&plot=%s&tvdb=%s&date=%s&show=%s&show_alt=%s&season=%s&episode=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, sysurl, sysimage, sysgenre, sysplot, systvdb, sysdate, sysshow, sysshow_alt, sysseason, sysepisode)
@@ -2829,8 +2829,8 @@ class seasons:
 
     def get(self, url, year, imdb, image, genre, plot, show, show_alt='', tvdb='', idx=True):
         if idx == True:
-            #self.list = self.get_list(url, year, imdb, image, genre, plot, show)
-            self.list = cache2(self.get_list, url, year, imdb, image, genre, plot, show)
+            self.list = self.get_list(url, year, imdb, image, genre, plot, show)
+            #self.list = cache2(self.get_list, url, year, imdb, image, genre, plot, show)
             index().seasonList(self.list)
         else:
             self.list = self.get_list2(url, year, imdb, tvdb, image, genre, plot, show, show_alt)
@@ -2887,6 +2887,14 @@ class seasons:
             type = [i for i in type if any(x == i for x in ['Reality', 'Game Show', 'Talk Show'])]
             if not len(type) == 0: return
 
+            networks = ['BBC One', 'BBC Two', 'BBC Three', 'BBC Four', 'CBBC', 'CBeebies', 'ITV', 'ITV1', 'ITV2', 'ITV3', 'ITV4', 'Channel 4', 'E4', 'More4', 'Channel 5', 'Sky1']
+            try: network = common.parseDOM(result, "Network")[0]
+            except:  network = ''
+            if network in networks: country = 'UK'
+            else: country = 'US'
+            dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
+            if country == 'UK': dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 0)
+
             seasons = common.parseDOM(result, "Episode")
             seasons = [i for i in seasons if common.parseDOM(i, "EpisodeNumber")[0] == '1']
             seasons = [i for i in seasons if not common.parseDOM(i, "SeasonNumber")[0] == '0']
@@ -2899,7 +2907,7 @@ class seasons:
                 date = common.replaceHTMLCodes(date)
                 date = date.encode('utf-8')
                 if date == '' or '-00' in date: raise Exception()
-                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
+                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int(dt.strftime("%Y%m%d%H%M")): raise Exception()
 
                 num = common.parseDOM(season, "SeasonNumber")[0]
                 num = '%01d' % int(num)
@@ -2927,7 +2935,12 @@ class seasons:
             tvrage = result['tvrage_id']
 
             tvrageUrl = link().tvrage_info % tvrage
-            result = getUrl(tvrageUrl, timeout=20).result
+            result = getUrl(tvrageUrl, timeout='20').result
+
+            try: country = common.parseDOM(result, "origin_country")[0]
+            except: country = 'US'
+            dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
+            if country == 'UK': dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 0)
 
             seasons = common.parseDOM(result, "Season", ret="no")
             seasons = [i for i in seasons if not i == '0']
@@ -2941,7 +2954,7 @@ class seasons:
                 date = [i for i in date if not '-00' in i][0]
                 date = date.encode('utf-8')
                 if date == '' or '-00' in date: raise Exception()
-                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
+                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int(dt.strftime("%Y%m%d%H%M")): raise Exception()
 
                 num = '%01d' % int(season)
                 num = num.encode('utf-8')
@@ -2961,6 +2974,8 @@ class seasons:
             imdbUrl = link().imdb_seasons % imdb
             result = getUrl(imdbUrl).result
             result = result.decode('iso-8859-1').encode('utf-8')
+
+            dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
 
             seasons = common.parseDOM(result, "select", attrs = { "id": "bySeason" })[0]
             seasons = common.parseDOM(seasons, "option", ret="value")
@@ -2987,7 +3002,7 @@ class seasons:
                     for i in dateDict: date = date.replace(i, dateDict[i])
                     date = re.findall('(\d+) (\d+) (\d+)', date, re.I)[0]
                     date = '%04d-%02d-%02d' % (int(date[2]), int(date[1]), int(date[0]))
-                    if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
+                    if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int(dt.strftime("%Y%m%d%H%M")): raise Exception()
 
                 self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'genre': genre, 'plot': plot, 'show': show, 'show_alt': show_alt, 'season': num, 'sort': '%10d' % int(num), 'idx_data': ''})
             except:
@@ -3002,8 +3017,8 @@ class episodes:
 
     def get(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data='', idx=True):
         if idx == True:
-            #self.list = self.get_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
-            self.list = cache(self.get_list, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
+            self.list = self.get_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
+            #self.list = cache(self.get_list, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
             index().episodeList(self.list)
         else:
             self.list = self.get_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
@@ -3015,62 +3030,13 @@ class episodes:
         index().episodeList(self.list)
 
     def get_list(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data):
-        if url.startswith(link().tvrage_base):
-            episodeList = self.tvrage_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
-        elif url == link().tvdb_base:
+        if url == link().tvdb_base:
             episodeList = self.tvdb_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
+        elif url.startswith(link().tvrage_base):
+            episodeList = self.tvrage_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
         else:
             episodeList = self.imdb_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
         return episodeList
-
-    def tvrage_list(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data):
-        try:
-            season = re.sub('[^0-9]', '', name)
-            season = season.encode('utf-8')
-
-            if not idx_data == '': result = idx_data
-            else: result = getUrl(url).result
-
-            episodes = common.parseDOM(result, "Season", attrs = { "no": season })[0]
-            episodes = common.parseDOM(episodes, "episode")
-            episodes = [i for i in episodes if not common.parseDOM(i, "seasonnum")[0] == '00']
-            episodes = [i for i in episodes if not common.parseDOM(i, "seasonnum")[0] == '0']
-        except:
-            return
-
-        for episode in episodes:
-            try:
-                date = common.parseDOM(episode, "airdate")[0]
-                date = common.replaceHTMLCodes(date)
-                date = date.encode('utf-8')
-                if date == '' or '-00' in date: raise Exception()
-                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
-
-                title = common.parseDOM(episode, "title")[0]
-                title = common.replaceHTMLCodes(title)
-                title = title.encode('utf-8')
-
-                num = common.parseDOM(episode, "seasonnum")[0]
-                num = re.sub('[^0-9]', '', '%01d' % int(num))
-                num = num.encode('utf-8')
-
-                name = show_alt + ' S' + '%02d' % int(season) + 'E' + '%02d' % int(num)
-                try: name = name.encode('utf-8')
-                except: pass
-
-                try: thumb = common.parseDOM(episode, "screencap")[0]
-                except: thumb = image
-                thumb = common.replaceHTMLCodes(thumb)
-                thumb = thumb.encode('utf-8')
-
-                desc = plot
-
-                self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'season': season, 'episode': num, 'show': show, 'show_alt': show_alt, 'url': url, 'image': thumb, 'date': date, 'genre': genre, 'plot': desc, 'sort': '%10d' % int(num)})
-            except:
-                pass
-
-        self.list = sorted(self.list, key=itemgetter('sort'))
-        return self.list
 
     def tvdb_list(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data):
         try:
@@ -3080,6 +3046,14 @@ class episodes:
             tvdbUrl = link().tvdb_episodes % (link().tvdb_key, tvdb)
             if not idx_data == '': result = idx_data
             else: result = getUrl(tvdbUrl).result
+
+            networks = ['BBC One', 'BBC Two', 'BBC Three', 'BBC Four', 'CBBC', 'CBeebies', 'ITV', 'ITV1', 'ITV2', 'ITV3', 'ITV4', 'Channel 4', 'E4', 'More4', 'Channel 5', 'Sky1']
+            try: network = common.parseDOM(result, "Network")[0]
+            except:  network = ''
+            if network in networks: country = 'UK'
+            else: country = 'US'
+            dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
+            if country == 'UK': dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 0)
 
             episodes = common.parseDOM(result, "Episode")
             episodes = [i for i in episodes if '%01d' % int(common.parseDOM(i, "SeasonNumber")[0]) == season]
@@ -3093,7 +3067,7 @@ class episodes:
                 date = common.replaceHTMLCodes(date)
                 date = date.encode('utf-8')
                 if date == '' or '-00' in date: raise Exception()
-                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
+                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int(dt.strftime("%Y%m%d%H%M")): raise Exception()
 
                 title = common.parseDOM(episode, "EpisodeName")[0]
                 title = common.replaceHTMLCodes(title)
@@ -3125,6 +3099,60 @@ class episodes:
         self.list = sorted(self.list, key=itemgetter('sort'))
         return self.list
 
+    def tvrage_list(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data):
+        try:
+            season = re.sub('[^0-9]', '', name)
+            season = season.encode('utf-8')
+
+            if not idx_data == '': result = idx_data
+            else: result = getUrl(url, timeout='20').result
+
+            try: country = common.parseDOM(result, "origin_country")[0]
+            except: country = 'US'
+            dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
+            if country == 'UK': dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 0)
+
+            episodes = common.parseDOM(result, "Season", attrs = { "no": season })[0]
+            episodes = common.parseDOM(episodes, "episode")
+            episodes = [i for i in episodes if not common.parseDOM(i, "seasonnum")[0] == '00']
+            episodes = [i for i in episodes if not common.parseDOM(i, "seasonnum")[0] == '0']
+        except:
+            return
+
+        for episode in episodes:
+            try:
+                date = common.parseDOM(episode, "airdate")[0]
+                date = common.replaceHTMLCodes(date)
+                date = date.encode('utf-8')
+                if date == '' or '-00' in date: raise Exception()
+                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int(dt.strftime("%Y%m%d%H%M")): raise Exception()
+
+                title = common.parseDOM(episode, "title")[0]
+                title = common.replaceHTMLCodes(title)
+                title = title.encode('utf-8')
+
+                num = common.parseDOM(episode, "seasonnum")[0]
+                num = re.sub('[^0-9]', '', '%01d' % int(num))
+                num = num.encode('utf-8')
+
+                name = show_alt + ' S' + '%02d' % int(season) + 'E' + '%02d' % int(num)
+                try: name = name.encode('utf-8')
+                except: pass
+
+                try: thumb = common.parseDOM(episode, "screencap")[0]
+                except: thumb = image
+                thumb = common.replaceHTMLCodes(thumb)
+                thumb = thumb.encode('utf-8')
+
+                desc = plot
+
+                self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': tvdb, 'season': season, 'episode': num, 'show': show, 'show_alt': show_alt, 'url': url, 'image': thumb, 'date': date, 'genre': genre, 'plot': desc, 'sort': '%10d' % int(num)})
+            except:
+                pass
+
+        self.list = sorted(self.list, key=itemgetter('sort'))
+        return self.list
+
     def imdb_list(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data):
         try:
             season = re.sub('[^0-9]', '', name)
@@ -3132,6 +3160,8 @@ class episodes:
 
             result = getUrl(url.replace(link().imdb_base, link().imdb_akas)).result
             result = result.decode('iso-8859-1').encode('utf-8')
+
+            dt = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
 
             episodes = common.parseDOM(result, "div", attrs = { "class": "list_item.+?" })
             episodes = [i for i in episodes if not common.parseDOM(i, "meta", ret="content", attrs = { "itemprop": "episodeNumber" })[0] == '0']
@@ -3145,7 +3175,7 @@ class episodes:
                 for i in dateDict: date = date.replace(i, dateDict[i])
                 date = re.findall('(\d+) (\d+) (\d+)', date, re.I)[0]
                 date = '%04d-%02d-%02d' % (int(date[2]), int(date[1]), int(date[0]))
-                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y%m%d%H%M")): raise Exception()
+                if int(re.sub('[^0-9]', '', str(date)) + '0000') + 10500 > int(dt.strftime("%Y%m%d%H%M")): raise Exception()
 
                 title = common.parseDOM(episode, "a", ret="title")[0]
                 title = common.replaceHTMLCodes(title)
