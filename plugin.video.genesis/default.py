@@ -2829,8 +2829,8 @@ class seasons:
 
     def get(self, url, year, imdb, image, genre, plot, show, show_alt='', tvdb='', idx=True):
         if idx == True:
-            self.list = self.get_list(url, year, imdb, image, genre, plot, show)
-            #self.list = cache2(self.get_list, url, year, imdb, image, genre, plot, show)
+            #self.list = self.get_list(url, year, imdb, image, genre, plot, show)
+            self.list = cache2(self.get_list, url, year, imdb, image, genre, plot, show)
             index().seasonList(self.list)
         else:
             self.list = self.get_list2(url, year, imdb, tvdb, image, genre, plot, show, show_alt)
@@ -3017,8 +3017,8 @@ class episodes:
 
     def get(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data='', idx=True):
         if idx == True:
-            self.list = self.get_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
-            #self.list = cache(self.get_list, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
+            #self.list = self.get_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
+            self.list = cache(self.get_list, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
             index().episodeList(self.list)
         else:
             self.list = self.get_list(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data)
