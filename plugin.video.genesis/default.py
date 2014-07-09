@@ -2870,7 +2870,7 @@ class seasons:
         try:
             result = getUrl(link().tvdb_series2 % urllib.quote_plus(show)).result
             result = common.parseDOM(result, "Series")
-            result = [i for i in result if show == common.parseDOM(i, "SeriesName")[0] and year in common.parseDOM(i, "FirstAired")[0]][0]
+            result = [i for i in result if show == re.sub('\s(|[(])(UK|US|AU|\d{4})(|[)])$', '', common.parseDOM(i, "SeriesName")[0]) and year in common.parseDOM(i, "FirstAired")[0]][0]
             show_alt = common.parseDOM(result, "SeriesName")[0]
             show_alt = common.replaceHTMLCodes(show_alt)
             tvdb = common.parseDOM(result, "seriesid")[0]
