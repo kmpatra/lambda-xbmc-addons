@@ -1,4 +1,13 @@
 ------------------------
+Genesis v1.0.4 (9-Jul-14)
+------------------------
+
+- Tweaked tv show listings.
+- Added Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.0.3 (8-Jul-14)
 ------------------------
 

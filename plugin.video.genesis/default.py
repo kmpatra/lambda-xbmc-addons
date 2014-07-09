@@ -198,6 +198,7 @@ class main:
         elif action.startswith('shows'):
             xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
             index().container_view('tvshows', {'skin.confluence' : 500})
+            if not action.endswith('_search'): cacheToDisc = False
         elif action.startswith('seasons'):
             xbmcplugin.setContent(int(sys.argv[1]), 'seasons')
             index().container_view('seasons', {'skin.confluence' : 500})
