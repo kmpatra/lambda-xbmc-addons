@@ -3,16 +3,19 @@
 	<!-- Settings -->
 	<string id="30000">General</string>
 	<string id="30001">Appearance</string>
-	<string id="30002">Auto-play</string>
-	<string id="30003">Auto-play (Library)</string>
-	<string id="30004">HD Hosts in Auto-play</string>
-	<string id="30005">Resume Playback</string>
-	<string id="30006">Playback Info</string>
-	<string id="30007">URL Resolver</string>
-	<string id="30008">Enable Meta Data</string>
-	<string id="30009">Enable Fanart</string>
-	<string id="30010">Meta Handler</string>
-	<string id="30011">Downloads</string>
+	<string id="30002">Latest Episodes</string>
+	<string id="30003">Trakt</string>
+	<string id="30004">TV Folder</string>
+	<string id="30005">Auto-play</string>
+	<string id="30006">Auto-play (Library)</string>
+	<string id="30007">HD Hosts in Auto-play</string>
+	<string id="30008">Resume Playback</string>
+	<string id="30009">Playback Info</string>
+	<string id="30010">URL Resolver</string>
+	<string id="30011">Enable Meta Data</string>
+	<string id="30012">Enable Fanart</string>
+	<string id="30013">Meta Handler</string>
+	<string id="30014">Downloads</string>
 	<string id="30031">Priority 1</string>
 	<string id="30032">Priority 2</string>
 	<string id="30033">Priority 3</string>
@@ -74,7 +77,8 @@
 	<string id="30321">YouTube addon is not installed.</string>
 	<string id="30322">This stream requires it.</string>
 	<string id="30323">You have disabled Auto update of TV Shows.</string>
-	<string id="30324">Latest Episodes require it.</string>
+	<string id="30324">Your Trakt account isn't public.</string>
+	<string id="30325">Latest Episodes require it.</string>
 	<!-- YesNo -->
 	<string id="30341">You have not set the download folder.</string>
 	<string id="30342">Do you want to set it now?</string>
@@ -146,8 +150,8 @@
 	<string id="30547">Search Actor</string>
 	<string id="30548">Search</string>
 	<string id="30561">[B]TRAKT[/B] : Collection</string>
-	<string id="30562">[B]TRAKT[/B] : Watchlist</string>
-	<string id="30563">[B]TRAKT[/B] : TV Collection</string>
+	<string id="30562">[B]TRAKT[/B] : TV Collection</string>
+	<string id="30563">[B]TRAKT[/B] : Watchlist</string>
 	<string id="30564">[B]TRAKT[/B] : TV Watchlist</string>
 	<string id="30565">[B]IMDB[/B] : Watchlist</string>
 	<string id="30566">[B]IMDB[/B] : TV Watchlist</string>

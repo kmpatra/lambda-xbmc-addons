@@ -3,16 +3,19 @@
 	<!-- Settings -->
 	<string id="30000">Geral</string>
 	<string id="30001">Aspecto</string>
-	<string id="30002">Começar Automaticamente</string>
-	<string id="30003">Começar Automaticamente (Biblioteca)</string>
-	<string id="30004">Fontes HD ao Começar Automaticamente</string>
-	<string id="30005">Resumir no Playback</string>
-	<string id="30006">Informação de Playback</string>
-	<string id="30007">URL Resolver</string>
-	<string id="30008">Permitir Meta Data</string>
-	<string id="30009">Permitir Fanart</string>
-	<string id="30010">Meta Handler</string>
-	<string id="30011">Downloads</string>
+	<string id="30002">Últimos Episodios</string>
+	<string id="30003">Trakt</string>
+	<string id="30004">Pasta de Séries</string>
+	<string id="30005">Começar Automaticamente</string>
+	<string id="30006">Começar Automaticamente (Biblioteca)</string>
+	<string id="30007">Fontes HD ao Começar Automaticamente</string>
+	<string id="30008">Resumir no Playback</string>
+	<string id="30009">Informação de Playback</string>
+	<string id="30010">URL Resolver</string>
+	<string id="30011">Permitir Meta Data</string>
+	<string id="30012">Permitir Fanart</string>
+	<string id="30013">Meta Handler</string>
+	<string id="30014">Downloads</string>
 	<string id="30031">Prioridade 1</string>
 	<string id="30032">Prioridade 2</string>
 	<string id="30033">Prioridade 3</string>
@@ -74,7 +77,8 @@
 	<string id="30321">Addon do YouTube não está instalado.</string>
 	<string id="30322">Este stream precisa do mesmo.</string>
 	<string id="30323">Desativou Actualização Automatica das Séries.</string>
-	<string id="30324">Últimos Episódios necessitam disso.</string>
+	<string id="30324">Sua conta Trakt não é público.</string>
+	<string id="30325">Últimos Episódios necessitam disso.</string>
 	<!-- YesNo -->
 	<string id="30341">Não configurou a pasta de downloads.</string>
 	<string id="30342">Quer configurar agora?</string>
@@ -146,8 +150,8 @@
 	<string id="30547">Pesquisar Actor</string>
 	<string id="30548">Pesquisar</string>
 	<string id="30561">[B]TRAKT[/B] : Coleção</string>
-	<string id="30562">[B]TRAKT[/B] : Watchlist</string>
-	<string id="30563">[B]TRAKT[/B] : Colecão Séries</string>
+	<string id="30562">[B]TRAKT[/B] : Colecão Séries</string>
+	<string id="30563">[B]TRAKT[/B] : Watchlist</string>
 	<string id="30564">[B]TRAKT[/B] : Watchlist Séries</string>
 	<string id="30565">[B]IMDB[/B] : Watchlist</string>
 	<string id="30566">[B]IMDB[/B] : TV Watchlist</string>

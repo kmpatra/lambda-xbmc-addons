@@ -171,6 +171,7 @@ class main:
         elif action == 'shows_search':                shows().search(query)
         elif action == 'seasons':                     seasons().get(url, year, imdb, image, genre, plot, show)
         elif action == 'episodes':                    episodes().get(name, url, year, imdb, tvdb, image, genre, plot, show, show_alt)
+        elif action == 'episodes_user_calendar':      episodes().user_calendar()
         elif action == 'episodes_calendar':           episodes().calendar(url)
         elif action == 'actors_movies':               actors().movies(query)
         elif action == 'actors_shows':                actors().shows(query)
@@ -194,11 +195,11 @@ class main:
         elif action.startswith('movies'):
             xbmcplugin.setContent(int(sys.argv[1]), 'movies')
             index().container_view('movies', {'skin.confluence' : 500})
-            if not action.endswith('_search'): cacheToDisc = False
+            cacheToDisc = False
         elif action.startswith('shows'):
             xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
             index().container_view('tvshows', {'skin.confluence' : 500})
-            if not action.endswith('_search'): cacheToDisc = False
+            cacheToDisc = False
         elif action.startswith('seasons'):
             xbmcplugin.setContent(int(sys.argv[1]), 'seasons')
             index().container_view('seasons', {'skin.confluence' : 500})
@@ -1026,13 +1027,13 @@ class index:
                     if meta['overlay'] == 6: playcountMenu = language(30404).encode("utf-8")
                     metaimdb, metaseason, metaepisode = urllib.quote_plus(re.sub('[^0-9]', '', str(meta['imdb_id']))), urllib.quote_plus(str(meta['season'])), urllib.quote_plus(str(meta['episode']))
                     label = str(meta['season']) + 'x' + '%02d' % int(meta['episode']) + ' . ' + meta['title']
-                    if action == 'episodes_subscriptions' or action == 'episodes_calendar': label = show + ' - ' + label
+                    if action == 'episodes_subscriptions' or action == 'episodes_calendar' or action == 'episodes_user_calendar': label = show + ' - ' + label
                     poster = meta['cover_url']
                     if poster == '': poster = image
                 else:
                     meta = {'label': title, 'title': title, 'tvshowtitle': show, 'season': season, 'episode': episode, 'imdb_id' : imdb, 'year' : year, 'premiered' : date, 'genre' : genre, 'plot': plot}
                     label = season + 'x' + '%02d' % int(episode) + ' . ' + title
-                    if action == 'episodes_subscriptions' or action == 'episodes_calendar': label = show + ' - ' + label
+                    if action == 'episodes_subscriptions' or action == 'episodes_calendar' or action == 'episodes_user_calendar': label = show + ' - ' + label
                     poster = image
                 if getmeta == 'true' and getSetting("fanart") == 'true':
                     fanart = meta['backdrop_url']
@@ -1572,7 +1573,7 @@ class subscriptions:
     def episodes(self):
         try:
             if not getSetting("service_update") == 'true':
-                index().okDialog(language(30323).encode("utf-8"), language(30324).encode("utf-8"))
+                index().okDialog(language(30323).encode("utf-8"), language(30325).encode("utf-8"))
 
             seasons, episodes = [], []
             library = xbmc.translatePath(getSetting("tv_library"))
@@ -1638,7 +1639,9 @@ class root:
         rootList.append({'name': 30503, 'image': 'channels_movies.jpg', 'action': 'channels_movies'})
         rootList.append({'name': 30504, 'image': 'root_genesis.jpg', 'action': 'root_genesis'})
         rootList.append({'name': 30505, 'image': 'movies_added.jpg', 'action': 'movies_added'})
-        if not xbmcvfs.listdir(xbmc.translatePath(getSetting("tv_library")))[0] == []:
+        if not (link().trakt_user == '' or link().trakt_password == '') and (getSetting("latest_episodes") == '0'):
+            rootList.append({'name': 30506, 'image': 'episodes_subscriptions.jpg', 'action': 'episodes_user_calendar'})
+        elif not xbmcvfs.listdir(xbmc.translatePath(getSetting("tv_library")))[0] == []:
             rootList.append({'name': 30506, 'image': 'episodes_subscriptions.jpg', 'action': 'episodes_subscriptions'})
         rootList.append({'name': 30507, 'image': 'calendar_episodes.jpg', 'action': 'calendar_episodes'})
         rootList.append({'name': 30508, 'image': 'root_search.jpg', 'action': 'root_search'})
@@ -1673,8 +1676,8 @@ class root:
         rootList = []
         if not (link().trakt_user == '' or link().trakt_password == ''):
             rootList.append({'name': 30561, 'image': 'movies_trakt_collection.jpg', 'action': 'movies_trakt_collection'})
-            rootList.append({'name': 30562, 'image': 'movies_trakt_watchlist.jpg', 'action': 'movies_trakt_watchlist'})
-            rootList.append({'name': 30563, 'image': 'shows_trakt_collection.jpg', 'action': 'shows_trakt_collection'})
+            rootList.append({'name': 30562, 'image': 'shows_trakt_collection.jpg', 'action': 'shows_trakt_collection'})
+            rootList.append({'name': 30563, 'image': 'movies_trakt_watchlist.jpg', 'action': 'movies_trakt_watchlist'})
             rootList.append({'name': 30564, 'image': 'shows_trakt_watchlist.jpg', 'action': 'shows_trakt_watchlist'})
         if not (link().imdb_user == ''):
             rootList.append({'name': 30565, 'image': 'movies_imdb_watchlist.jpg', 'action': 'movies_imdb_watchlist'})
@@ -1746,7 +1749,8 @@ class link:
         self.trakt_collection = 'http://api.trakt.tv/user/library/movies/collection.json/%s/%s'
         self.trakt_tv_summary = 'http://api.trakt.tv/show/summary.json/%s/%s'
         self.trakt_tv_trending = 'http://api.trakt.tv/shows/trending.json/%s'
-        self.trakt_tv_calendar = 'http://api.trakt.tv/calendar/shows.json/%s/%s/1'
+        self.trakt_tv_calendar = 'http://api.trakt.tv/calendar/shows.json/%s/%s/%s'
+        self.trakt_tv_user_calendar = 'http://api.trakt.tv/user/calendar/shows.json/%s/%s/%s/%s'
         self.trakt_tv_watchlist = 'http://api.trakt.tv/user/watchlist/shows.json/%s/%s'
         self.trakt_tv_collection = 'http://api.trakt.tv/user/library/shows/collection.json/%s/%s'
         self.trakt_lists = 'http://api.trakt.tv/user/lists.json/%s/%s'
@@ -3026,8 +3030,21 @@ class episodes:
             return self.list
 
     def calendar(self, url):
-        #self.list = self.trakt_list(url)
-        self.list = cache2(self.trakt_list, url)
+        date = url
+        url = link().trakt_tv_calendar % (link().trakt_key, re.sub('[^0-9]', '', str(date)), '1')
+        #self.list = self.trakt_list(url, date)
+        self.list = cache2(self.trakt_list, url, date)
+        self.list = sorted(self.list, key=itemgetter('name'))
+        index().episodeList(self.list)
+
+    def user_calendar(self):
+        now = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
+        date = datetime.date(now.year, now.month, now.day) - datetime.timedelta(days=30)
+        url = link().trakt_tv_user_calendar % (link().trakt_key, link().trakt_user, re.sub('[^0-9]', '', str(date)), '31')
+        self.list = self.trakt_list(url)
+        if self.list == None: index().okDialog(language(30324).encode("utf-8"), language(30325).encode("utf-8"))
+        try: self.list = self.list[::-1]
+        except: pass
         index().episodeList(self.list)
 
     def get_list(self, name, url, year, imdb, tvdb, image, genre, plot, show, show_alt, idx_data):
@@ -3214,12 +3231,12 @@ class episodes:
         self.list = sorted(self.list, key=itemgetter('sort'))
         return self.list
 
-    def trakt_list(self, date):
+    def trakt_list(self, url, date='0'):
         try:
-            traktUrl = link().trakt_tv_calendar % (link().trakt_key, re.sub('[^0-9]', '', str(date)))
-            result = getUrl(traktUrl).result
-            result = json.loads(result)[0]
-            episodes = result['episodes']
+            episodes = []
+            result = getUrl(url).result
+            result = json.loads(result)
+            for i in result: episodes += i['episodes']
         except:
             return
 
@@ -3232,10 +3249,12 @@ class episodes:
                 season = episode['episode']['season']
                 season = re.sub('[^0-9]', '', '%01d' % int(season))
                 if len(season) > 2: raise Exception()
+                if season == '0': raise Exception()
                 season = season.encode('utf-8')
 
                 num = episode['episode']['number']
                 num = re.sub('[^0-9]', '', '%01d' % int(num))
+                if num == '0': raise Exception()
                 num = num.encode('utf-8')
 
                 show = episode['show']['title']
@@ -3292,7 +3311,6 @@ class episodes:
             except:
                 pass
 
-        self.list = sorted(self.list, key=itemgetter('name'))
         return self.list
 
 class trailer:
