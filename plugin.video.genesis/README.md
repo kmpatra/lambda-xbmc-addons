@@ -13,6 +13,7 @@ Attributions
 - 4orbs theme by Marquerite | http://www.xbmchub.com
 - Embossed theme by jokster | http://www.xbmchub.com
 - Portuguese translation by Mafarricos | http://www.xbmchub.com
+- French translation by dr1ss | http://www.xbmchub.com
 
 
 License

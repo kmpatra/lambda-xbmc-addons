@@ -1,19 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
 	<!-- Settings -->
 	<string id="30000">Geral</string>
 	<string id="30001">Aspecto</string>
-	<string id="30002">Últimos Episodios</string>
+	<string id="30002">Últimos Episódios</string>
 	<string id="30003">Trakt</string>
 	<string id="30004">Pasta de Séries</string>
 	<string id="30005">Começar Automaticamente</string>
 	<string id="30006">Começar Automaticamente (Biblioteca)</string>
 	<string id="30007">Fontes HD ao Começar Automaticamente</string>
-	<string id="30008">Resumir no Playback</string>
-	<string id="30009">Informação de Playback</string>
+	<string id="30008">Resumir no play</string>
+	<string id="30009">Informação no play</string>
 	<string id="30010">URL Resolver</string>
 	<string id="30011">Permitir Meta Data</string>
-	<string id="30012">Permitir Fanart</string>
+	<string id="30012">Permitir fanart</string>
 	<string id="30013">Meta Handler</string>
 	<string id="30014">Downloads</string>
 	<string id="30031">Prioridade 1</string>
@@ -47,7 +47,7 @@
 	<string id="30084">Actualizar automaticamente Séries</string>
 	<string id="30085">Intervalo de Atualização</string>
 	<string id="30086">Sincronizar Visto na Biblioteca XBMC e Genesis</string>
-	<string id="30087">Atualizar biblioteca XBMC depois de adicionar conteúdo</string>
+	<string id="30087">Actualizar biblioteca XBMC depois de adicionar conteúdo</string>
 	<string id="30100">Contas</string>
 	<string id="30101">Utilizador</string>
 	<string id="30102">Password</string>
@@ -69,7 +69,7 @@
 	<string id="30308">Download acabou com sucesso</string>
 	<string id="30309">Adicionado à pasta de Filmes de Genesis</string>
 	<string id="30310">Adicionado à pasta de Séries de Genesis</string>
-	<string id="30311">Biblioteca Genesis atualizada</string>
+	<string id="30311">Biblioteca Genesis actualizada</string>
 	<string id="30312">Não existem legendas disponíveis</string>
 	<string id="30313">Não existe stream disponível</string>
 	<string id="30314">Carregado em</string>
@@ -77,7 +77,7 @@
 	<string id="30321">Addon do YouTube não está instalado.</string>
 	<string id="30322">Este stream precisa do mesmo.</string>
 	<string id="30323">Desativou Actualização Automatica das Séries.</string>
-	<string id="30324">Sua conta Trakt não é público.</string>
+	<string id="30324">A tua conta Trakt não é pública.</string>
 	<string id="30325">Últimos Episódios necessitam disso.</string>
 	<!-- YesNo -->
 	<string id="30341">Não configurou a pasta de downloads.</string>
@@ -109,7 +109,7 @@
 	<string id="30407">Adicionar aos favoritos</string>
 	<string id="30408">Remover dos favoritos</string>
 	<string id="30409">Adicionar à Biblioteca</string>
-	<string id="30410">Atualizar Bibliteca</string>
+	<string id="30410">Actualizar Bibliteca</string>
 	<string id="30411">Começar Automaticamente</string>
 	<string id="30412">Configurações do Add-on</string>
 	<string id="30413">A dar agora...</string>
@@ -122,14 +122,14 @@
 	<string id="30420">Configurar vista de Episódios</string>
 	<string id="30421">Início...</string>
 	<!-- Description -->
-	<string id="30450">As origens de streaming</string>
+	<string id="30450">As origens do streaming</string>
 	<!-- Labels -->
 	<string id="30501">Filmes</string>
 	<string id="30502">Séries</string>
 	<string id="30503">Canais</string>
 	<string id="30504">Meu Genesis</string>
 	<string id="30505">Últimos Filmes</string>
-	<string id="30506">Últimos Episodios</string>
+	<string id="30506">Últimos Episódios</string>
 	<string id="30507">Calendário de Séries</string>
 	<string id="30508">Pesquisa</string>
 	<string id="30521">Géneros</string>
@@ -143,18 +143,18 @@
 	<string id="30529">Pesquisa</string>
 	<string id="30541">Géneros</string>
 	<string id="30542">Mais Popular</string>
-	<string id="30543">Returning TV Shows</string>
+	<string id="30543">Séries actuais</string>
 	<string id="30544">O que está a ser visto</string>
 	<string id="30545">Bastante Votado</string>
 	<string id="30546">Mais Votado</string>
 	<string id="30547">Pesquisar Actor</string>
 	<string id="30548">Pesquisar</string>
-	<string id="30561">[B]TRAKT[/B] : Coleção</string>
-	<string id="30562">[B]TRAKT[/B] : Colecão Séries</string>
+	<string id="30561">[B]TRAKT[/B] : Colecção</string>
+	<string id="30562">[B]TRAKT[/B] : Colecção de Séries</string>
 	<string id="30563">[B]TRAKT[/B] : Watchlist</string>
-	<string id="30564">[B]TRAKT[/B] : Watchlist Séries</string>
+	<string id="30564">[B]TRAKT[/B] : Watchlist de Séries</string>
 	<string id="30565">[B]IMDB[/B] : Watchlist</string>
-	<string id="30566">[B]IMDB[/B] : TV Watchlist</string>
+	<string id="30566">[B]IMDB[/B] : Watchlist de Séries</string>
 	<string id="30567">Listas de Filmes</string>
 	<string id="30568">Listas de Séries</string>
 	<string id="30569">Filmes Favoritos</string>

@@ -1,4 +1,13 @@
 ------------------------
+Genesis v1.0.7 (12-Jul-14)
+------------------------
+
+- Added French translation.
+- Updated Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.0.6 (11-Jul-14)
 ------------------------
 
