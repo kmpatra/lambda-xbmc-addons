@@ -107,11 +107,11 @@ class main:
         try:        episode = urllib.unquote_plus(params["episode"])
         except:     episode = None
 
-
         if action == None:                            root().get()
         elif action == 'root_movies':                 root().movies()
         elif action == 'root_shows':                  root().shows()
         elif action == 'root_genesis':                root().genesis()
+        elif action == 'root_tools':                  root().tools()
         elif action == 'root_search':                 root().search()
         elif action == 'item_queue':                  contextMenu().item_queue()
         elif action == 'view_movies':                 contextMenu().view('movies')
@@ -121,6 +121,7 @@ class main:
         elif action == 'addon_home':                  contextMenu().addon_home()
         elif action == 'playlist_open':               contextMenu().playlist_open()
         elif action == 'settings_open':               contextMenu().settings_open()
+        elif action == 'cache_clear':                 contextMenu().cache_clear()
         elif action == 'settings_urlresolver':        contextMenu().settings_open('script.module.urlresolver')
         elif action == 'settings_metahandler':        contextMenu().settings_open('script.module.metahandler')
         elif action == 'favourite_movie_add':         contextMenu().favourite_add(favData, name, url, image, imdb, year, refresh=True)
@@ -141,6 +142,12 @@ class main:
         elif action == 'library_tv_list':             contextMenu().library_tv_list(url)
         elif action == 'library_update':              contextMenu().library_update()
         elif action == 'library_service':             contextMenu().library_update(silent=True)
+        elif action == 'library_trakt_collection':    contextMenu().library_preset_list('trakt_collection')
+        elif action == 'library_trakt_watchlist':     contextMenu().library_preset_list('trakt_watchlist')
+        elif action == 'library_imdb_watchlist':      contextMenu().library_preset_list('imdb_watchlist')
+        elif action == 'library_tv_trakt_collection': contextMenu().library_preset_list('trakt_tv_collection')
+        elif action == 'library_tv_trakt_watchlist':  contextMenu().library_preset_list('trakt_tv_watchlist')
+        elif action == 'library_tv_imdb_watchlist':   contextMenu().library_preset_list('imdb_tv_watchlist')
         elif action == 'autoplay_movie':              contextMenu().autoplay('movie', name, title, imdb, '', year, '', '', '', '')
         elif action == 'autoplay_episode':            contextMenu().autoplay('episode', name, title, year, imdb, tvdb, season, episode, show, show_alt)
         elif action == 'download':                    contextMenu().download(name, url, provider)
@@ -186,33 +193,6 @@ class main:
         elif action == 'play_moviehost':              resolver().play_host('movie', name, url, imdb, source, provider)
         elif action == 'play_tvhost':                 resolver().play_host('episode', name, url, imdb, source, provider)
         elif action == 'play':                        resolver().run(name, title, year, imdb, tvdb, season, episode, show, show_alt, url)
-
-
-        cacheToDisc = True
-
-        if action is None:
-            pass
-        elif action.startswith('movies'):
-            xbmcplugin.setContent(int(sys.argv[1]), 'movies')
-            index().container_view('movies', {'skin.confluence' : 500})
-            cacheToDisc = False
-        elif action.startswith('shows'):
-            xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
-            index().container_view('tvshows', {'skin.confluence' : 500})
-            cacheToDisc = False
-        elif action.startswith('seasons'):
-            xbmcplugin.setContent(int(sys.argv[1]), 'seasons')
-            index().container_view('seasons', {'skin.confluence' : 500})
-        elif action.startswith('episodes'):
-            xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
-            index().container_view('episodes', {'skin.confluence' : 504})
-            cacheToDisc = False
-        elif action.startswith('channels'):
-            xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
-            cacheToDisc = False
-        xbmcplugin.setPluginFanart(int(sys.argv[1]), addonFanart)
-        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
-        return
 
 class getUrl(object):
     def __init__(self, url, close=True, proxy=None, post=None, mobile=False, referer=None, cookie=None, output='', timeout='10'):
@@ -427,7 +407,7 @@ class player(xbmc.Player):
         minutes, seconds = divmod(offset, 60)
         hours, minutes = divmod(minutes, 60)
         offset_time = '%02d:%02d:%02d' % (hours, minutes, seconds)
-        yes = index().yesnoDialog('%s %s' % (language(30353).encode("utf-8"), offset_time), '', self.name, language(30354).encode("utf-8"), language(30355).encode("utf-8"))
+        yes = index().yesnoDialog('%s %s' % (language(30354).encode("utf-8"), offset_time), '', self.name, language(30355).encode("utf-8"), language(30356).encode("utf-8"))
         if yes: self.seekTime(offset)
 
     def onPlayBackStarted(self):
@@ -437,7 +417,7 @@ class player(xbmc.Player):
         if PseudoTV == 'True': return
 
         if getSetting("playback_info") == 'true':
-            elapsedTime = '%s %.2f seconds' % (language(30314).encode("utf-8"), (time.time() - self.loadingStarting))     
+            elapsedTime = '%s %.2f seconds' % (language(30315).encode("utf-8"), (time.time() - self.loadingStarting))     
             index().infoDialog(elapsedTime, header=self.name)
 
         if getSetting("resume_playback") == 'true':
@@ -504,7 +484,7 @@ class subtitles:
 
             return subtitle
         except:
-            index().infoDialog(language(30312).encode("utf-8"), name)
+            index().infoDialog(language(30313).encode("utf-8"), name)
             return
 
 class index:
@@ -549,8 +529,6 @@ class index:
         addonIcon = os.path.join(addonArt,'icon.png')
         global addonFanart
         addonFanart = os.path.join(addonArt,'fanart.jpg')
-        global addonDownloads
-        addonDownloads = os.path.join(addonArt,'root_downloads.jpg')
         global addonGenres
         addonGenres = os.path.join(addonArt,'genres_movies.jpg')
         global addonTVGenres
@@ -616,29 +594,45 @@ class index:
                 u = '%s?action=%s' % (sys.argv[0], action)
 
                 cm = []
+                replaceItems = False
 
                 if action == 'movies_trakt_collection':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_movie_list&url=%s)' % (sys.argv[0], urllib.quote_plus(link().trakt_collection % (link().trakt_key, link().trakt_user)))))
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_trakt_collection)' % (sys.argv[0])))
                 elif action == 'movies_trakt_watchlist':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_movie_list&url=%s)' % (sys.argv[0], urllib.quote_plus(link().trakt_watchlist % (link().trakt_key, link().trakt_user)))))
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_trakt_watchlist)' % (sys.argv[0])))
                 elif action == 'movies_imdb_watchlist':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_movie_list&url=%s)' % (sys.argv[0], urllib.quote_plus(link().imdb_watchlist % link().imdb_user))))
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_imdb_watchlist)' % (sys.argv[0])))
                 elif action == 'shows_trakt_collection':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_list&url=%s)' % (sys.argv[0], urllib.quote_plus(link().trakt_tv_collection % (link().trakt_key, link().trakt_user)))))
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_trakt_collection)' % (sys.argv[0])))
                 elif action == 'shows_trakt_watchlist':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_list&url=%s)' % (sys.argv[0], urllib.quote_plus(link().trakt_tv_watchlist % (link().trakt_key, link().trakt_user)))))
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_trakt_watchlist)' % (sys.argv[0])))
                 elif action == 'shows_imdb_watchlist':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_list&url=%s)' % (sys.argv[0], urllib.quote_plus(link().imdb_watchlist % link().imdb_user))))
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_imdb_watchlist)' % (sys.argv[0])))
+                elif action == 'folder_downloads':
+                    u = xbmc.translatePath(getSetting("downloads"))
+                elif action == 'folder_movie':
+                    u = xbmc.translatePath(getSetting("movie_library"))
+                elif action == 'folder_tv':
+                    u = xbmc.translatePath(getSetting("tv_library"))
+
+                if u == '': raise Exception()
 
                 cm.append((language(30410).encode("utf-8"), 'RunPlugin(%s?action=library_update)' % (sys.argv[0])))
+
+                if action == 'movies_search' or action == 'shows_search' or action == 'actors_movies' or action == 'actors_shows':
+                    cm.append((language(30412).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
+                    cm.append((language(30413).encode("utf-8"), 'RunPlugin(%s?action=playlist_open)' % (sys.argv[0])))
+                    replaceItems = True
 
                 item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
                 item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
                 item.setProperty("Fanart_Image", addonFanart)
-                item.addContextMenuItems(cm, replaceItems=False)
+                item.addContextMenuItems(cm, replaceItems=replaceItems)
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=True)
             except:
                 pass
+
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
 
     def pageList(self, pageList, action):
         if pageList == None: return
@@ -663,6 +657,8 @@ class index:
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=True)
             except:
                 pass
+
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
 
     def userList(self, userList, action):
         if userList == None: return
@@ -690,34 +686,7 @@ class index:
             except:
                 pass
 
-    def nextList(self, nextList):
-        try: next = nextList[0]['next']
-        except: return
-        if next == '': return
-        name, url, image = language(30361).encode("utf-8"), next, addonNext
-        sysurl = urllib.quote_plus(url)
-
-        if action.startswith('movies'):
-            u = '%s?action=movies&url=%s' % (sys.argv[0], sysurl)
-        elif action.startswith('shows'):
-            u = '%s?action=shows&url=%s' % (sys.argv[0], sysurl)
-
-        item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
-        item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
-        item.setProperty("Fanart_Image", addonFanart)
-        item.addContextMenuItems([], replaceItems=False)
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,isFolder=True)
-
-    def downloadList(self):
-        u = getSetting("downloads")
-        if u == '': return
-        name, image = language(30363).encode("utf-8"), addonDownloads
-
-        item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
-        item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
-        item.setProperty("Fanart_Image", addonFanart)
-        item.addContextMenuItems([], replaceItems=False)
-        xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,isFolder=True)
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
 
     def channelList(self, channelList):
         if channelList == None: return
@@ -758,11 +727,17 @@ class index:
             except:
                 pass
 
+        xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
+
     def movieList(self, movieList):
         if movieList == None: return
 
         autoplay = getSetting("autoplay")
         if PseudoTV == 'True': autoplay = 'true'
+
+        cacheToDisc = False
+        if action == 'movies_search': cacheToDisc = True
 
         getmeta = getSetting("meta")
         if action == 'movies_search': getmeta = ''
@@ -853,6 +828,23 @@ class index:
             except:
                 pass
 
+        try:
+            next = movieList[0]['next']
+            if next == '': raise Exception()
+            name, url, image = language(30361).encode("utf-8"), next, addonNext
+            u = '%s?action=movies&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+            item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
+            item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
+            item.setProperty("Fanart_Image", addonFanart)
+            item.addContextMenuItems([], replaceItems=False)
+            xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,isFolder=True)
+        except:
+            pass
+
+        xbmcplugin.setContent(int(sys.argv[1]), 'movies')
+        index().container_view('movies', {'skin.confluence' : 500})
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
+
     def showList(self, showList):
         if showList == None: return
 
@@ -928,6 +920,23 @@ class index:
             except:
                 pass
 
+        try:
+            next = showList[0]['next']
+            if next == '': raise Exception()
+            name, url, image = language(30361).encode("utf-8"), next, addonNext
+            u = '%s?action=shows&url=%s' % (sys.argv[0], urllib.quote_plus(url))
+            item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
+            item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
+            item.setProperty("Fanart_Image", addonFanart)
+            item.addContextMenuItems([], replaceItems=False)
+            xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,isFolder=True)
+        except:
+            pass
+
+        xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
+        index().container_view('tvshows', {'skin.confluence' : 500})
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+
     def seasonList(self, seasonList):
         if seasonList == None: return
 
@@ -990,6 +999,10 @@ class index:
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=True)
             except:
                 pass
+
+        xbmcplugin.setContent(int(sys.argv[1]), 'seasons')
+        index().container_view('seasons', {'skin.confluence' : 500})
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
 
     def episodeList(self, episodeList):
         if episodeList == None: return
@@ -1061,6 +1074,10 @@ class index:
             except:
                 pass
 
+        xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
+        index().container_view('episodes', {'skin.confluence' : 504})
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
+
     def moviesourceList(self, sourceList):
         if sourceList == None: return
 
@@ -1111,6 +1128,8 @@ class index:
                 xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=False)
             except:
                 pass
+
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
 
     def tvsourceList(self, sourceList):
         if sourceList == None: return
@@ -1167,6 +1186,8 @@ class index:
             except:
                 pass
 
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+
 class contextMenu:
     def item_queue(self):
         xbmc.executebuiltin('Action(Queue)')
@@ -1179,6 +1200,15 @@ class contextMenu:
 
     def addon_home(self):
         xbmc.executebuiltin('Container.Update(plugin://%s/,replace)' % (addonId))
+
+    def cache_clear(self):
+        try: StorageServer.StorageServer(addonFullId,1).delete('%')
+        except: pass
+        try: StorageServer.StorageServer(addonFullId,24).delete('%')
+        except: pass
+        try: StorageServer.StorageServer(addonFullId,720).delete('%')
+        except: pass
+        index().infoDialog(language(30312).encode("utf-8"))
 
     def view(self, content):
         try:
@@ -1378,6 +1408,24 @@ class contextMenu:
             xbmc.executebuiltin('UpdateLibrary(video)')
         if silent == False:
             index().infoDialog(language(30311).encode("utf-8"))
+
+    def library_preset_list(self, url):
+        if xbmc.getInfoLabel('Container.FolderPath').endswith('root_tools'):
+            yes = index().yesnoDialog(language(30353).encode("utf-8"), '')
+            if not yes: return
+
+        if url == 'trakt_collection':
+            self.library_movie_list(link().trakt_collection % (link().trakt_key, link().trakt_user))
+        elif url == 'trakt_watchlist':
+            self.library_movie_list(link().trakt_watchlist % (link().trakt_key, link().trakt_user))
+        elif url == 'imdb_watchlist':
+            self.library_movie_list(link().imdb_watchlist % link().imdb_user)
+        elif url == 'trakt_tv_collection':
+            self.library_tv_list(link().trakt_tv_collection % (link().trakt_key, link().trakt_user))
+        elif url == 'trakt_tv_watchlist':
+            self.library_tv_list(link().trakt_tv_watchlist % (link().trakt_key, link().trakt_user))
+        elif url == 'imdb_tv_watchlist':
+            self.library_tv_list(link().imdb_watchlist % link().imdb_user)
 
     def movie_library(self, name, title, year, imdb, url, check=False):
         try:
@@ -1644,7 +1692,8 @@ class root:
         elif not xbmcvfs.listdir(xbmc.translatePath(getSetting("tv_library")))[0] == []:
             rootList.append({'name': 30506, 'image': 'episodes_subscriptions.jpg', 'action': 'episodes_subscriptions'})
         rootList.append({'name': 30507, 'image': 'calendar_episodes.jpg', 'action': 'calendar_episodes'})
-        rootList.append({'name': 30508, 'image': 'root_search.jpg', 'action': 'root_search'})
+        rootList.append({'name': 30508, 'image': 'root_tools.jpg', 'action': 'root_tools'})
+        rootList.append({'name': 30509, 'image': 'root_search.jpg', 'action': 'root_search'})
         index().rootList(rootList)
 
     def movies(self):
@@ -1685,14 +1734,10 @@ class root:
         if not (link().trakt_user == '' or link().trakt_password == '') or not (link().imdb_user == ''):
             rootList.append({'name': 30567, 'image': 'userlists_movies.jpg', 'action': 'userlists_movies'})
             rootList.append({'name': 30568, 'image': 'userlists_shows.jpg', 'action': 'userlists_shows'})
-        index().rootList(rootList)
-
-        rootList = []
         rootList.append({'name': 30569, 'image': 'movies_favourites.jpg', 'action': 'movies_favourites'})
         rootList.append({'name': 30570, 'image': 'shows_favourites.jpg', 'action': 'shows_favourites'})
+        rootList.append({'name': 30571, 'image': 'folder_downloads.jpg', 'action': 'folder_downloads'})
         index().rootList(rootList)
-
-        index().downloadList()
 
     def search(self):
         rootList = []
@@ -1700,6 +1745,25 @@ class root:
         rootList.append({'name': 30582, 'image': 'shows_search.jpg', 'action': 'shows_search'})
         rootList.append({'name': 30583, 'image': 'actors_movies.jpg', 'action': 'actors_movies'})
         rootList.append({'name': 30584, 'image': 'actors_shows.jpg', 'action': 'actors_shows'})
+        index().rootList(rootList)
+
+    def tools(self):
+        rootList = []
+        rootList.append({'name': 30601, 'image': 'settings_open.jpg', 'action': 'settings_open'})
+        rootList.append({'name': 30602, 'image': 'settings_metahandler.jpg', 'action': 'settings_metahandler'})
+        rootList.append({'name': 30603, 'image': 'settings_urlresolver.jpg', 'action': 'settings_urlresolver'})
+        rootList.append({'name': 30604, 'image': 'cache_clear.jpg', 'action': 'cache_clear'})
+        rootList.append({'name': 30605, 'image': 'library_update.jpg', 'action': 'library_update'})
+        if not (link().trakt_user == '' or link().trakt_password == ''):
+            rootList.append({'name': 30606, 'image': 'movies_trakt_collection.jpg', 'action': 'library_trakt_collection'})
+            rootList.append({'name': 30607, 'image': 'shows_trakt_collection.jpg', 'action': 'library_tv_trakt_collection'})
+            rootList.append({'name': 30608, 'image': 'movies_trakt_watchlist.jpg', 'action': 'library_trakt_watchlist'})
+            rootList.append({'name': 30609, 'image': 'shows_trakt_watchlist.jpg', 'action': 'library_tv_trakt_watchlist'})
+        if not (link().imdb_user == ''):
+            rootList.append({'name': 30610, 'image': 'movies_imdb_watchlist.jpg', 'action': 'library_imdb_watchlist'})
+            rootList.append({'name': 30611, 'image': 'shows_imdb_watchlist.jpg', 'action': 'library_tv_imdb_watchlist'})
+        rootList.append({'name': 30612, 'image': 'folder_movie.jpg', 'action': 'folder_movie'})
+        rootList.append({'name': 30613, 'image': 'folder_tv.jpg', 'action': 'folder_tv'})
         index().rootList(rootList)
 
 
@@ -1723,7 +1787,7 @@ class link:
         self.imdb_search = 'http://akas.imdb.com/search/title?title_type=feature,tv_movie&sort=moviemeter,asc&count=25&start=1&title=%s'
         self.imdb_tv_genres = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=moviemeter,asc&count=25&start=1&genres=%s'
         self.imdb_tv_popular = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=moviemeter,asc&count=25&start=1'
-        self.imdb_tv_rating = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=user_rating,desc&count=25&start=1'
+        self.imdb_tv_rating = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=5000,&sort=user_rating,desc&count=25&start=1'
         self.imdb_tv_views = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=num_votes,desc&count=25&start=1'
         self.imdb_tv_active = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&production_status=active&sort=moviemeter,asc&count=25&start=1'
         self.imdb_tv_search = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=moviemeter,asc&count=25&start=1&title=%s'
@@ -1848,6 +1912,7 @@ class genres:
 
                 url = common.parseDOM(genre, "a", ret="href")[0]
                 url = re.compile('/genre/(.+?)/').findall(url)[0]
+                if url == 'documentary': raise Exception()
                 url = link().imdb_genres % url
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
@@ -2122,31 +2187,26 @@ class movies:
 
         if idx == False: return self.list
         index().movieList(self.list)
-        index().nextList(self.list)
 
     def popular(self):
         #self.list = self.imdb_list(link().imdb_popular)
         self.list = cache(self.imdb_list, link().imdb_popular)
         index().movieList(self.list)
-        index().nextList(self.list)
 
     def boxoffice(self):
         #self.list = self.imdb_list(link().imdb_boxoffice)
         self.list = cache(self.imdb_list, link().imdb_boxoffice)
         index().movieList(self.list)
-        index().nextList(self.list)
 
     def views(self):
         #self.list = self.imdb_list(link().imdb_views)
         self.list = cache(self.imdb_list, link().imdb_views)
         index().movieList(self.list)
-        index().nextList(self.list)
 
     def oscars(self):
         #self.list = self.imdb_list(link().imdb_oscars)
         self.list = cache(self.imdb_list, link().imdb_oscars)
         index().movieList(self.list)
-        index().nextList(self.list)
 
     def added(self):
         #self.list = self.ice_list()
@@ -2517,31 +2577,26 @@ class shows:
 
         if idx == False: return self.list
         index().showList(self.list)
-        index().nextList(self.list)
 
     def popular(self):
         #self.list = self.imdb_list(link().imdb_tv_popular)
         self.list = cache(self.imdb_list, link().imdb_tv_popular)
         index().showList(self.list)
-        index().nextList(self.list)
 
     def rating(self):
         #self.list = self.imdb_list(link().imdb_tv_rating)
         self.list = cache(self.imdb_list, link().imdb_tv_rating)
         index().showList(self.list)
-        index().nextList(self.list)
 
     def views(self):
         #self.list = self.imdb_list(link().imdb_tv_views)
         self.list = cache(self.imdb_list, link().imdb_tv_views)
         index().showList(self.list)
-        index().nextList(self.list)
 
     def active(self):
         #self.list = self.imdb_list(link().imdb_tv_active)
         self.list = cache(self.imdb_list, link().imdb_tv_active)
         index().showList(self.list)
-        index().nextList(self.list)
 
     def trending(self):
         #self.list = self.trakt_list(link().trakt_tv_trending % link().trakt_key)
@@ -2892,6 +2947,9 @@ class seasons:
             type = [i for i in type if any(x == i for x in ['Reality', 'Game Show', 'Talk Show'])]
             if not len(type) == 0: return
 
+            blocks = ['73141']
+            if tvdb in blocks: return
+
             networks = ['BBC One', 'BBC Two', 'BBC Three', 'BBC Four', 'CBBC', 'CBeebies', 'ITV', 'ITV1', 'ITV2', 'ITV3', 'ITV4', 'Channel 4', 'E4', 'More4', 'Channel 5', 'Sky1']
             try: network = common.parseDOM(result, "Network")[0]
             except:  network = ''
@@ -3233,9 +3291,12 @@ class episodes:
 
     def trakt_list(self, url, date='0'):
         try:
-            episodes = []
-            result = getUrl(url).result
+            post = urllib.urlencode({'username': link().trakt_user, 'password': link().trakt_password})
+
+            result = getUrl(url, post=post).result
             result = json.loads(result)
+
+            episodes = []
             for i in result: episodes += i['episodes']
         except:
             return
@@ -3424,7 +3485,7 @@ class resolver:
             player().run(content, name, url, imdb)
             return url
         except:
-            index().infoDialog(language(30313).encode("utf-8"))
+            index().infoDialog(language(30314).encode("utf-8"))
             return
 
     def run(self, name, title, year, imdb, tvdb, season, episode, show, show_alt, url):
@@ -3462,7 +3523,7 @@ class resolver:
             return url
         except:
             if not PseudoTV == 'True': return
-            index().infoDialog(language(30313).encode("utf-8"))
+            index().infoDialog(language(30314).encode("utf-8"))
             return
 
     def cleantitle_movie(self, title):

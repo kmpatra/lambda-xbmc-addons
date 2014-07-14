@@ -70,9 +70,10 @@
 	<string id="30309">Ajouté au dossier Films de Genesis</string>
 	<string id="30310">Ajouté au dossier TV de Genesis</string>
 	<string id="30311">Médiathèque Genesis mise à jour</string>
-	<string id="30312">Pas de sous-titres disponibles</string>
-	<string id="30313">Pas de stream disponible</string>
-	<string id="30314">Chargé en</string>
+	<string id="30312">Genesis cache cleared</string>
+	<string id="30313">Pas de sous-titres disponibles</string>
+	<string id="30314">Pas de stream disponible</string>
+	<string id="30315">Chargé en</string>
 	<!-- OK -->
 	<string id="30321">L'extension Youtube n'est pas installée.</string>
 	<string id="30322">Ce stream le requiert.</string>
@@ -92,13 +93,13 @@
 	<string id="30350">Ajouter uniquement les films non présents dans la médiathèque XBMC.</string>
 	<string id="30351">Ajouter uniquement les séries TV non présents dans la médiathèque XBMC.</string>
 	<string id="30352">Ceci évitera les doublons!</string>
-	<string id="30353">Poursuivre depuis</string>
-	<string id="30354">Poursuivre</string>
-	<string id="30355">Commencer du début</string>
+	<string id="30353">Êtes-vous sûr(e)?</string>
+	<string id="30354">Poursuivre depuis</string>
+	<string id="30355">Poursuivre</string>
+	<string id="30356">Commencer du début</string>
 	<!-- Misc -->
 	<string id="30361">Page suivante</string>
 	<string id="30362">Recherche</string>
-	<string id="30363">Téléchargements</string>
 	<!-- ContextMenu -->
 	<string id="30401">Mettre en fil d'attente</string>
 	<string id="30402">Télécharger vidéo</string>
@@ -131,7 +132,8 @@
 	<string id="30505">Derniers Films</string>
 	<string id="30506">Derniers Episodes</string>
 	<string id="30507">Calendrier TV</string>
-	<string id="30508">Rechercher</string>
+	<string id="30508">Outils</string>
+	<string id="30509">Rechercher</string>
 	<string id="30521">Genres</string>
 	<string id="30522">Box Office</string>
 	<string id="30523">Box Office par an</string>
@@ -159,8 +161,22 @@
 	<string id="30568">Listes Séries TV</string>
 	<string id="30569">Favoris Films</string>
 	<string id="30570">Favoris TV</string>
+	<string id="30571">Téléchargements</string>
 	<string id="30581">Films</string>
 	<string id="30582">Séries TV</string>
 	<string id="30583">Acteurs Films</string>
 	<string id="30584">Acteurs TV</string>
+	<string id="30601">Open Genesis settings...</string>
+	<string id="30602">Open Metahandler settings...</string>
+	<string id="30603">Open URLResolver settings...</string>
+	<string id="30604">Clear Genesis cache...</string>
+	<string id="30605">Update Genesis folders...</string>
+	<string id="30606">[B]TRAKT[/B] : Import Collection...</string>
+	<string id="30607">[B]TRAKT[/B] : Import TV Collection...</string>
+	<string id="30608">[B]TRAKT[/B] : Import Watchlist...</string>
+	<string id="30609">[B]TRAKT[/B] : Import TV Watchlist...</string>
+	<string id="30610">[B]IMDB[/B] : Import Watchlist...</string>
+	<string id="30611">[B]IMDB[/B] : Import TV Watchlist...</string>
+	<string id="30612">Genesis movie folder...</string>
+	<string id="30613">Genesis TV folder...</string>
 </strings>
