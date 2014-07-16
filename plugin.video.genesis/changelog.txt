@@ -1,4 +1,17 @@
 ------------------------
+Genesis v1.1.1 (16-Jul-14)
+------------------------
+
+- Tweaked library update.
+- Added Progress bar in library import/update.
+- Tweaked season listings.
+- Updated themes.
+- Updated translations.
+- Added Dutch translation.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.1.0 (14-Jul-14)
 ------------------------
 
