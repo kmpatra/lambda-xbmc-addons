@@ -255,6 +255,7 @@ class player(xbmc.Player):
         xbmc.Player.__init__(self)
 
     def run(self, content, name, url, imdb='0'):
+        xbmcgui.Dialog().ok(str(''), str(url), str(''))
         self.video_info(content, name, imdb)
 
         if self.folderPath.startswith(sys.argv[0]) or PseudoTV == 'True':
@@ -525,7 +526,7 @@ class index:
     def container_art(self):
         global addonArt
         addonArt = os.path.join(addonPath,'resources/art')
-        addonArt = os.path.join(addonArt,getSetting("appearance").lower())
+        addonArt = os.path.join(addonArt,getSetting("appearance").lower().replace(' ', ''))
 
         global addonIcon
         addonIcon = os.path.join(addonArt,'icon.png')
@@ -1444,7 +1445,7 @@ class contextMenu:
             pass
 
         if getSetting("update_library") == 'true' and not xbmc.getCondVisibility('Library.IsScanningVideo'):
-            xbmc.executebuiltin('UpdateLibrary(video,%s)' % tvLibrary)
+            xbmc.executebuiltin('UpdateLibrary(video)')
         if silent == False:
             index().infoDialog(language(30311).encode("utf-8"))
 
@@ -3794,8 +3795,12 @@ class resolver:
         filter += [i for i in self.sources if i['quality'] == 'CAM']
         self.sources = filter
 
+        if getSetting("play_hd") == 'false':
+            self.sources = [i for i in self.sources if not i['quality'] == 'HD']
+
         count = 1
         for i in range(len(self.sources)):
+            self.sources[i]['host'] = self.sources[i]['source']
             self.sources[i]['source'] = str('%02d' % count) + ' | [B]' + self.sources[i]['provider'].upper() + '[/B] | ' + self.sources[i]['source'].upper() + ' | ' + self.sources[i]['quality']
             count = count + 1
 
@@ -3820,17 +3825,35 @@ class resolver:
             return
 
     def sources_direct(self):
+        hd_blocks = ['Muchmovies', 'Firedrive', 'Movreel', 'Billionuploads', '180upload', 'Hugefiles']
+        hd_blocks = [i.lower() for i in hd_blocks]
+
+        if not (getSetting("realdedrid_user") == '' or getSetting("realdedrid_password") == ''):
+            try:
+                filter = []
+                rd_hosts = getUrl('https://real-debrid.com/api/hosters.php').result
+                rd_hosts = [i.split('.')[0].replace('"', '').lower() for i in rd_hosts.split(',')]
+                filter += [i for i in self.sources if i['quality'] == 'HD' and i['host'] in rd_hosts]
+                filter += [i for i in self.sources if i['quality'] == 'HD' and not i['host'] in hd_blocks]
+                filter += [i for i in self.sources if not i['quality'] == 'HD' and i['host'] in rd_hosts]
+                filter += [i for i in self.sources if not i['quality'] == 'HD' and not i['host'] in rd_hosts]
+                self.sources = filter
+            except:
+                pass
+        else:
+            self.sources = [i for i in self.sources if not i['host'] in hd_blocks]
+
+        if getSetting("autoplay_hd") == 'false':
+            self.sources = [i for i in self.sources if not i['quality'] == 'HD']
+
         u = None
 
         for i in self.sources:
             try:
-                if getSetting("autoplay_hd") == 'false' and i['quality'] == 'HD': raise Exception()
-                if i['provider'] == 'Icefilms' and i['quality'] == 'HD': raise Exception()
-                if i['provider'] == 'Muchmovies': raise Exception()
                 url = self.sources_resolve(i['url'], i['provider'])
                 xbmc.sleep(1000)
-                if url is None: raise Exception()
-                if u is None: u == url
+                if url == None: raise Exception()
+                if u == None: u = url
 
                 if url.startswith('http://'):
                     request = urllib2.Request(url.rsplit('|', 1)[0])

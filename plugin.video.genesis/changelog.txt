@@ -1,4 +1,18 @@
 ------------------------
+Genesis v1.1.2 (19-Jul-14)
+------------------------
+
+- Added RealDedrid support.
+- Added Deep Blue theme.
+- Added option for disabling HD Hosts.
+- Fixed issue with library update.
+- Tweaked Auto-play.
+- Tweaked addon's settings.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.1.1 (16-Jul-14)
 ------------------------
 

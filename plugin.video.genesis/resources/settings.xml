@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
 	<category label="30000">
-		<setting id="appearance" type="select" label="30001" values="4orbs|Aztec|Embossed" default="4orbs"/>
+		<setting id="appearance" type="select" label="30001" values="4orbs|Aztec|Deep Blue|Embossed" default="4orbs"/>
 		<setting type="sep"/>
 		<setting id="latest_episodes" type="select" label="30002" lvalues="30003|30004" default="0"/>
 		<setting type="sep"/>
 		<setting id="autoplay" type="bool" label="30005" default="false"/>
 		<setting id="autoplay_library" type="bool" label="30006" default="false"/>
-		<setting id="autoplay_hd" type="bool" label="30007" default="false"/>
-		<setting id="resume_playback" type="bool" label="30008" default="true"/>
-		<setting id="playback_info" type="bool" label="30009" default="false"/>
-		<setting label="30010" type="action" action="RunPlugin(plugin://plugin.video.genesis/?action=settings_urlresolver)"/>
+		<setting id="play_hd" type="bool" label="30007" default="true"/>
+		<setting id="autoplay_hd" type="bool" label="30008" default="false" enable="!eq(-1,false)"/>
+		<setting id="resume_playback" type="bool" label="30009" default="true"/>
+		<setting id="playback_info" type="bool" label="30010" default="false"/>
 		<setting type="sep"/>
 		<setting id="meta" type="bool" label="30011" default="true"/>
 		<setting id="fanart" type="bool" label="30012" default="true" enable="!eq(-1,false)"/>
-		<setting label="30013" type="action" action="RunPlugin(plugin://plugin.video.genesis/?action=settings_metahandler)" enable="!eq(-2,false)"/>
 		<setting type="sep"/>
-		<setting id="downloads" type="folder" label="30014" default=""/>
+		<setting id="downloads" type="folder" label="30013" default=""/>
 		<setting id="settings_version" type="text" default="" visible="false"/>
 	</category>
 
@@ -55,20 +54,21 @@
 	</category>
 
 	<category label="30070">
-		<setting id="hosthd1" type="select" label="30031" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="VK"/>
-		<setting id="hosthd2" type="select" label="30032" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="MoviesHD"/>
-		<setting id="hosthd3" type="select" label="30033" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Muchmovies"/>
-		<setting id="hosthd4" type="select" label="30034" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Shush"/>
-		<setting id="hosthd5" type="select" label="30035" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Glowgaze"/>
-		<setting id="hosthd6" type="select" label="30036" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Movietube"/>
-		<setting id="hosthd7" type="select" label="30037" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="YIFY"/>
-		<setting id="hosthd8" type="select" label="30038" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Noobroom"/>
-		<setting id="hosthd9" type="select" label="30039" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Firedrive"/>
-		<setting id="hosthd10" type="select" label="30040" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Movreel"/>
-		<setting id="hosthd11" type="select" label="30041" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Billionuploads"/>
-		<setting id="hosthd12" type="select" label="30042" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="180upload"/>
-		<setting id="hosthd13" type="select" label="30043" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Hugefiles"/>
-		<setting id="hosthd14" type="select" label="30044" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Einthusan"/>
+		<setting id="play_hd" type="bool" label="" visible="false" default="true"/>
+		<setting id="hosthd1" type="select" label="30031" enable="!eq(-1,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="VK"/>
+		<setting id="hosthd2" type="select" label="30032" enable="!eq(-2,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="MoviesHD"/>
+		<setting id="hosthd3" type="select" label="30033" enable="!eq(-3,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Muchmovies"/>
+		<setting id="hosthd4" type="select" label="30034" enable="!eq(-4,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Shush"/>
+		<setting id="hosthd5" type="select" label="30035" enable="!eq(-5,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Glowgaze"/>
+		<setting id="hosthd6" type="select" label="30036" enable="!eq(-6,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Movietube"/>
+		<setting id="hosthd7" type="select" label="30037" enable="!eq(-7,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="YIFY"/>
+		<setting id="hosthd8" type="select" label="30038" enable="!eq(-8,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Noobroom"/>
+		<setting id="hosthd9" type="select" label="30039" enable="!eq(-9,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Firedrive"/>
+		<setting id="hosthd10" type="select" label="30040" enable="!eq(-10,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Movreel"/>
+		<setting id="hosthd11" type="select" label="30041" enable="!eq(-11,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Billionuploads"/>
+		<setting id="hosthd12" type="select" label="30042" enable="!eq(-12,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="180upload"/>
+		<setting id="hosthd13" type="select" label="30043" enable="!eq(-13,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Hugefiles"/>
+		<setting id="hosthd14" type="select" label="30044" enable="!eq(-14,false)" values="-|VK|MoviesHD|Muchmovies|Shush|Glowgaze|Movietube|YIFY|Noobroom|Firedrive|Movreel|Billionuploads|180upload|Hugefiles|Einthusan" default="Einthusan"/>
 	</category>
 
 	<category label="30071">
@@ -112,6 +112,9 @@
 		<setting id="trakt_password" type="text" option="hidden" label="30102" default=""/>
 		<setting type="lsep" label="IMDb"/>
 		<setting id="imdb_user" type="text" label="30101" default=""/>
+		<setting type="lsep" label="RealDedrid"/>
+		<setting id="realdedrid_user" type="text" label="30101" default=""/>
+		<setting id="realdedrid_password" type="text" option="hidden" label="30102" default=""/>
 		<setting type="lsep" label="Noobroom"/>
 		<setting id="noobroom_mail" type="text" label="30103" default=""/>
 		<setting id="noobroom_password" type="text" option="hidden" label="30102" default=""/>

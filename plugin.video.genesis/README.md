@@ -12,6 +12,7 @@ Attributions
 - GKDecrypter by shani_08 | http://www.xbmchub.com
 - 4orbs theme by Marquerite | http://www.xbmchub.com
 - Aztec theme by azad720 | http://www.xbmchub.com
+- Deep Blue theme by rayw1986 | http://www.xbmchub.com
 - Embossed theme by jokster | http://www.xbmchub.com
 - Dutch translation by dynamic2 | http://www.xbmchub.com
 - French translation by dr1ss | http://www.xbmchub.com

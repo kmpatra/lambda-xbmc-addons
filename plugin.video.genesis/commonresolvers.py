@@ -18,7 +18,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import urllib,urllib2,re,os,cookielib,xbmc,xbmcgui
+import urllib,urllib2,re,os,cookielib,xbmc,xbmcplugin,xbmcgui,xbmcaddon
+try:    import json
+except: import simplejson as json
 try:    import CommonFunctions
 except: import commonfunctionsdummy as CommonFunctions
 common = CommonFunctions
@@ -68,6 +70,9 @@ class getUrl(object):
 class resolvers:
     def get(self, url):
         try:
+            debrid = self.realdebrid(url)
+            if not debrid == None: return debrid
+
             if '/vk.com' in url:                url = self.vk(url)
             elif 'mail.ru' in url:              url = self.mailru(url)
             elif 'videomega.tv' in url:         url = self.videomega(url)
@@ -90,6 +95,26 @@ class resolvers:
                 if not resolver.startswith('http://'): return
                 if not resolver == url: return resolver
 
+            return url
+        except:
+            return
+
+    def realdebrid(self, url):
+        try:
+            user, password = xbmcaddon.Addon().getSetting("realdedrid_user"), xbmcaddon.Addon().getSetting("realdedrid_password")
+            if (user == '' or password == ''): raise Exception()
+
+            login_data = urllib.urlencode({'user' : user, 'pass' : password})
+            login_link = 'https://real-debrid.com/ajax/login.php?%s' % login_data
+            result = getUrl(login_link, close=False).result
+            result = json.loads(result)
+            error = result['error']
+            if not error == 0: raise Exception()
+
+            url = 'https://real-debrid.com/ajax/unrestrict.php?link=%s' % url
+            result = getUrl(url).result
+            result = json.loads(result)
+            url = result['generated_links'][0][-1]
             return url
         except:
             return
