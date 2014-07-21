@@ -58,7 +58,7 @@
 	<string id="30124">Primary Language</string>
 	<string id="30125">Secondary Language</string>
 	<!-- Info -->
-	<string id="30301"></string>
+	<string id="30301"/>
 	<string id="30302"> is on by default</string>
 	<string id="30303">Added to Favourites</string>
 	<string id="30304">Removed from Favourites</string>
@@ -77,8 +77,7 @@
 	<string id="30321">YouTube addon is not installed.</string>
 	<string id="30322">This stream requires it.</string>
 	<string id="30323">You have disabled Auto update of TV Shows.</string>
-	<string id="30324">Your Trakt account isn't public.</string>
-	<string id="30325">Latest Episodes require it.</string>
+	<string id="30324">Latest Episodes require it.</string>
 	<!-- YesNo -->
 	<string id="30341">You have not set the download folder.</string>
 	<string id="30342">Do you want to set it now?</string>

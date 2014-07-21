@@ -255,7 +255,6 @@ class player(xbmc.Player):
         xbmc.Player.__init__(self)
 
     def run(self, content, name, url, imdb='0'):
-        xbmcgui.Dialog().ok(str(''), str(url), str(''))
         self.video_info(content, name, imdb)
 
         if self.folderPath.startswith(sys.argv[0]) or PseudoTV == 'True':
@@ -1659,7 +1658,7 @@ class subscriptions:
     def episodes(self):
         try:
             if not getSetting("service_update") == 'true':
-                index().okDialog(language(30323).encode("utf-8"), language(30325).encode("utf-8"))
+                index().okDialog(language(30323).encode("utf-8"), language(30324).encode("utf-8"))
 
             seasons, episodes = [], []
             shows = [os.path.join(tvLibrary, i) for i in xbmcvfs.listdir(tvLibrary)[0]]
@@ -2547,6 +2546,7 @@ class movies:
         try:
             url = 'http://www.icefilms.info/movies/added/1'
             result = getUrl(url).result
+            result = result.decode('iso-8859-1').encode('utf-8')
             movies = common.parseDOM(result, "span", attrs = { "class": "list" })[0]
             movies = movies.split('<br>')
         except:
@@ -3153,7 +3153,6 @@ class episodes:
         date = datetime.date(now.year, now.month, now.day) - datetime.timedelta(days=30)
         url = link().trakt_tv_user_calendar % (link().trakt_key, link().trakt_user, re.sub('[^0-9]', '', str(date)), '31')
         self.list = self.trakt_list(url)
-        if self.list == None: index().okDialog(language(30324).encode("utf-8"), language(30325).encode("utf-8"))
         try: self.list = self.list[::-1]
         except: pass
         index().episodeList(self.list)
