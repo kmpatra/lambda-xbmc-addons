@@ -3529,10 +3529,6 @@ class episodes:
                 except:
                     desc = '0'
 
-                print "---------------"
-                print name
-                print desc
-
                 self.list.append({'name': name, 'title': title, 'year': '0', 'imdb': '0', 'tvdb': '0', 'tvrage': tvrage, 'season': season, 'episode': num, 'show': show, 'show_alt': show, 'url': '0', 'image': thumb, 'date': date, 'genre': '0', 'plot': desc, 'next': next})
             except:
                 pass
