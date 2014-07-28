@@ -1,4 +1,21 @@
 ------------------------
+Genesis v1.2.0 (28-Jul-14)
+------------------------
+
+- Added "Latest movies" from SceneSource.
+- Added "Latest episodes" from SceneSource.
+- Removed "Latest movies" from Icefilms.
+- Removed "Latest episodes" from Library folder.
+- Added option for "Latest episodes" from Trakt.
+- Re-work of season listings.
+- Re-work of episode listings.
+- Fixed Noobroom source.
+- Fixed Shush source.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.1.3 (22-Jul-14)
 ------------------------
 

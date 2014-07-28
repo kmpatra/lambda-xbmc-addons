@@ -3,18 +3,16 @@
 	<!-- Settings -->
 	<string id="30000">Algemeen</string>
 	<string id="30001">Uiterlijk</string>
-	<string id="30002">Laatste Afleveringen</string>
-	<string id="30003">Trakt</string>
-	<string id="30004">TV Folder</string>
-	<string id="30005">Automatisch-afspelen</string>
-	<string id="30006">Automatisch-afspelen (Bibliotheek)</string>
-	<string id="30007">HD Hosts</string>
-	<string id="30008">HD Hosts in Automatisch-afspelen</string>
-	<string id="30009">Afspelen hervatten</string>
-	<string id="30010">Afspeel Info</string>
-	<string id="30011">Meta Data inschakelen</string>
-	<string id="30012">Fanart inschakelen</string>
-	<string id="30013">Downloads</string>
+	<string id="30002">Laatste Afleveringen van Trakt</string>
+	<string id="30003">Automatisch-afspelen</string>
+	<string id="30004">Automatisch-afspelen (Bibliotheek)</string>
+	<string id="30005">HD Hosts</string>
+	<string id="30006">HD Hosts in Automatisch-afspelen</string>
+	<string id="30007">Afspelen hervatten</string>
+	<string id="30008">Afspeel Info</string>
+	<string id="30009">Meta Data inschakelen</string>
+	<string id="30010">Fanart inschakelen</string>
+	<string id="30011">Downloads</string>
 	<string id="30031">Prioriteit 1</string>
 	<string id="30032">Prioriteit 2</string>
 	<string id="30033">Prioriteit 3</string>
@@ -76,8 +74,6 @@
 	<!-- OK -->
 	<string id="30321">YouTube addon staat niet geinstalleerd.</string>
 	<string id="30322">Deze stream vereist dat.</string>
-	<string id="30323">Je hebt Auto update geanuleerd voor Series.</string>
-	<string id="30324">Nieuwste Afleveringen vereisen dit.</string>
 	<!-- YesNo -->
 	<string id="30341">Je hebt geen Download-map ingesteld.</string>
 	<string id="30342">Wil je dat nu doen?</string>

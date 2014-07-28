@@ -3,18 +3,16 @@
 	<!-- Settings -->
 	<string id="30000">General</string>
 	<string id="30001">Appearance</string>
-	<string id="30002">Latest Episodes</string>
-	<string id="30003">Trakt</string>
-	<string id="30004">TV Folder</string>
-	<string id="30005">Auto-play</string>
-	<string id="30006">Auto-play (Library)</string>
-	<string id="30007">HD Hosts</string>
-	<string id="30008">HD Hosts in Auto-play</string>
-	<string id="30009">Resume Playback</string>
-	<string id="30010">Playback Info</string>
-	<string id="30011">Enable Meta Data</string>
-	<string id="30012">Enable Fanart</string>
-	<string id="30013">Downloads</string>
+	<string id="30002">Latest Episodes from Trakt</string>
+	<string id="30003">Auto-play</string>
+	<string id="30004">Auto-play (Library)</string>
+	<string id="30005">HD Hosts</string>
+	<string id="30006">HD Hosts in Auto-play</string>
+	<string id="30007">Resume Playback</string>
+	<string id="30008">Playback Info</string>
+	<string id="30009">Enable Meta Data</string>
+	<string id="30010">Enable Fanart</string>
+	<string id="30011">Downloads</string>
 	<string id="30031">Priority 1</string>
 	<string id="30032">Priority 2</string>
 	<string id="30033">Priority 3</string>
@@ -76,8 +74,6 @@
 	<!-- OK -->
 	<string id="30321">YouTube addon is not installed.</string>
 	<string id="30322">This stream requires it.</string>
-	<string id="30323">You have disabled Auto update of TV Shows.</string>
-	<string id="30324">Latest Episodes require it.</string>
 	<!-- YesNo -->
 	<string id="30341">You have not set the download folder.</string>
 	<string id="30342">Do you want to set it now?</string>

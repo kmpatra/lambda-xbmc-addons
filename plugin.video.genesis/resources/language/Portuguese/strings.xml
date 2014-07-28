@@ -3,18 +3,16 @@
 	<!-- Settings -->
 	<string id="30000">Geral</string>
 	<string id="30001">Aspecto</string>
-	<string id="30002">Últimos Episódios</string>
-	<string id="30003">Trakt</string>
-	<string id="30004">Pasta de Séries</string>
-	<string id="30005">Começar Automaticamente</string>
-	<string id="30006">Começar Automaticamente (Biblioteca)</string>
-	<string id="30007">Fontes HD</string>
-	<string id="30008">Fontes HD ao Começar Automaticamente</string>
-	<string id="30009">Resumir no play</string>
-	<string id="30010">Informação no play</string>
-	<string id="30011">Permitir Meta Data</string>
-	<string id="30012">Permitir fanart</string>
-	<string id="30013">Transferências</string>
+	<string id="30002">Últimos Episódios de Trakt</string>
+	<string id="30003">Começar Automaticamente</string>
+	<string id="30004">Começar Automaticamente (Biblioteca)</string>
+	<string id="30005">Fontes HD</string>
+	<string id="30006">Fontes HD ao Começar Automaticamente</string>
+	<string id="30007">Resumir no play</string>
+	<string id="30008">Informação no play</string>
+	<string id="30009">Permitir Meta Data</string>
+	<string id="30010">Permitir fanart</string>
+	<string id="30011">Transferências</string>
 	<string id="30031">Prioridade 1</string>
 	<string id="30032">Prioridade 2</string>
 	<string id="30033">Prioridade 3</string>
@@ -76,8 +74,6 @@
 	<!-- OK -->
 	<string id="30321">Addon do YouTube não está instalado.</string>
 	<string id="30322">Esta fonte precisa do mesmo.</string>
-	<string id="30323">Desactivou Actualização Automatica das Séries.</string>
-	<string id="30324">Últimos Episódios necessitam disso.</string>
 	<!-- YesNo -->
 	<string id="30341">Não configurou a pasta de transferências.</string>
 	<string id="30342">Quer configurar agora?</string>

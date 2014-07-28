@@ -3,18 +3,16 @@
 	<!-- Settings -->
 	<string id="30000">Général</string>
 	<string id="30001">Apparence</string>
-	<string id="30002">Derniers Episodes</string>
-	<string id="30003">Trakt</string>
-	<string id="30004">Dossier TV</string>
-	<string id="30005">Lecture AUTO</string>
-	<string id="30006">Lecture AUTO (Médiathèque)</string>
-	<string id="30007">Hébergeurs HD</string>
-	<string id="30008">Hébergeurs HD en Lecture AUTO</string>
-	<string id="30009">Poursuivre Lecture</string>
-	<string id="30010">Info Lecture</string>
-	<string id="30011">Activer Meta Data</string>
-	<string id="30012">Activer Fanart (Images)</string>
-	<string id="30013">Téléchargements</string>
+	<string id="30002">Derniers Episodes de Trakt</string>
+	<string id="30003">Lecture AUTO</string>
+	<string id="30004">Lecture AUTO (Médiathèque)</string>
+	<string id="30005">Hébergeurs HD</string>
+	<string id="30006">Hébergeurs HD en Lecture AUTO</string>
+	<string id="30007">Poursuivre Lecture</string>
+	<string id="30008">Info Lecture</string>
+	<string id="30009">Activer Meta Data</string>
+	<string id="30010">Activer Fanart (Images)</string>
+	<string id="30011">Téléchargements</string>
 	<string id="30031">Priorité 1</string>
 	<string id="30032">Priorité 2</string>
 	<string id="30033">Priorité 3</string>
@@ -76,8 +74,6 @@
 	<!-- OK -->
 	<string id="30321">L'extension Youtube n'est pas installée.</string>
 	<string id="30322">Ce stream le requiert.</string>
-	<string id="30323">Vous avez désactivé la MAJ Auto des Séries TV.</string>
-	<string id="30324">Derniers Episodes le requiert.</string>
 	<!-- YesNo -->
 	<string id="30341">Vous n'avez pas défini le dossier de téléchargement.</string>
 	<string id="30342">Voulez-vous le définir maintenant?</string>
