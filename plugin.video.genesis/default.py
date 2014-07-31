@@ -152,13 +152,14 @@ class main:
         elif action == 'library_tv_trakt_collection': contextMenu().library_preset_list('trakt_tv_collection')
         elif action == 'library_tv_trakt_watchlist':  contextMenu().library_preset_list('trakt_tv_watchlist')
         elif action == 'library_tv_imdb_watchlist':   contextMenu().library_preset_list('imdb_tv_watchlist')
-        elif action == 'autoplay_movie':              contextMenu().autoplay('movie', name, title, year, imdb, '', '', '', '', '', '')
-        elif action == 'autoplay_episode':            contextMenu().autoplay('episode', name, title, year, imdb, tvdb, tvrage, season, episode, show, show_alt)
+        elif action == 'toggle_movie_playback':       contextMenu().toggle_playback('movie', name, title, year, imdb, '', '', '', '', '', '')
+        elif action == 'toggle_episode_playback':     contextMenu().toggle_playback('episode', name, title, year, imdb, tvdb, tvrage, season, episode, show, show_alt)
         elif action == 'download':                    contextMenu().download(name, url, provider)
         elif action == 'trailer':                     contextMenu().trailer(name, url)
         elif action == 'shows_favourites':            favourites().shows()
         elif action == 'movies_favourites':           favourites().movies()
         elif action == 'movies':                      movies().get(url)
+        elif action == 'movies_userlist':             movies().get(url)
         elif action == 'movies_popular':              movies().popular()
         elif action == 'movies_boxoffice':            movies().boxoffice()
         elif action == 'movies_views':                movies().views()
@@ -170,6 +171,7 @@ class main:
         elif action == 'movies_imdb_watchlist':       movies().imdb_watchlist()
         elif action == 'movies_search':               movies().search(query)
         elif action == 'shows':                       shows().get(url)
+        elif action == 'shows_userlist':              shows().get(url)
         elif action == 'shows_popular':               shows().popular()
         elif action == 'shows_rating':                shows().rating()
         elif action == 'shows_views':                 shows().views()
@@ -533,20 +535,7 @@ class index:
         addonIcon = os.path.join(addonArt,'icon.png')
         global addonFanart
         addonFanart = os.path.join(addonArt,'fanart.jpg')
-        global addonGenres
-        addonGenres = os.path.join(addonArt,'genres_movies.jpg')
-        global addonTVGenres
-        addonTVGenres = os.path.join(addonArt,'genres_shows.jpg')
-        global addonYears
-        addonYears = os.path.join(addonArt,'years_movies.jpg')
-        global addonCalendar
-        addonCalendar = os.path.join(addonArt,'calendar_episodes.jpg')
-        global addonLists
-        addonLists = os.path.join(addonArt,'userlists_movies.jpg')
-        global addonNext
-        addonNext = os.path.join(addonArt,'item_next.jpg')
-        global addonNext2
-        addonNext2 = os.path.join(addonArt,'item_next2.jpg')
+        if getSetting("appearance") == '-': addonFanart = ''
 
     def container_data(self):
         if not xbmcvfs.exists(dataPath):
@@ -592,40 +581,65 @@ class index:
 
     def rootList(self, rootList):
         total = len(rootList)
+
+        cacheToDisc = False
+        if action == 'actors_movies' or action == 'actors_shows': cacheToDisc = True
+
         for i in rootList:
             try:
-                name = language(i['name']).encode("utf-8")
-                image = '%s/%s' % (addonArt, i['image'])
-                action = i['action']
-                u = '%s?action=%s' % (sys.argv[0], action)
+                try: name = language(i['name']).encode("utf-8")
+                except: name = i['name']
+
+                root = i['action']
+                u = '%s?action=%s' % (sys.argv[0], root)
+                try: u += '&url=%s' % urllib.quote_plus(i['url'])
+                except: pass
+
+                if i['image'].startswith('http://'):
+                    image = i['image']
+                elif getSetting("appearance") == '-':
+                    if root == 'episodes_added': image = 'DefaultRecentlyAddedEpisodes.png'
+                    elif root == 'movies_added': image = 'DefaultRecentlyAddedMovies.png'
+                    elif root == 'root_genesis': image = 'DefaultVideoPlaylists.png'
+                    elif root == 'root_tools': image = 'DefaultAddonProgram.png'
+                    elif root.startswith('movies') or root.endswith('_movies'): image = 'DefaultMovies.png'
+                    elif root.startswith('episodes') or root.endswith('_episodes'): image = 'DefaultTVShows.png'
+                    elif root.startswith('shows') or root.endswith('_shows'): image = 'DefaultTVShows.png'
+                    else: image = 'DefaultFolder.png'
+                else:
+                    image = '%s/%s' % (addonArt, i['image'])
 
                 cm = []
                 replaceItems = False
 
-                if action == 'movies_trakt_collection':
+                if root == 'movies_userlist':
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_movie_list&url=%s)' % (sys.argv[0], urllib.quote_plus(i['url']))))
+                elif root == 'shows_userlist':
+                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_list&url=%s)' % (sys.argv[0], urllib.quote_plus(i['url']))))
+                elif root == 'movies_trakt_collection':
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_trakt_collection)' % (sys.argv[0])))
-                elif action == 'movies_trakt_watchlist':
+                elif root == 'movies_trakt_watchlist':
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_trakt_watchlist)' % (sys.argv[0])))
-                elif action == 'movies_imdb_watchlist':
+                elif root == 'movies_imdb_watchlist':
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_imdb_watchlist)' % (sys.argv[0])))
-                elif action == 'shows_trakt_collection':
+                elif root == 'shows_trakt_collection':
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_trakt_collection)' % (sys.argv[0])))
-                elif action == 'shows_trakt_watchlist':
+                elif root == 'shows_trakt_watchlist':
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_trakt_watchlist)' % (sys.argv[0])))
-                elif action == 'shows_imdb_watchlist':
+                elif root == 'shows_imdb_watchlist':
                     cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_imdb_watchlist)' % (sys.argv[0])))
-                elif action == 'folder_downloads':
+                elif root == 'folder_downloads':
                     u = xbmc.translatePath(getSetting("downloads"))
-                elif action == 'folder_movie':
+                elif root == 'folder_movie':
                     u = movieLibrary
-                elif action == 'folder_tv':
+                elif root == 'folder_tv':
                     u = tvLibrary
 
                 if u == '': raise Exception()
 
                 cm.append((language(30410).encode("utf-8"), 'RunPlugin(%s?action=library_update)' % (sys.argv[0])))
 
-                if action == 'movies_search' or action == 'shows_search' or action == 'actors_movies' or action == 'actors_shows':
+                if root == 'movies_search' or root == 'shows_search' or root == 'actors_movies' or root == 'actors_shows':
                     cm.append((language(30412).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
                     cm.append((language(30413).encode("utf-8"), 'RunPlugin(%s?action=playlist_open)' % (sys.argv[0])))
                     replaceItems = True
@@ -638,61 +652,7 @@ class index:
             except:
                 pass
 
-        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
-
-    def pageList(self, pageList, action):
-        if pageList == None: return
-
-        total = len(pageList)
-        for i in pageList:
-            try:
-                name, url, image = i['name'], i['url'], i['image']
-                sysname, sysurl, sysimage = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image)
-
-                if action == 'movies':
-                    u = '%s?action=movies&url=%s' % (sys.argv[0], sysurl)
-                elif action == 'shows':
-                    u = '%s?action=shows&url=%s' % (sys.argv[0], sysurl)
-                elif action == 'calendar':
-                    u = '%s?action=episodes_calendar&url=%s' % (sys.argv[0], sysurl)
-
-                item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
-                item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
-                item.setProperty("Fanart_Image", addonFanart)
-                item.addContextMenuItems([], replaceItems=False)
-                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=True)
-            except:
-                pass
-
-        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
-
-    def userList(self, userList, action):
-        if userList == None: return
-
-        total = len(userList)
-        for i in userList:
-            try:
-                name, url, image = i['name'], i['url'], i['image']
-                sysname, sysurl, sysimage = urllib.quote_plus(name), urllib.quote_plus(url), urllib.quote_plus(image)
-
-                cm = []
-
-                if action == 'movies':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_movie_list&url=%s)' % (sys.argv[0], sysurl)))
-                    u = '%s?action=movies&url=%s' % (sys.argv[0], sysurl)
-                elif action == 'shows':
-                    cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_list&url=%s)' % (sys.argv[0], sysurl)))
-                    u = '%s?action=shows&url=%s' % (sys.argv[0], sysurl)
-
-                item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
-                item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
-                item.setProperty("Fanart_Image", addonFanart)
-                item.addContextMenuItems(cm, replaceItems=False)
-                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=True)
-            except:
-                pass
-
-        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+        xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
 
     def channelList(self, channelList):
         if channelList == None: return
@@ -718,7 +678,7 @@ class index:
                 meta = {'Label': title, 'Title': title, 'Studio': channel, 'Duration': '1440', 'Plot': plot}
 
                 cm = []
-                cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=autoplay_movie&name=%s&title=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear)))
+                cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=toggle_movie_playback&name=%s&title=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear)))
                 cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl)))
                 cm.append((language(30412).encode("utf-8"), 'RunPlugin(%s?action=settings_open)' % (sys.argv[0])))
                 cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=addon_home)' % (sys.argv[0])))
@@ -785,7 +745,7 @@ class index:
                     fanart = addonFanart
 
                 cm = []
-                cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=autoplay_movie&name=%s&title=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear)))
+                cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=toggle_movie_playback&name=%s&title=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear)))
 
                 if action == 'movies_favourites':
                     cm.append((language(30414).encode("utf-8"), 'Action(Info)'))
@@ -837,7 +797,8 @@ class index:
         try:
             next = movieList[0]['next']
             if next == '': raise Exception()
-            name, url, image = language(30361).encode("utf-8"), next, addonNext
+            name, url, image = language(30361).encode("utf-8"), next, os.path.join(addonArt,'item_next.jpg')
+            if getSetting("appearance") == '-': image = 'DefaultFolder.png'
             u = '%s?action=movies&url=%s' % (sys.argv[0], urllib.quote_plus(url))
             item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
             item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
@@ -929,7 +890,8 @@ class index:
         try:
             next = showList[0]['next']
             if next == '': raise Exception()
-            name, url, image = language(30361).encode("utf-8"), next, addonNext
+            name, url, image = language(30361).encode("utf-8"), next, os.path.join(addonArt,'item_next.jpg')
+            if getSetting("appearance") == '-': image = 'DefaultFolder.png'
             u = '%s?action=shows&url=%s' % (sys.argv[0], urllib.quote_plus(url))
             item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
             item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
@@ -1062,7 +1024,7 @@ class index:
                     fanart = addonFanart
 
                 cm = []
-                cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=autoplay_episode&name=%s&title=%s&imdb=%s&tvdb=%s&tvrage=%s&year=%s&season=%s&episode=%s&show=%s&show_alt=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, systvdb, systvrage, sysyear, sysseason, sysepisode, sysshow, sysshow_alt, sysurl)))
+                cm.append((language(30411).encode("utf-8"), 'RunPlugin(%s?action=toggle_episode_playback&name=%s&title=%s&imdb=%s&tvdb=%s&tvrage=%s&year=%s&season=%s&episode=%s&show=%s&show_alt=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysimdb, systvdb, systvrage, sysyear, sysseason, sysepisode, sysshow, sysshow_alt, sysurl)))
                 cm.append((language(30416).encode("utf-8"), 'Action(Info)'))
                 if getmeta == 'true': cm.append((language(30405).encode("utf-8"), 'RunPlugin(%s?action=metadata_episodes&imdb=%s&season=%s&episode=%s)' % (sys.argv[0], metaimdb, metaseason, metaepisode)))
                 if getmeta == 'true': cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_episodes&imdb=%s&season=%s&episode=%s)' % (sys.argv[0], metaimdb, metaseason, metaepisode)))
@@ -1084,7 +1046,8 @@ class index:
         try:
             next = episodeList[0]['next']
             if next == '': raise Exception()
-            name, url, image = language(30361).encode("utf-8"), next, addonNext2
+            name, url, image = language(30361).encode("utf-8"), next, os.path.join(addonArt,'item_next2.jpg')
+            if getSetting("appearance") == '-': image = 'DefaultFolder.png'
             u = '%s?action=episodes2&url=%s' % (sys.argv[0], urllib.quote_plus(url))
             item = xbmcgui.ListItem(name, iconImage="DefaultFolder.png", thumbnailImage=image)
             item.setInfo( type="Video", infoLabels={ "Label": name, "Title": name, "Plot": addonDesc } )
@@ -1641,18 +1604,24 @@ class contextMenu:
             sys.exit()
             return
 
-    def autoplay(self, content, name, title, year, imdb, tvdb, tvrage, season, episode, show, show_alt):
+    def toggle_playback(self, content, name, title, year, imdb, tvdb, tvrage, season, episode, show, show_alt):
         if content == 'movie':
             meta = {'title': xbmc.getInfoLabel('ListItem.title'), 'originaltitle': xbmc.getInfoLabel('ListItem.originaltitle'), 'year': xbmc.getInfoLabel('ListItem.year'), 'genre': xbmc.getInfoLabel('ListItem.genre'), 'director': xbmc.getInfoLabel('ListItem.director'), 'country': xbmc.getInfoLabel('ListItem.country'), 'rating': xbmc.getInfoLabel('ListItem.rating'), 'votes': xbmc.getInfoLabel('ListItem.votes'), 'mpaa': xbmc.getInfoLabel('ListItem.mpaa'), 'duration': xbmc.getInfoLabel('ListItem.duration'), 'trailer': xbmc.getInfoLabel('ListItem.trailer'), 'writer': xbmc.getInfoLabel('ListItem.writer'), 'studio': xbmc.getInfoLabel('ListItem.studio'), 'tagline': xbmc.getInfoLabel('ListItem.tagline'), 'plotoutline': xbmc.getInfoLabel('ListItem.plotoutline'), 'plot': xbmc.getInfoLabel('ListItem.plot')}
             label, poster, fanart = xbmc.getInfoLabel('ListItem.label'), xbmc.getInfoLabel('ListItem.icon'), xbmc.getInfoLabel('ListItem.Property(Fanart_Image)')
             sysname, systitle, sysyear, sysimdb = urllib.quote_plus(name), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb)
-            u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&url=play://' % (sys.argv[0], sysname, systitle, sysyear, sysimdb)
+            u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb)
 
         elif content == 'episode':
             meta = {'title': xbmc.getInfoLabel('ListItem.title'), 'tvshowtitle': xbmc.getInfoLabel('ListItem.tvshowtitle'), 'season': xbmc.getInfoLabel('ListItem.season'), 'episode': xbmc.getInfoLabel('ListItem.episode'), 'writer': xbmc.getInfoLabel('ListItem.writer'), 'director': xbmc.getInfoLabel('ListItem.director'), 'rating': xbmc.getInfoLabel('ListItem.rating'), 'duration': xbmc.getInfoLabel('ListItem.duration'), 'premiered': xbmc.getInfoLabel('ListItem.premiered'), 'plot': xbmc.getInfoLabel('ListItem.plot')}
             label, poster, fanart = xbmc.getInfoLabel('ListItem.label'), xbmc.getInfoLabel('ListItem.icon'), xbmc.getInfoLabel('ListItem.Property(Fanart_Image)')
             sysname, systitle, sysyear, sysimdb, systvdb, systvrage, sysseason, sysepisode, sysshow, sysshow_alt = urllib.quote_plus(name), urllib.quote_plus(title), urllib.quote_plus(year), urllib.quote_plus(imdb), urllib.quote_plus(tvdb), urllib.quote_plus(tvrage), urllib.quote_plus(season), urllib.quote_plus(episode), urllib.quote_plus(show), urllib.quote_plus(show_alt)
-            u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tvdb=%s&tvrage=%s&season=%s&episode=%s&show=%s&show_alt=%s&url=play://' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, systvdb, systvrage, sysseason, sysepisode, sysshow, sysshow_alt)
+            u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&tvdb=%s&tvrage=%s&season=%s&episode=%s&show=%s&show_alt=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, systvdb, systvrage, sysseason, sysepisode, sysshow, sysshow_alt)
+
+        autoplay = getSetting("autoplay")
+        if not xbmc.getInfoLabel('Container.FolderPath').startswith(sys.argv[0]):
+            autoplay = getSetting("autoplay_library")
+        if autoplay == 'false': u += '&url=direct://'
+        else: u += '&url=dialog://'
 
         playlist = xbmc.PlayList(xbmc.PLAYLIST_VIDEO)
         playlist.clear()
@@ -1855,7 +1824,8 @@ class actors:
         if not (self.query is None or self.query == ''):
             self.query = link().imdb_actors_search % urllib.quote_plus(self.query)
             self.list = self.imdb_list(self.query)
-            index().pageList(self.list, 'movies')
+            for i in range(0, len(self.list)): self.list[i].update({'action': 'movies'})
+            index().rootList(self.list)
 
     def shows(self, query=None):
         if query is None:
@@ -1865,7 +1835,8 @@ class actors:
         if not (self.query is None or self.query == ''):
             self.query = link().imdb_actors_search % urllib.quote_plus(self.query)
             self.list = self.imdb_list(self.query)
-            index().pageList(self.list, 'shows')
+            for i in range(0, len(self.list)): self.list[i].update({'action': 'shows'})
+            index().rootList(self.list)
 
     def imdb_list(self, url):
         try:
@@ -1909,12 +1880,14 @@ class genres:
     def movies(self):
         #self.list = self.imdb_list()
         self.list = cache3(self.imdb_list)
-        index().pageList(self.list, 'movies')
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'genres_movies.jpg', 'action': 'movies'})
+        index().rootList(self.list)
 
     def shows(self):
         #self.list = self.imdb_list2()
         self.list = cache3(self.imdb_list2)
-        index().pageList(self.list, 'shows')
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'genres_shows.jpg', 'action': 'shows'})
+        index().rootList(self.list)
 
     def imdb_list(self):
         try:
@@ -1937,9 +1910,7 @@ class genres:
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
-                image = addonGenres.encode('utf-8')
-
-                self.list.append({'name': name, 'url': url, 'image': image})
+                self.list.append({'name': name, 'url': url})
             except:
                 pass
 
@@ -1966,9 +1937,7 @@ class genres:
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
-                image = addonTVGenres.encode('utf-8')
-
-                self.list.append({'name': name, 'url': url, 'image': image})
+                self.list.append({'name': name, 'url': url})
             except:
                 pass
 
@@ -1980,7 +1949,8 @@ class years:
 
     def movies(self):
         self.list = self.imdb_list()
-        index().pageList(self.list, 'movies')
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'years_movies.jpg', 'action': 'movies'})
+        index().rootList(self.list)
 
     def imdb_list(self):
         year = (datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y")
@@ -1989,8 +1959,7 @@ class years:
             name = str(i).encode('utf-8')
             url = link().imdb_years % (str(i), str(i))
             url = url.encode('utf-8')
-            image = addonYears.encode('utf-8')
-            self.list.append({'name': name, 'url': url, 'image': image})
+            self.list.append({'name': name, 'url': url})
 
         return self.list
 
@@ -2000,7 +1969,8 @@ class calendar:
 
     def episodes(self):
         self.list = self.trakt_list()
-        index().pageList(self.list, 'calendar')
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'calendar_episodes.jpg', 'action': 'episodes_calendar'})
+        index().rootList(self.list)
 
     def trakt_list(self):
         now = datetime.datetime.utcnow() - datetime.timedelta(hours = 5)
@@ -2010,8 +1980,7 @@ class calendar:
             date = today - datetime.timedelta(days=i)
             date = str(date)
             date = date.encode('utf-8')
-            image = addonCalendar.encode('utf-8')
-            self.list.append({'name': date, 'url': date, 'image': image})
+            self.list.append({'name': date, 'url': date})
 
         return self.list
 
@@ -2022,17 +1991,18 @@ class userlists:
     def movies(self):
         if not (link().trakt_user == '' or link().trakt_password == ''): self.trakt_list()
         if not (link().imdb_user == ''): self.imdb_list()
-        index().userList(self.list, 'movies')
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'userlists_movies.jpg', 'action': 'movies_userlist'})
+        index().rootList(self.list)
 
     def shows(self):
         if not (link().trakt_user == '' or link().trakt_password == ''): self.trakt_list()
         if not (link().imdb_user == ''): self.imdb_list()
-        index().userList(self.list, 'shows')
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'userlists_movies.jpg', 'action': 'shows_userlist'})
+        index().rootList(self.list)
 
     def trakt_list(self):
         post = urllib.urlencode({'username': link().trakt_user, 'password': link().trakt_password})
         info = (link().trakt_key, link().trakt_user)
-        image = addonLists.encode('utf-8')
 
         try:
             userlists = []
@@ -2052,15 +2022,13 @@ class userlists:
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'image': image})
+                self.list.append({'name': name, 'url': url})
             except:
                 pass
 
         return self.list
 
     def imdb_list(self):
-        image = addonLists.encode('utf-8')
-
         try:
             userlists = []
             result = getUrl(link().imdb_userlists % link().imdb_user).result
@@ -2080,7 +2048,7 @@ class userlists:
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
-                self.list.append({'name': name, 'url': url, 'image': image})
+                self.list.append({'name': name, 'url': url})
             except:
                 pass
 
@@ -3796,7 +3764,9 @@ class resolver:
             elif not xbmc.getInfoLabel('Container.FolderPath').startswith(sys.argv[0]):
                 autoplay = getSetting("autoplay_library")
 
-            if url == 'play://':
+            if url == 'dialog://':
+                url = self.sources_dialog()
+            elif url == 'direct://':
                 url = self.sources_direct()
             elif not autoplay == 'true':
                 url = self.sources_dialog()

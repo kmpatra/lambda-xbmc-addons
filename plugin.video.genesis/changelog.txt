@@ -1,4 +1,16 @@
 ------------------------
+Genesis v1.2.1 (31-Jul-14)
+------------------------
+
+- Added blank theme.
+- Fixed issues with themes.
+- Re-work of various listings.
+- Replaced "Auto-play" context menu with "Toggle playback".
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.2.0 (28-Jul-14)
 ------------------------
 
