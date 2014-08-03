@@ -115,7 +115,14 @@
 	<string id="30418">Set TV Shows view</string>
 	<string id="30419">Set Seasons view</string>
 	<string id="30420">Set Episodes view</string>
-	<string id="30421">Home...</string>
+	<string id="30421">Trakt Manager</string>
+	<string id="30422">Add to Collection</string>
+	<string id="30423">Remove from Collection</string>
+	<string id="30424">Add to Watchlist</string>
+	<string id="30425">Remove from Watchlist</string>
+	<string id="30426">Add to new List</string>
+	<string id="30427">Add to</string>
+	<string id="30428">Remove from</string>
 	<!-- Description -->
 	<string id="30450">The origins of streaming</string>
 	<!-- Labels -->

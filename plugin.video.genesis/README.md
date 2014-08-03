@@ -16,6 +16,7 @@ Attributions
 - Embossed theme by jokster | http://www.xbmchub.com
 - Dutch translation by dynamic2 | http://www.xbmchub.com
 - French translation by dr1ss | http://www.xbmchub.com
+- Hebrew translation by finalmakerr | http://www.xbmchub.com
 - Portuguese translation by Mafarricos | http://www.xbmchub.com
 
 

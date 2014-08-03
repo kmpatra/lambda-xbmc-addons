@@ -115,7 +115,14 @@
 	<string id="30418">Définir vue Séries TV</string>
 	<string id="30419">Définir vue Saisons</string>
 	<string id="30420">Définir vue Episodes</string>
-	<string id="30421">Accueil...</string>
+	<string id="30421">Trakt Manager</string>
+	<string id="30422">Add to Collection</string>
+	<string id="30423">Remove from Collection</string>
+	<string id="30424">Add to Watchlist</string>
+	<string id="30425">Remove from Watchlist</string>
+	<string id="30426">Add to new List</string>
+	<string id="30427">Add to</string>
+	<string id="30428">Remove from</string>
 	<!-- Description -->
 	<string id="30450">Les origines du streaming</string>
 	<!-- Labels -->
