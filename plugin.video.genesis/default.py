@@ -122,9 +122,9 @@ class main:
         elif action == 'view_tvshows':                contextMenu().view('tvshows')
         elif action == 'view_seasons':                contextMenu().view('seasons')
         elif action == 'view_episodes':               contextMenu().view('episodes')
+        elif action == 'cache_clear':                 contextMenu().cache_clear()
         elif action == 'playlist_open':               contextMenu().playlist_open()
         elif action == 'settings_open':               contextMenu().settings_open()
-        elif action == 'cache_clear':                 contextMenu().cache_clear()
         elif action == 'settings_urlresolver':        contextMenu().settings_open('script.module.urlresolver')
         elif action == 'settings_metahandler':        contextMenu().settings_open('script.module.metahandler')
         elif action == 'favourite_movie_add':         contextMenu().favourite_add(favData, name, url, image, imdb, year, refresh=True)
@@ -750,7 +750,8 @@ class index:
                 if getmeta == 'true' and not action == 'movies_search':
                     cm.append((language(30405).encode("utf-8"), 'RunPlugin(%s?action=metadata_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
                     cm.append((playcountMenu, 'RunPlugin(%s?action=playcount_movies&imdb=%s)' % (sys.argv[0], metaimdb)))
-                cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=trakt_manager&name=%s&imdb=%s)' % (sys.argv[0], sysname, sysimdb)))
+                if not (getSetting("trakt_user") == '' or getSetting("trakt_password") == ''):
+                    cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=trakt_manager&name=%s&imdb=%s)' % (sys.argv[0], sysname, sysimdb)))
                 cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_movie_add&name=%s&title=%s&year=%s&imdb=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, sysurl)))
                 if action == 'movies_favourites':
                     cm.append((language(30408).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_delete&name=%s&url=%s)' % (sys.argv[0], systitle, sysurl)))
@@ -836,7 +837,8 @@ class index:
                 cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s)' % (sys.argv[0], sysname)))
                 if getmeta == 'true' and not action == 'shows_search':
                     cm.append((language(30405).encode("utf-8"), 'RunPlugin(%s?action=metadata_tvshows&imdb=%s)' % (sys.argv[0], metaimdb)))
-                cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=trakt_tv_manager&name=%s&imdb=%s)' % (sys.argv[0], sysname, sysimdb)))
+                if not (getSetting("trakt_user") == '' or getSetting("trakt_password") == ''):
+                    cm.append((language(30421).encode("utf-8"), 'RunPlugin(%s?action=trakt_tv_manager&name=%s&imdb=%s)' % (sys.argv[0], sysname, sysimdb)))
                 cm.append((language(30409).encode("utf-8"), 'RunPlugin(%s?action=library_tv_add&name=%s&year=%s&imdb=%s&url=%s)' % (sys.argv[0], sysname, sysyear, sysimdb, sysurl)))
                 if action == 'shows_favourites':
                     cm.append((language(30408).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_delete&name=%s&url=%s)' % (sys.argv[0], sysname, sysurl))) 
@@ -1149,12 +1151,6 @@ class contextMenu:
     def item_queue(self):
         xbmc.executebuiltin('Action(Queue)')
 
-    def playlist_open(self):
-        xbmc.executebuiltin('ActivateWindow(VideoPlaylist)')
-
-    def settings_open(self, id=addonId):
-        xbmc.executebuiltin('Addon.OpenSettings(%s)' % id)
-
     def cache_clear(self):
         try: StorageServer.StorageServer(addonFullId,1).delete('%')
         except: pass
@@ -1163,6 +1159,12 @@ class contextMenu:
         try: StorageServer.StorageServer(addonFullId,720).delete('%')
         except: pass
         index().infoDialog(language(30312).encode("utf-8"))
+
+    def playlist_open(self):
+        xbmc.executebuiltin('ActivateWindow(VideoPlaylist)')
+
+    def settings_open(self, id=addonId):
+        xbmc.executebuiltin('Addon.OpenSettings(%s)' % id)
 
     def view(self, content):
         try:
@@ -1819,7 +1821,7 @@ class link:
         self.imdb_actors_search = 'http://www.imdb.com/search/name?count=100&name=%s'
         self.imdb_actors = 'http://m.imdb.com/name/nm%s/filmotype/%s'
         self.imdb_userlists = 'http://akas.imdb.com/user/ur%s/lists?tab=all&sort=modified:desc&filter=titles'
-        self.imdb_watchlist ='http://akas.imdb.com/user/ur%s/watchlist?view=detail&count=100&sort=title:asc&start=1'
+        self.imdb_watchlist ='http://akas.imdb.com/user/ur%s/watchlist?sort=alpha,asc&mode=detail&page=1'
         self.imdb_list ='http://akas.imdb.com/list/%s/?view=detail&count=100&sort=listorian:asc&start=1'
         self.imdb_user = getSetting("imdb_user").replace('ur', '')
 
@@ -2202,7 +2204,7 @@ class movies:
 
     def get(self, url, idx=True):
         if url == link().imdb_watchlist % link().imdb_user:
-            self.list = self.imdb_list3(url)
+            self.list = self.imdb_list4(url)
         elif url.startswith(link().imdb_base) or url.startswith(link().imdb_akas):
             #self.list = self.imdb_list(url)
             self.list = cache(self.imdb_list, url)
@@ -2260,7 +2262,7 @@ class movies:
         index().movieList(self.list)
 
     def imdb_watchlist(self):
-        self.list = self.imdb_list3(link().imdb_watchlist % link().imdb_user)
+        self.list = self.imdb_list4(link().imdb_watchlist % link().imdb_user)
         self.list = sorted(self.list, key=itemgetter('name'))
         index().movieList(self.list)
 
@@ -2470,6 +2472,85 @@ class movies:
 
         return self.list
 
+    def imdb_list4(self, url):
+        try:
+            URL = url.replace(link().imdb_base, link().imdb_akas)
+            url = 'http://9proxy.in/b.php?u=%s&b=28' % urllib.quote_plus(urllib.unquote_plus(url))
+            result = getUrl(url, referer=url).result
+
+            try:
+                threads = []
+                pages = common.parseDOM(result, "div", attrs = { "class": "desc" })
+                pages = [re.compile('of (\d+) titles').findall(i)[0] for i in pages][0]
+                pages = (int(pages)+100)/100
+                for i in range(1, int(pages)):
+                    self.data.append('')
+                    moviesUrl = URL.replace('&page=1', '&page=%s' % str(i+1))
+                    moviesUrl = 'http://9proxy.in/b.php?u=%s&b=28' % urllib.quote_plus(urllib.unquote_plus(moviesUrl))
+                    threads.append(Thread(self.thread, moviesUrl, i-1))
+                [i.start() for i in threads]
+                [i.join() for i in threads]
+                for i in self.data: result += i
+            except:
+                pass
+
+            result = result.replace('\n','')
+            movies = common.parseDOM(result, "div", attrs = { "class": "lister-item mode-detail" })
+        except:
+            return
+
+        for movie in movies:
+            try:
+                title = common.parseDOM(movie, "h3", attrs = { "class": "lister-item-header" })[0]
+                title = common.parseDOM(title, "a")[0]
+                title = common.replaceHTMLCodes(title)
+                title = title.encode('utf-8')
+
+                year = common.parseDOM(movie, "span", attrs = { "class": "lister-item-year.+?" })[0]
+                year = re.compile('[(](\d{4})[)]').findall(year)[-1]
+                year = year.encode('utf-8')
+
+                if int(year) > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y")): raise Exception()
+
+                name = '%s (%s)' % (title, year)
+                try: name = name.encode('utf-8')
+                except: pass
+
+                imdb = common.parseDOM(movie, "img", ret="data-tconst")[0]
+                imdb = re.sub('[^0-9]', '', str(imdb))
+                imdb = imdb.encode('utf-8')
+
+                url = link().imdb_title % imdb
+                url = common.replaceHTMLCodes(url)
+                url = url.encode('utf-8')
+
+                try:
+                    image = common.parseDOM(movie, "img", ret="src")[0]
+                    image = urllib.unquote_plus(image)
+                    image = image[image.find('?') + 1:].split('&')
+                    image = [i.split('=', 1)[-1] for i in image if i.startswith('u=')][0]
+                    image = 'http' + image.split('http' , 1)[-1]
+                    if not ('_SX' in image or '_SY' in image): raise Exception()
+                    image = image.rsplit('_SX', 1)[0].rsplit('_SY', 1)[0] + '_SX500.' + image.rsplit('.', 1)[-1]
+                except:
+                    image = link().imdb_image
+                image = common.replaceHTMLCodes(image)
+                image = image.encode('utf-8')
+
+                try:
+                    plot = common.parseDOM(movie, "p", attrs = { "class": "" })[0]
+                    plot = plot.rsplit('<span>', 1)[0].rsplit('<a href', 1)[0].strip()
+                    plot = common.replaceHTMLCodes(plot)
+                    plot = plot.encode('utf-8')
+                except:
+                    plot = ''
+
+                self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'tvrage': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'url': url, 'image': image, 'date': '0', 'genre': '0', 'plot': plot})
+            except:
+                pass
+
+        return self.list
+
     def trakt_list(self, url):
         try:
             post = urllib.urlencode({'username': link().trakt_user, 'password': link().trakt_password})
@@ -2645,7 +2726,7 @@ class shows:
 
     def get(self, url, idx=True):
         if url == link().imdb_watchlist % link().imdb_user:
-            self.list = self.imdb_list3(url)
+            self.list = self.imdb_list4(url)
         elif url.startswith(link().imdb_base) or url.startswith(link().imdb_akas):
             #self.list = self.imdb_list(url)
             self.list = cache(self.imdb_list, url)
@@ -2695,7 +2776,7 @@ class shows:
         index().showList(self.list)
 
     def imdb_watchlist(self):
-        self.list = self.imdb_list3(link().imdb_watchlist % link().imdb_user)
+        self.list = self.imdb_list4(link().imdb_watchlist % link().imdb_user)
         self.list = sorted(self.list, key=itemgetter('name'))
         index().showList(self.list)
 
@@ -2887,6 +2968,83 @@ class shows:
                     plot = plot.encode('utf-8')
                 except:
                     plot = '0'
+
+                self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'genre': '0', 'plot': plot})
+            except:
+                pass
+
+        return self.list
+
+    def imdb_list4(self, url):
+        try:
+            URL = url.replace(link().imdb_base, link().imdb_akas)
+            url = 'http://9proxy.in/b.php?u=%s&b=28' % urllib.quote_plus(urllib.unquote_plus(url))
+            result = getUrl(url, referer=url).result
+
+            try:
+                threads = []
+                pages = common.parseDOM(result, "div", attrs = { "class": "desc" })
+                pages = [re.compile('of (\d+) titles').findall(i)[0] for i in pages][0]
+                pages = (int(pages)+100)/100
+                for i in range(1, int(pages)):
+                    self.data.append('')
+                    showsUrl = URL.replace('&page=1', '&page=%s' % str(i+1))
+                    showsUrl = 'http://9proxy.in/b.php?u=%s&b=28' % urllib.quote_plus(urllib.unquote_plus(showsUrl))
+                    threads.append(Thread(self.thread, showsUrl, i-1))
+                [i.start() for i in threads]
+                [i.join() for i in threads]
+                for i in self.data: result += i
+            except:
+                pass
+
+            result = result.replace('\n','')
+            shows = common.parseDOM(result, "div", attrs = { "class": "lister-item mode-detail" })
+        except:
+            return
+
+        for show in shows:
+            try:
+                name = common.parseDOM(show, "h3", attrs = { "class": "lister-item-header" })[0]
+                name = common.parseDOM(name, "a")[0]
+                name = common.replaceHTMLCodes(name)
+                name = name.encode('utf-8')
+
+                year = common.parseDOM(show, "span", attrs = { "class": "lister-item-year.+?" })[0]
+                year = re.compile('[(](.+?)[)]').findall(year)[-1]
+                if year.isdigit(): raise Exception()
+                year = re.compile('(\d{4}).+').findall(year)[0]
+                year = year.encode('utf-8')
+
+                if int(year) > int((datetime.datetime.utcnow() - datetime.timedelta(hours = 5)).strftime("%Y")): raise Exception()
+
+                imdb = common.parseDOM(show, "img", ret="data-tconst")[0]
+                imdb = re.sub('[^0-9]', '', str(imdb))
+                imdb = imdb.encode('utf-8')
+
+                url = link().imdb_title % imdb
+                url = common.replaceHTMLCodes(url)
+                url = url.encode('utf-8')
+
+                try:
+                    image = common.parseDOM(show, "img", ret="src")[0]
+                    image = urllib.unquote_plus(image)
+                    image = image[image.find('?') + 1:].split('&')
+                    image = [i.split('=', 1)[-1] for i in image if i.startswith('u=')][0]
+                    image = 'http' + image.split('http' , 1)[-1]
+                    if not ('_SX' in image or '_SY' in image): raise Exception()
+                    image = image.rsplit('_SX', 1)[0].rsplit('_SY', 1)[0] + '_SX500.' + image.rsplit('.', 1)[-1]
+                except:
+                    image = link().imdb_image
+                image = common.replaceHTMLCodes(image)
+                image = image.encode('utf-8')
+
+                try:
+                    plot = common.parseDOM(show, "p", attrs = { "class": "" })[0]
+                    plot = plot.rsplit('<span>', 1)[0].rsplit('<a href', 1)[0].strip()
+                    plot = common.replaceHTMLCodes(plot)
+                    plot = plot.encode('utf-8')
+                except:
+                    plot = ''
 
                 self.list.append({'name': name, 'url': url, 'image': image, 'year': year, 'imdb': imdb, 'genre': '0', 'plot': plot})
             except:

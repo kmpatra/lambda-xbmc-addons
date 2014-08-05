@@ -1,4 +1,14 @@
 ------------------------
+Genesis v1.2.3 (5-Aug-14)
+------------------------
+
+- Fixed IMDb watchlist.
+- Fixed IMDb TV watchlist.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.2.2 (3-Aug-14)
 ------------------------
 
