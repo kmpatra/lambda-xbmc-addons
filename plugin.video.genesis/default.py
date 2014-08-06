@@ -788,8 +788,12 @@ class index:
             pass
 
         xbmcplugin.setContent(int(sys.argv[1]), 'movies')
-        index().container_view('movies', {'skin.confluence' : 500})
         xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=cacheToDisc)
+        for i in range(0, 200):
+            if xbmc.getCondVisibility('Container.Content(movies)'):
+                return index().container_view('movies', {'skin.confluence' : 500})
+            xbmc.sleep(100)
+
 
     def showList(self, showList):
         if showList == None: return
@@ -880,8 +884,11 @@ class index:
             pass
 
         xbmcplugin.setContent(int(sys.argv[1]), 'tvshows')
-        index().container_view('tvshows', {'skin.confluence' : 500})
         xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+        for i in range(0, 200):
+            if xbmc.getCondVisibility('Container.Content(tvshows)'):
+                return index().container_view('tvshows', {'skin.confluence' : 500})
+            xbmc.sleep(100)
 
     def seasonList(self, seasonList):
         if seasonList == None: return
@@ -947,8 +954,11 @@ class index:
                 pass
 
         xbmcplugin.setContent(int(sys.argv[1]), 'seasons')
-        index().container_view('seasons', {'skin.confluence' : 500})
         xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=True)
+        for i in range(0, 200):
+            if xbmc.getCondVisibility('Container.Content(seasons)'):
+                return index().container_view('seasons', {'skin.confluence' : 500})
+            xbmc.sleep(100)
 
     def episodeList(self, episodeList):
         if episodeList == None: return
@@ -1035,8 +1045,11 @@ class index:
             pass
 
         xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
-        index().container_view('episodes', {'skin.confluence' : 504})
         xbmcplugin.endOfDirectory(int(sys.argv[1]), cacheToDisc=False)
+        for i in range(0, 200):
+            if xbmc.getCondVisibility('Container.Content(episodes)'):
+                return index().container_view('episodes', {'skin.confluence' : 504})
+            xbmc.sleep(100)
 
     def moviesourceList(self, sourceList):
         if sourceList == None: return
@@ -2332,6 +2345,7 @@ class movies:
                     genre = common.parseDOM(movie, "span", attrs = { "class": "genre" })
                     genre = common.parseDOM(genre, "a")
                     genre = " / ".join(genre)
+                    if genre == '': raise Exception()
                     genre = common.replaceHTMLCodes(genre)
                     genre = genre.encode('utf-8')
                 except:
@@ -2601,6 +2615,7 @@ class movies:
                 try:
                     genre = movie['genres']
                     genre = " / ".join(genre)
+                    if genre == '': raise Exception()
                     genre = common.replaceHTMLCodes(genre)
                     genre = genre.encode('utf-8')
                 except:
@@ -2608,6 +2623,7 @@ class movies:
 
                 try:
                     plot = movie['overview']
+                    if plot == '': raise Exception()
                     plot = common.replaceHTMLCodes(plot)
                     plot = plot.encode('utf-8')
                 except:
@@ -2673,10 +2689,11 @@ class movies:
                 url = common.replaceHTMLCodes(url)
                 url = url.encode('utf-8')
 
-                try:
-                    image = common.parseDOM(movie, "img", ret="src")[0]
-                except:
-                    image = link().imdb_image
+                image = link().imdb_image
+                try: image = common.parseDOM(movie, "img", ret="src")[0]
+                except: pass
+                try: image = common.parseDOM(movie, "img", ret="src", attrs = { "height": "240" })[0]
+                except: pass
                 image = common.replaceHTMLCodes(image)
                 image = image.encode('utf-8')
 
@@ -2842,6 +2859,7 @@ class shows:
                     genre = common.parseDOM(show, "span", attrs = { "class": "genre" })
                     genre = common.parseDOM(genre, "a")
                     genre = " / ".join(genre)
+                    if genre == '': raise Exception()
                     genre = common.replaceHTMLCodes(genre)
                     genre = genre.encode('utf-8')
                 except:
@@ -3099,6 +3117,7 @@ class shows:
                 try:
                     genre = show['genres']
                     genre = " / ".join(genre)
+                    if genre == '': raise Exception()
                     genre = common.replaceHTMLCodes(genre)
                     genre = genre.encode('utf-8')
                 except:
@@ -3106,6 +3125,7 @@ class shows:
 
                 try:
                     plot = show['overview']
+                    if plot == '': raise Exception()
                     plot = common.replaceHTMLCodes(plot)
                     plot = plot.encode('utf-8')
                 except:
@@ -3394,6 +3414,7 @@ class episodes:
 
                 try: desc = common.parseDOM(episode, "Overview")[0]
                 except: desc = plot
+                if desc == '': desc = plot
                 desc = common.replaceHTMLCodes(desc)
                 desc = desc.encode('utf-8')
 
@@ -3446,6 +3467,7 @@ class episodes:
 
                 try: thumb = common.parseDOM(episode, "screencap")[0]
                 except: thumb = image
+                if thumb == '': thumb = image
                 thumb = common.replaceHTMLCodes(thumb)
                 thumb = thumb.encode('utf-8')
 
@@ -3578,12 +3600,14 @@ class episodes:
 
                 thumb = episode['episode']['images']['screen']
                 if thumb == '': thumb = episode['show']['images']['poster']
+                if thumb == '': thumb = link().imdb_tv_image
                 thumb = common.replaceHTMLCodes(thumb)
                 thumb = thumb.encode('utf-8')
 
                 try:
                     genre = episode['show']['genres']
                     genre = " / ".join(genre)
+                    if genre == '': raise Exception()
                     genre = common.replaceHTMLCodes(genre)
                     genre = genre.encode('utf-8')
                 except:
@@ -3592,6 +3616,7 @@ class episodes:
                 try:
                     desc = episode['episode']['overview']
                     if desc == '': desc = episode['show']['overview']
+                    if desc == '': raise Exception()
                     desc = common.replaceHTMLCodes(desc)
                     desc = desc.encode('utf-8')
                 except:
@@ -3678,10 +3703,11 @@ class episodes:
                 tvrage = common.replaceHTMLCodes(tvrage)
                 tvrage = tvrage.encode('utf-8')
 
-                try:
-                    thumb = common.parseDOM(episode, "img", ret="src")[0]
-                except:
-                    thumb = link().imdb_tv_image
+                thumb = link().imdb_tv_image
+                try: thumb = common.parseDOM(episode, "img", ret="src")[0]
+                except: pass
+                try: thumb = common.parseDOM(episode, "img", ret="src", attrs = { "width": "696px" })[0]
+                except: pass
                 thumb = common.replaceHTMLCodes(thumb)
                 thumb = thumb.encode('utf-8')
 

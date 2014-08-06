@@ -1,4 +1,15 @@
 ------------------------
+Genesis v1.2.4 (6-Aug-14)
+------------------------
+
+- Fixed issue with various listings.
+- Tweaked Auto-view.
+- Tweaked "Latest movies".
+- Tweaked "Latest episodes".
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.2.3 (5-Aug-14)
 ------------------------
 
