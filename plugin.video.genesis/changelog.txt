@@ -1,4 +1,16 @@
 ------------------------
+Genesis v1.3.0 (10-Aug-14)
+------------------------
+
+- Tweaked movie listings.
+- Tweaked tv show listings.
+- Re-work of season listings.
+- Re-work of episode listings.
+- Tweaked library integration.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.2.4 (6-Aug-14)
 ------------------------
 
