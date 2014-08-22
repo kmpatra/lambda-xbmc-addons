@@ -101,6 +101,7 @@
 	<!-- Progress -->
 	<string id="30361">Getting information</string>
 	<string id="30362">items found</string>
+	<string id="30363">Update Library</string>
 	<!-- Misc -->
 	<string id="30381">Next Page</string>
 	<string id="30382">Search</string>
@@ -114,8 +115,8 @@
 	<string id="30407">Add to favourites</string>
 	<string id="30408">Remove from favourites</string>
 	<string id="30409">Add to Library</string>
-	<string id="30410">Update Library</string>
-	<string id="30411">Toggle playback</string>
+	<string id="30410">Auto-play</string>
+	<string id="30411">Play using...</string>
 	<string id="30412">Add-on settings</string>
 	<string id="30413">Now playing...</string>
 	<string id="30414">Movie information</string>

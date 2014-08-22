@@ -101,6 +101,7 @@
 	<!-- Progress -->
 	<string id="30361">Getting information</string>
 	<string id="30362">items found</string>
+	<string id="30363">Update bibliotheek</string>
 	<!-- Misc -->
 	<string id="30381">Volgende Pagina</string>
 	<string id="30382">Zoeken</string>
@@ -114,8 +115,8 @@
 	<string id="30407">Toevoegen aan favoriten</string>
 	<string id="30408">Verwijderen van favoriten</string>
 	<string id="30409">Toevoegen aan bibliotheek</string>
-	<string id="30410">Update bibliotheek</string>
-	<string id="30411">Toggle playback</string>
+	<string id="30410">Automatisch-afspelen</string>
+	<string id="30411">Afspelen met...</string>
 	<string id="30412">Add-on instellingen</string>
 	<string id="30413">Speeld nu af...</string>
 	<string id="30414">Film informatie</string>

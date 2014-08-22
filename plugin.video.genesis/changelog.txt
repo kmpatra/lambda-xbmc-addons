@@ -1,4 +1,18 @@
 ------------------------
+Genesis v1.4.1 (23-Aug-14)
+------------------------
+
+- Added Trakt Manager in episode listings.
+- Re-work of "Mark as watched" (Trakt support).
+- Added "Mark as watched" in tv show listings.
+- Added "Mark as watched" in season listings.
+- Added Clean theme.
+- Updated translations.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.4.0 (15-Aug-14)
 ------------------------
 

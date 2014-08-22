@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
 	<!-- Settings -->
 	<string id="30000">כללי</string>
@@ -8,18 +8,18 @@
 	<string id="30004">אפשר fanart</string>
 	<string id="30005">Create Meta Data</string>
 	<string id="30006">הורדות</string>
-	<string id="30020">Playback</string>
+	<string id="30020">ניגון</string>
 	<string id="30021">הפעלה אוטומטית</string>
 	<string id="30022">הפעלה אוטומטית (ספריה)</string>
 	<string id="30023">HD שרתי אכסון</string>
 	<string id="30024">HD שרתי אכסון Auto-play</string>
-	<string id="30025">When playback starts...</string>
+	<string id="30025">כאשר הניגון מתחיל...</string>
 	<string id="30026">המשך צפייה מהנקודה האחרונה</string>
 	<string id="30027">מידע על המתנגן</string>
-	<string id="30028">When playback ends...</string>
-	<string id="30029">Mark as watched in Metahandler</string>
-	<string id="30030">Mark as watched in Kodi library</string>
-	<string id="30031">Mark as watched in Trakt</string>
+	<string id="30028">כאשר הניגון מסתיים...</string>
+	<string id="30029">Metahandler-סמן כצפה ב</string>
+	<string id="30030">Kodi library-סמן כצפה ב</string>
+	<string id="30031">Trakt-סמן כצפה ב</string>
 	<string id="30040">סרטים</string>
 	<string id="30041">סדרות טלוויזיה</string>
 	<string id="30060">HD שרתי אכסון</string>
@@ -91,16 +91,17 @@
 	<string id="30347">סרט כבר בספרייה.</string>
 	<string id="30348">תכנית טלוויזיה כבר בספרייה.</string>
 	<string id="30349">אתה בכל זאת מעונין להוסיף?</string>
-	<string id="30350">הוסף רק סרטים שלא נמצאים כבר בספרייה.</string>
-	<string id="30351">הוסף רק סדרות שלא נמצאים כבר בספרייה.</string>
+	<string id="30350">הוסף רק סרטים שלא נמצאים כבר בספרייה?</string>
+	<string id="30351">הוסף רק סדרות שלא נמצאים כבר בספרייה?</string>
 	<string id="30352">פעולה זו תמנע כפילויות!</string>
 	<string id="30353">האם אתה בטוח?</string>
 	<string id="30354">המשך מ</string>
 	<string id="30355">המשך מנקודה שנעצר</string>
 	<string id="30356">התחל מהתחלה</string>
 	<!-- Progress -->
-	<string id="30361">Getting information</string>
-	<string id="30362">items found</string>
+	<string id="30361">אוסף מידע...</string>
+	<string id="30362">פריטים מצאו</string>
+	<string id="30363">עדכון ספרייה</string>
 	<!-- Misc -->
 	<string id="30381">עמוד הבא</string>
 	<string id="30382">חיפוש</string>
@@ -114,8 +115,8 @@
 	<string id="30407">הוסף למעודפים</string>
 	<string id="30408">הסר ממעודפים</string>
 	<string id="30409">הוסף לספרייה</string>
-	<string id="30410">עדכון ספרייה</string>
-	<string id="30411">החלף פס קול</string>
+	<string id="30410">הפעלה אוטומטית</string>
+	<string id="30411">נגן באמצעות...</string>
 	<string id="30412">הגדרות הרחבה</string>
 	<string id="30413">מנגן עכשיו...</string>
 	<string id="30414">פרטי סרט</string>
@@ -125,14 +126,14 @@
 	<string id="30418">הגדר תצוגת סדרות</string>
 	<string id="30419">הגדר תצוגת עונות</string>
 	<string id="30420">הגדר תצוגת פרקים</string>
-	<string id="30421">Trakt Manager</string>
-	<string id="30422">Add to Collection</string>
-	<string id="30423">Remove from Collection</string>
-	<string id="30424">Add to Watchlist</string>
-	<string id="30425">Remove from Watchlist</string>
-	<string id="30426">Add to new List</string>
-	<string id="30427">Add to</string>
-	<string id="30428">Remove from</string>
+	<string id="30421">Trakt מנהל</string>
+	<string id="30422">הוסף לקולקצייה</string>
+	<string id="30423">הסר מקולקצייה</string>
+	<string id="30424">הוסף לרשימת צפיה</string>
+	<string id="30425">הסר מרשימת צפיה</string>
+	<string id="30426">הוסף לרשימה חדשה</string>
+	<string id="30427">הוסף לרשימה בשם</string>
+	<string id="30428">הסר מרשימה בשם</string>
 	<!-- Description -->
 	<string id="30450">המקור לחיפוש/הוספה של סרטים וסדרות.</string>
 	<!-- Labels -->
@@ -162,12 +163,12 @@
 	<string id="30546">לפי הצבעות</string>
 	<string id="30547">חיפוש לפי שחקן</string>
 	<string id="30548">חיפוש</string>
-	<string id="30561">[B]TRAKT[/B] : Collection</string>
-	<string id="30562">[B]TRAKT[/B] : TV Collection</string>
-	<string id="30563">[B]TRAKT[/B] : Watchlist</string>
-	<string id="30564">[B]TRAKT[/B] : TV Watchlist</string>
-	<string id="30565">[B]IMDB[/B] : Watchlist</string>
-	<string id="30566">[B]IMDB[/B] : TV Watchlist</string>
+	<string id="30561">[B]TRAKT[/B] : קולקציית סרטים</string>
+	<string id="30562">[B]TRAKT[/B] : קולקציית סדרות</string>
+	<string id="30563">[B]TRAKT[/B] : רשימת צפיה סרטים</string>
+	<string id="30564">[B]TRAKT[/B] : רשימת צפיה סדרות</string>
+	<string id="30565">[B]IMDB[/B] : רשימת צפיה סרטים</string>
+	<string id="30566">[B]IMDB[/B] : רשמ צפיה סדרות</string>
 	<string id="30567">רשימת סרטים</string>
 	<string id="30568">רשימת סדרות</string>
 	<string id="30569">סרטים מעודפים</string>
@@ -177,17 +178,17 @@
 	<string id="30582">סדרות</string>
 	<string id="30583">שחקנים בסדרות</string>
 	<string id="30584">שחקנים בסדרות</string>
-	<string id="30601">Genesis פתח הגדרות...</string>
-	<string id="30602">Metahandler פתח הגדרות...</string>
-	<string id="30603">URLResolver פתח הגדרות...</string>
-	<string id="30604">Genesis נקה מטמון...</string>
-	<string id="30605">Genesis עדכן תיקיות...</string>
-	<string id="30606">[B]TRAKT[/B] : יבא קולקציית סרטים...</string>
-	<string id="30607">[B]TRAKT[/B] : יבא קולקציית סדרות...</string>
-	<string id="30608">[B]TRAKT[/B] : יבא רשימת צפיה סרטים...</string>
-	<string id="30609">[B]TRAKT[/B] : יבא רשימת צפיה סדרות...</string>
-	<string id="30610">[B]IMDB[/B] : יבא רשימת צפיה סרטים...</string>
-	<string id="30611">[B]IMDB[/B] : יבא רשימת צפיה סדרות...</string>
-	<string id="30612">Genesis ספריית סרטים...</string>
-	<string id="30613">Genesis ספריית סדרות...</string>
+	<string id="30601">Genesis...פתח הגדרות</string>
+	<string id="30602">Metahandler...פתח הגדרות</string>
+	<string id="30603">URLResolver...פתח הגדרות</string>
+	<string id="30604">Genesis...נקה מטמון</string>
+	<string id="30605">Genesis...עדכן תיקיות</string>
+	<string id="30606">[B]TRAKT[/B]יבא קולקציית סרטים...</string>
+	<string id="30607">[B]TRAKT[/B]יבא קולקציית סדרות...</string>
+	<string id="30608">[B]TRAKT[/B]יבא רשימת צפיה סרטים...</string>
+	<string id="30609">[B]TRAKT[/B]יבא רשימת צפיה סדרות...</string>
+	<string id="30610">[B]IMDB[/B]יבא רשימת צפיה סרטים...</string>
+	<string id="30611">[B]IMDB[/B]יבא רשימת צפיה סדרות...</string>
+	<string id="30612">Genesis...ספריית סרטים</string>
+	<string id="30613">Genesis...ספריית סדרות</string>
 </strings>

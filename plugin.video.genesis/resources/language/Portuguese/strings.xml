@@ -101,6 +101,7 @@
 	<!-- Progress -->
 	<string id="30361">Getting information</string>
 	<string id="30362">items found</string>
+	<string id="30363">Actualizar Bibliteca</string>
 	<!-- Misc -->
 	<string id="30381">Próxima Página</string>
 	<string id="30382">Pesquisa</string>
@@ -114,8 +115,8 @@
 	<string id="30407">Adicionar aos favoritos</string>
 	<string id="30408">Remover dos favoritos</string>
 	<string id="30409">Adicionar à Biblioteca</string>
-	<string id="30410">Actualizar Bibliteca</string>
-	<string id="30411">Toggle playback</string>
+	<string id="30410">Começar Automaticamente</string>
+	<string id="30411">Reproduzir utilizando...</string>
 	<string id="30412">Configurações do Add-on</string>
 	<string id="30413">A dar agora...</string>
 	<string id="30414">Informação do Filme</string>
