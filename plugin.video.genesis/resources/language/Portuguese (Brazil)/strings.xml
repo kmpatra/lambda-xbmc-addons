@@ -6,20 +6,20 @@
 	<string id="30002">Últimos Episódios de Trakt</string>
 	<string id="30003">Permitir Meta Data</string>
 	<string id="30004">Permitir fanart</string>
-	<string id="30005">Create Meta Data</string>
+	<string id="30005">Criar Meta Data</string>
 	<string id="30006">Transferências</string>
-	<string id="30020">Playback</string>
+	<string id="30020">Reproduzir</string>
 	<string id="30021">Começar Automaticamente</string>
 	<string id="30022">Começar Automaticamente (Biblioteca)</string>
 	<string id="30023">Fontes HD</string>
 	<string id="30024">Fontes HD ao Começar Automaticamente</string>
-	<string id="30025">When playback starts...</string>
-	<string id="30026">Resumir no play</string>
-	<string id="30027">Informação no play</string>
-	<string id="30028">When playback ends...</string>
-	<string id="30029">Mark as watched in Metahandler</string>
-	<string id="30030">Mark as watched in Kodi library</string>
-	<string id="30031">Mark as watched in Trakt</string>
+	<string id="30025">Quando reprodução começar...</string>
+	<string id="30026">Resumir a reproduçãoy</string>
+	<string id="30027">Informação na reprodução</string>
+	<string id="30028">Quando a reprodução acabar...</string>
+	<string id="30029">Marcar como visto no Metahandler</string>
+	<string id="30030">Marcar como visto na biblioteca Kodi</string>
+	<string id="30031">Marcar como visto no Trakt</string>
 	<string id="30040">Filmes</string>
 	<string id="30041">TV</string>
 	<string id="30060">Servidores HD</string>
@@ -50,7 +50,7 @@
 	<string id="30103">TV</string>
 	<string id="30104">Actualizar automaticamente Séries</string>
 	<string id="30105">Intervalo de Actualização</string>
-	<string id="30106">Add only new episodes during update</string>
+	<string id="30106">Adicionar apenas novos episódios durante a actualização</string>
 	<string id="30107">Actualizar biblioteca Kodi depois de adicionar conteúdo</string>
 	<string id="30120">Contas</string>
 	<string id="30121">Utilizador</string>
@@ -99,8 +99,8 @@
 	<string id="30355">Resumir</string>
 	<string id="30356">Começar desde o inicio</string>
 	<!-- Progress -->
-	<string id="30361">Getting information</string>
-	<string id="30362">items found</string>
+	<string id="30361">Obtendo informação</string>
+	<string id="30362">itens encontrados</string>
 	<string id="30363">Actualizar Bibliteca</string>
 	<!-- Misc -->
 	<string id="30381">Próxima Página</string>
@@ -126,14 +126,14 @@
 	<string id="30418">Configurar vista de Séries</string>
 	<string id="30419">Configurar vista de Temporadas</string>
 	<string id="30420">Configurar vista de Episódios</string>
-	<string id="30421">Trakt Manager</string>
-	<string id="30422">Add to Collection</string>
-	<string id="30423">Remove from Collection</string>
-	<string id="30424">Add to Watchlist</string>
-	<string id="30425">Remove from Watchlist</string>
-	<string id="30426">Add to new List</string>
-	<string id="30427">Add to</string>
-	<string id="30428">Remove from</string>
+	<string id="30421">Gestão do Trakt</string>
+	<string id="30422">Adicionar à Colecção</string>
+	<string id="30423">Remover da Colecção</string>
+	<string id="30424">Adicionar à Watchlist</string>
+	<string id="30425">Remover da Watchlist</string>
+	<string id="30426">Adicionar a uma nova Lista</string>
+	<string id="30427">Adicionar a</string>
+	<string id="30428">Remover de</string>
 	<!-- Description -->
 	<string id="30450">As origens do streaming</string>
 	<!-- Labels -->

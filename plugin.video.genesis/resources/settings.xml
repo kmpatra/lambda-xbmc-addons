@@ -122,7 +122,7 @@
 		<setting id="trakt_password" type="text" option="hidden" label="30122" default=""/>
 		<setting type="lsep" label="IMDb"/>
 		<setting id="imdb_user" type="text" label="30121" default=""/>
-		<setting type="lsep" label="RealDedrid"/>
+		<setting type="lsep" label="RealDebrid"/>
 		<setting id="realdedrid_user" type="text" label="30121" default=""/>
 		<setting id="realdedrid_password" type="text" option="hidden" label="30122" default=""/>
 		<setting type="lsep" label="Noobroom"/>

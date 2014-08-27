@@ -1,0 +1,240 @@
+------------------------
+Genesis v1.4.2 (27-Aug-14)
+------------------------
+
+- Re-work of "Latest movies".
+- Re-work of "Latest episodes".
+- Fixed issue with library update.
+- Fixed issue with Shush source.
+- Updated Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.4.1 (23-Aug-14)
+------------------------
+
+- Added Trakt Manager in episode listings.
+- Re-work of "Mark as watched" (Trakt support).
+- Added "Mark as watched" in tv show listings.
+- Added "Mark as watched" in season listings.
+- Added Clean theme.
+- Updated translations.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.4.0 (15-Aug-14)
+------------------------
+
+- Re-work of movie listings.
+- Re-work of tv show listings.
+- Re-work of playback.
+- Added more playback settings.
+- Tweaked import of content to library.
+- Fixed issue with episodes.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.3.0 (10-Aug-14)
+------------------------
+
+- Tweaked movie listings.
+- Tweaked tv show listings.
+- Re-work of season listings.
+- Re-work of episode listings.
+- Tweaked library integration.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.2.4 (6-Aug-14)
+------------------------
+
+- Fixed issue with various listings.
+- Tweaked Auto-view.
+- Tweaked "Latest movies".
+- Tweaked "Latest episodes".
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.2.3 (5-Aug-14)
+------------------------
+
+- Fixed IMDb watchlist.
+- Fixed IMDb TV watchlist.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.2.2 (3-Aug-14)
+------------------------
+
+- Added Trakt Manager.
+- Fixed issue with blank theme.
+- Updated translations.
+- Added Hebrew translation.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.2.1 (31-Jul-14)
+------------------------
+
+- Added blank theme.
+- Fixed issues with themes.
+- Re-work of various listings.
+- Replaced "Auto-play" context menu with "Toggle playback".
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.2.0 (28-Jul-14)
+------------------------
+
+- Added "Latest movies" from SceneSource.
+- Added "Latest episodes" from SceneSource.
+- Removed "Latest movies" from Icefilms.
+- Removed "Latest episodes" from Library folder.
+- Added option for "Latest episodes" from Trakt.
+- Re-work of season listings.
+- Re-work of episode listings.
+- Fixed Noobroom source.
+- Fixed Shush source.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.1.3 (22-Jul-14)
+------------------------
+
+- Fixed "Latest Movies".
+- Tweaked Trakt "Latest episodes".
+- Updated translations.
+- Tweaked context menus.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.1.2 (19-Jul-14)
+------------------------
+
+- Added RealDedrid support.
+- Added Deep Blue theme.
+- Added option for disabling HD Hosts.
+- Fixed issue with library update.
+- Tweaked Auto-play.
+- Tweaked addon's settings.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.1.1 (16-Jul-14)
+------------------------
+
+- Tweaked library update.
+- Added Progress bar in library import/update.
+- Tweaked season listings.
+- Updated themes.
+- Updated translations.
+- Added Dutch translation.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.1.0 (14-Jul-14)
+------------------------
+
+- Added Aztec theme.
+- Added Tools section.
+- Tweaked Highly Rated TV shows.
+- Tweaked Trakt "Latest episodes".
+- Tweaked loading of all listings.
+- Tweaked genre listings.
+- Tweaked season listings.
+- Tweaked episode listings.
+- Tweaked search menus.
+- Updated Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.7 (12-Jul-14)
+------------------------
+
+- Added French translation.
+- Updated Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.6 (11-Jul-14)
+------------------------
+
+- Fixed issues with search from XBMC favourites.
+- Added support for "Latest episodes" of Trakt accounts.
+- Added options for "Latest episodes" (Trakt, TV Folder).
+- Tweaked My Genesis menus.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.5 (9-Jul-14)
+------------------------
+
+- Fixed issue with library import.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.4 (9-Jul-14)
+------------------------
+
+- Tweaked tv show listings.
+- Added Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.3 (8-Jul-14)
+------------------------
+
+- Tweaked season listings.
+- Tweaked episode listings.
+- Fixed missing episode listings.
+- Fixed issue with playback offset.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.2 (8-Jul-14)
+------------------------
+
+- Fixed issue with resolvers.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.1 (7-Jul-14)
+------------------------
+
+- Tweaked season listings.
+- Tweaked episode listings.
+- Tweaked firedrive resolver.
+- Code cosmetics.
+
+
+------------------------
+Genesis v1.0.0 (7-Jul-14)
+------------------------
+
+- Initial version

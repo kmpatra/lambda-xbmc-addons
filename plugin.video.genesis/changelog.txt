@@ -1,4 +1,16 @@
 ------------------------
+Genesis v1.4.2 (27-Aug-14)
+------------------------
+
+- Re-work of "Latest movies".
+- Re-work of "Latest episodes".
+- Fixed issue with library update.
+- Fixed issue with Shush source.
+- Updated Portuguese translation.
+- Code cosmetics.
+
+
+------------------------
 Genesis v1.4.1 (23-Aug-14)
 ------------------------
 
