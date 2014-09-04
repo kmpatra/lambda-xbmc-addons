@@ -971,19 +971,19 @@ class root:
 
 class link:
     def __init__(self):
-        self.viooz_base = 'http://viooz.co'
-        self.viooz_static = 'http://static.viooz.co'
-        self.viooz_added = 'http://viooz.co/movies/'
-        self.viooz_cinema = 'http://viooz.co/cenima/'
-        self.viooz_views = 'http://viooz.co/top/'
-        self.viooz_search = 'http://viooz.co/search?s=t&q=%s'
-        self.viooz_actor = 'http://viooz.co/search?s=a&q=%s'
-        self.viooz_director = 'http://viooz.co/search?s=d&q=%s'
-        self.viooz_pages = 'http://viooz.co/movies/'
-        self.viooz_genres = 'http://viooz.co/genre/'
-        self.viooz_years = 'http://viooz.co/year/'
-        self.viooz_countries = 'http://viooz.co/country/'
-        self.viooz_languages = 'http://viooz.co/language/'
+        self.viooz_base = 'http://viooz.ac'
+        self.viooz_static = 'http://static.viooz.ac'
+        self.viooz_added = 'http://viooz.ac/movies/'
+        self.viooz_cinema = 'http://viooz.ac/cenima/'
+        self.viooz_views = 'http://viooz.ac/top/'
+        self.viooz_search = 'http://viooz.ac/search?s=t&q=%s'
+        self.viooz_actor = 'http://viooz.ac/search?s=a&q=%s'
+        self.viooz_director = 'http://viooz.ac/search?s=d&q=%s'
+        self.viooz_pages = 'http://viooz.ac/movies/'
+        self.viooz_genres = 'http://viooz.ac/genre/'
+        self.viooz_years = 'http://viooz.ac/year/'
+        self.viooz_countries = 'http://viooz.ac/country/'
+        self.viooz_languages = 'http://viooz.ac/language/'
 
 class proxy:
     def getUrl(self, url):
@@ -1415,6 +1415,7 @@ class resolver:
     def viooz(self, url, name):
         import decrypter
 
+        url = url.replace('viooz.co', 'viooz.ac')
         result = proxy().getUrl(url)
 
         try:

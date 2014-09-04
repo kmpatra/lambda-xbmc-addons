@@ -1,4 +1,15 @@
 ------------------------
+Hellenic TV v2.6.9 (4-Sep-14)
+------------------------
+
+- Updated MEGA, STAR, GREEK CINEMA, START TV, KYDON TV and DIKTYO TV.
+- Added secondary streams for MEGA and STAR.
+- Added ACTION 24.
+- Removed STAR KENTRIKIS ELLADOS, TRT, SUPER B, TOP CHANNEL and TVS.
+- Code cosmetics.
+
+
+------------------------
 Hellenic TV v2.6.8 (26-Jun-14)
 ------------------------
 

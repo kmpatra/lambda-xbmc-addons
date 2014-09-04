@@ -5,8 +5,13 @@
 			<name>MEGA</name>
 			<type></type>
 			<url>rtmp://37.48.66.244:80/megaweb/megaweb.sdp pageUrl=http://www.kanalia.eu/ live=1 timeout=10</url>
-			<type2>ustream</type2>
-			<url2>http://www.ustream.tv/channel/mobile0001</url2>
+			<base>http://www.megatv.com/webtv</base>
+			<epg>30501</epg>
+		</channel>
+		<channel active="True">
+			<name>MEGA (2)</name>
+			<type>hls</type>
+			<url>http://megahdlive1-f.akamaihd.net/i/live_1@105260/master.m3u8</url>
 			<base>http://www.megatv.com/webtv</base>
 			<epg>30501</epg>
 		</channel>
@@ -14,8 +19,6 @@
 			<name>ANT1</name>
 			<type>hls</type>
 			<url>http://wow.ant1.gr:1935/live/smil:mavani.smil/playlist.m3u8</url>
-			<type2>ustream</type2>
-			<url2>http://www.ustream.tv/channel/mobile003</url2>
 			<base>http://www.antenna.gr/webtv/doubleip/live</base>
 			<epg>30502</epg>
 		</channel>
@@ -24,6 +27,13 @@
 			<type></type>
 			<url>rtmp://37.48.66.244:80/alterweb/alterweb.sdp pageUrl=http://www.kanalia.eu/ live=1 timeout=10</url>
 			<base></base>
+			<epg>30503</epg>
+		</channel>
+		<channel active="True">
+			<name>STAR (2)</name>
+			<type></type>
+			<url>http://starhdlive2-lh.akamaihd.net/i/live_1@181243/master.m3u8</url>
+			<base>http://www.star.gr/tv/el/Pages/LiveVideo.aspx</base>
 			<epg>30503</epg>
 		</channel>
 		<channel active="True">
@@ -189,9 +199,9 @@
 		</channel>
 		<channel active="True">
 			<name>GREEK CINEMA</name>
-			<type>justin</type>
-			<url>http://www.justin.tv/zuganelis</url>
-			<base>http://www.justin.tv/zuganelis</base>
+			<type>livestream</type>
+			<url>http://www.livestream.com/naturatv1</url>
+			<base></base>
 			<epg>30547</epg>
 		</channel>
 		<channel active="False">
@@ -239,10 +249,10 @@
 			<base>http://www.extratv.gr/</base>
 			<epg>30562</epg>
 		</channel>
-		<channel active="False">
+		<channel active="True">
 			<name>ACTION 24</name>
-			<type>livestream_new</type>
-			<url>http://new.livestream.com/action24/action24</url>
+			<type>streamago</type>
+			<url>http://www.streamago.tv/channel/44490/action-24/</url>
 			<base>http://www.action24.gr/</base>
 			<epg>30563</epg>
 		</channel>
@@ -407,7 +417,7 @@
 	</area>
 
 	<area name="CENTRAL GREECE">
-		<channel active="True">
+		<channel active="False">
 			<name>STAR KENTRIKIS ELLADOS</name>
 			<type>dailymotion</type>
 			<url>http://www.dailymotion.com/video/xqjey2_star-lamia-live-streaming_news</url>
@@ -431,10 +441,10 @@
 	</area>
 
 	<area name="THESSALY">
-		<channel active="True">
+		<channel active="False">
 			<name>TRT</name>
-			<type>justin</type>
-			<url>http://www.justin.tv/trtcontrol</url>
+			<type></type>
+			<url></url>
 			<base>http://www.trttv.com/</base>
 			<epg>30621</epg>
 		</channel>
@@ -500,7 +510,7 @@
 		<channel active="True">
 			<name>START TV</name>
 			<type>veetle</type>
-			<url>http://veetle.com/index.php/channel/view#535a3b85c0310</url>
+			<url>http://veetle.com/index.php/channel/view#5378ba5fe38e8</url>
 			<base>http://www.startmedia.gr/</base>
 			<epg>30645</epg>
 		</channel>
@@ -528,7 +538,7 @@
 	</area>
 
 	<area name="PELOPONNESE AND WEST GREECE">
-		<channel active="True">
+		<channel active="False">
 			<name>SUPER B</name>
 			<type>dailymotion</type>
 			<url>http://www.dailymotion.com/video/xxyvtx_live_webcam</url>
@@ -669,8 +679,8 @@
 		</channel>
 		<channel active="True">
 			<name>KYDON TV</name>
-			<type>justin</type>
-			<url>http://www.justin.tv/kydontv</url>
+			<type>ustream</type>
+			<url>http://www.ustream.tv/channel/test-ktv-2</url>
 			<base>http://www.kydon.gr/</base>
 			<epg>30704</epg>
 		</channel>
@@ -807,15 +817,15 @@
 		</channel>
 		<channel active="True">
 			<name>FLASH TV</name>
-			<type>justin</type>
-			<url>http://www.justin.tv/flashtvkozani</url>
+			<type>ustream</type>
+			<url>http://www.ustream.tv/channel/flash-tv-ch</url>
 			<base>http://www.flash-tv.gr/</base>
 			<epg>30782</epg>
 		</channel>
-		<channel active="True">
+		<channel active="False">
 			<name>TOP CHANNEL</name>
-			<type>justin</type>
-			<url>http://www.justin.tv/top_channel</url>
+			<type></type>
+			<url></url>
 			<base>http://www.top-channel.tripod.com/profil.htm</base>
 			<epg>30783</epg>
 		</channel>
@@ -838,9 +848,9 @@
 	<area name="EAST MACEDONIA">
 		<channel active="True">
 			<name>DIKTYO TV</name>
-			<type>justin</type>
-			<url>http://www.justin.tv/diktyo</url>
-			<base>http://diktyotv.gr/</base>
+			<type>ustream</type>
+			<url>http://www.ustream.tv/channel/diktyo-tv1</url>
+			<base>http://www.diktyotv.gr/</base>
 			<epg>30801</epg>
 		</channel>
 		<channel active="True">
@@ -878,7 +888,7 @@
 			<base>http://www.alfadramas.gr/</base>
 			<epg>30806</epg>
 		</channel>
-		<channel active="True">
+		<channel active="False">
 			<name>TVS</name>
 			<type></type>
 			<url>rtmp://eco.caststream.net/serrestv/serrestv live=1 timeout=10</url>

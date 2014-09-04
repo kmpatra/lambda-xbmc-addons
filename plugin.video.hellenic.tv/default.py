@@ -208,7 +208,7 @@ class index:
         url = resolver().run(name)
         if url is None: return
         meta = {'Label': title, 'Title': title, 'Studio': name, 'Duration': '1440', 'Plot': epg}
-        image = '%s/%s.png' % (addonLogos, name)
+        image = '%s/%s.png' % (addonLogos, re.sub('\s[(]\d{1}[)]','', name))
 
         item = xbmcgui.ListItem(path=url, iconImage=image, thumbnailImage=image)
         item.setInfo( type="Video", infoLabels= meta )
@@ -227,7 +227,7 @@ class index:
                 u = '%s?action=play&channel=%s&t=%s' % (sys.argv[0], sysname, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
                 meta = {'Label': name, 'Title': name, 'Studio': name, 'Duration': '1440', 'Plot': epg}
 
-                image = '%s/%s.png' % (addonLogos, name)
+                image = '%s/%s.png' % (addonLogos, re.sub('\s[(]\d{1}[)]','', name))
                 fanart = '%s/%s.jpg' % (addonSlideshow, str(count)[-1])
                 count = count + 1
 
@@ -250,6 +250,7 @@ class contextMenu:
         try:
             epgList = []
             channel = channel.replace('_',' ')
+            channel = re.sub('\s[(]\d{1}[)]','', channel)
 
             now = datetime.datetime.now()
             now = '%04d' % now.year + '%02d' % now.month + '%02d' % now.day + '%02d' % now.hour + '%02d' % now.minute + '%02d' % now.second
@@ -325,8 +326,10 @@ class channels:
                 except: url2 = "False"
                 url2 = common.replaceHTMLCodes(url2)
 
+
+
                 epg = common.parseDOM(channel, "epg")[0]
-                try: epg = self.epg[name]
+                try: epg = self.epg[re.sub('\s[(]\d{1}[)]','', name)]
                 except: epg = "[B][%s] - %s[/B]\n%s" % (language(30361), name, language(int(epg)))
                 epg = common.replaceHTMLCodes(epg)
 
@@ -388,14 +391,13 @@ class resolver:
                 'visionip'          : self.visionip,
                 'skai'              : self.skai,
                 'madtv'             : self.madtv,
-                'action24'          : self.action24,
+                'streamago'         : self.streamago,
                 'viiideo'           : self.viiideo,
                 'dailymotion'       : self.dailymotion,
                 'livestream_new'    : self.livestream_new,
                 'livestream'        : self.livestream,
                 'ustream'           : self.ustream,
-                'veetle'            : self.veetle,
-                'justin'            : self.justin
+                'veetle'            : self.veetle
             }
 
             dialog = xbmcgui.DialogProgress()
@@ -534,14 +536,11 @@ class resolver:
         except:
             return
 
-    def action24(self, url):
+    def streamago(self, url):
         try:
-            result = getUrl(url).result
-            url = common.parseDOM(result, "iframe", ret="src")
-            url = [i for i in url if 'dmcloud.net' in i][0]
-
-            result = getUrl(url).result
-            url = re.compile('"ios_url": "(.+?)"').findall(result)[0]
+            result = getUrl(url + '/xml/').result
+            url = common.parseDOM(result, "path_rtsp")[0]
+            url = url.split('[')[-1].split(']')[0]
             return url
         except:
             return
@@ -578,29 +577,5 @@ class resolver:
             return url
         except:
             return
-
-    def justin(self, url):
-        try:
-            name = url.split("/")[-1]
-            result = 'http://api.twitch.tv/api/channels/%s/access_token?as3=t' % name
-            result = getUrl(result, referer=url).result
-
-            token = re.compile('"token":"(.+?)","').findall(result)[0]
-            token = token.replace('\\', '')
-            token = urllib.quote_plus(token).decode('utf-8')
-            sig = re.compile('"sig":"(.+?)"').findall(result)[0]
-            sig = sig.replace('\\', '')
-
-            url = 'http://usher.twitch.tv/select/%s.json?allow_source=true&player=jtvweb&type=any&nauth=%s&nauthsig=%s' % (name, token, sig)
-            result = getUrl(url).result
-
-            url = result.replace('\n', '').split('#EXT-X-MEDIA:TYPE=VIDEO', 1)[-1].rsplit('#EXT-X-MEDIA:TYPE=VIDEO', 1)[0].split('http://', 1)[-1]
-            if url == "[]": raise Exception()
-            url = 'http://' + url
-
-            return url
-        except:
-            return
-
 
 main()

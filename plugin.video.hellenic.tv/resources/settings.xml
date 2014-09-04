@@ -3,8 +3,10 @@
 	<category label="30000">
 		<!-- PANHELLENIC -->
 		<setting id="MEGA" label="MEGA" type="bool" default="true" visible="true"/>
+		<setting id="MEGA (2)" label="MEGA (2)" type="bool" default="true" visible="true"/>
 		<setting id="ANT1" label="ANT1" type="bool" default="true" visible="true"/>
 		<setting id="STAR" label="STAR" type="bool" default="true" visible="true"/>
+		<setting id="STAR (2)" label="STAR (2)" type="bool" default="true" visible="true"/>
 		<setting id="ALPHA" label="ALPHA" type="bool" default="true" visible="true"/>
 		<setting id="SKAI" label="SKAI" type="bool" default="true" visible="true"/>
 		<setting id="E TV" label="E TV" type="bool" default="true" visible="true"/>
@@ -67,11 +69,11 @@
 		<setting id="EURO CHANNEL" label="EURO CHANNEL" type="bool" default="true" visible="false"/>
 		<setting id="KANALI 9" label="KANALI 9" type="bool" default="true" visible="false"/>
 		<!-- CENTRAL GREECE -->
-		<setting id="STAR KENTRIKIS ELLADOS" label="STAR KENTRIKIS ELLADOS" type="bool" default="true" visible="true"/>
+		<setting id="STAR KENTRIKIS ELLADOS" label="STAR KENTRIKIS ELLADOS" type="bool" default="true" visible="false"/>
 		<setting id="ENA TV" label="ENA TV" type="bool" default="true" visible="true"/>
 		<setting id="ETV" label="ETV" type="bool" default="true" visible="false"/>
 		<!-- THESSALY -->
-		<setting id="TRT" label="TRT" type="bool" default="true" visible="true"/>
+		<setting id="TRT" label="TRT" type="bool" default="true" visible="false"/>
 		<setting id="ASTRA TV" label="ASTRA TV" type="bool" default="true" visible="true"/>
 		<setting id="ZEUS" label="ZEUS" type="bool" default="true" visible="true"/>
 		<setting id="THESSALIA TV" label="THESSALIA TV" type="bool" default="true" visible="false"/>
@@ -86,7 +88,7 @@
 		<setting id="ART TV" label="ART TV" type="bool" default="true" visible="false"/>
 		<setting id="KOSMO TV" label="KOSMO TV" type="bool" default="true" visible="false"/>
 		<!-- PELOPONNESE AND WEST GREECE -->
-		<setting id="SUPER B" label="SUPER B" type="bool" default="true" visible="true"/>
+		<setting id="SUPER B" label="SUPER B" type="bool" default="true" visible="false"/>
 		<setting id="ACHAIA CHANNEL" label="ACHAIA CHANNEL" type="bool" default="true" visible="true"/>
 		<setting id="BEST TV" label="BEST TV" type="bool" default="true" visible="true"/>
 		<setting id="ORT" label="ORT" type="bool" default="true" visible="true"/>
@@ -130,7 +132,7 @@
 		<!-- WEST MACEDONIA -->
 		<setting id="WEST CHANNEL" label="WEST CHANNEL" type="bool" default="true" visible="true"/>
 		<setting id="FLASH TV" label="FLASH TV" type="bool" default="true" visible="true"/>
-		<setting id="TOP CHANNEL" label="TOP CHANNEL" type="bool" default="true" visible="true"/>
+		<setting id="TOP CHANNEL" label="TOP CHANNEL" type="bool" default="true" visible="false"/>
 		<setting id="TRM" label="TRM" type="bool" default="true" visible="false"/>
 		<setting id="SUPER 28" label="SUPER 28" type="bool" default="true" visible="true"/>
 		<!-- EAST MACEDONIA -->
@@ -140,7 +142,7 @@
 		<setting id="STAR TV DRAMA" label="STAR TV DRAMA" type="bool" default="true" visible="true"/>
 		<setting id="CENTER TV" label="CENTER TV" type="bool" default="true" visible="false"/>
 		<setting id="ALFA TV" label="ALFA TV" type="bool" default="true" visible="false"/>
-		<setting id="TVS" label="TVS" type="bool" default="true" visible="true"/>
+		<setting id="TVS" label="TVS" type="bool" default="true" visible="false"/>
 		<setting id="TV DELTA" label="TV DELTA" type="bool" default="true" visible="false"/>
 		<!-- THRACE -->
 		<setting id="DELTA TV" label="DELTA TV" type="bool" default="true" visible="true"/>
