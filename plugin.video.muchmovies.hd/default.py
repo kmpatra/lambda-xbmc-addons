@@ -900,15 +900,15 @@ class root:
 
 class link:
     def __init__(self):
-        self.muchmovies_base = 'http://www.muchmovies.org'
-        self.muchmovies_sort = 'http://www.muchmovies.org/session/sort'
-        self.muchmovies_title = 'http://www.muchmovies.org/movies?sort_by=title'
-        self.muchmovies_release = 'http://www.muchmovies.org/movies?sort_by=release'
-        self.muchmovies_added = 'http://www.muchmovies.org/movies?sort_by=date_added'
-        self.muchmovies_rating = 'http://www.muchmovies.org/movies?sort_by=rating'
-        self.muchmovies_root = 'http://www.muchmovies.org/movies'
-        self.muchmovies_search = 'http://www.muchmovies.org/search'
-        self.muchmovies_genre = 'http://www.muchmovies.org/genres'
+        self.muchmovies_base = 'http://www.buzzfilms.co'
+        self.muchmovies_sort = 'http://www.buzzfilms.co/session/sort'
+        self.muchmovies_title = 'http://www.buzzfilms.co/movies?sort_by=title'
+        self.muchmovies_release = 'http://www.buzzfilms.co/movies?sort_by=release'
+        self.muchmovies_added = 'http://www.buzzfilms.co/movies?sort_by=date_added'
+        self.muchmovies_rating = 'http://www.buzzfilms.co/movies?sort_by=rating'
+        self.muchmovies_root = 'http://www.buzzfilms.co/movies'
+        self.muchmovies_search = 'http://www.buzzfilms.co/search'
+        self.muchmovies_genre = 'http://www.buzzfilms.co/genres'
         self.muchmovies_backup = 'http://123movies.me'
 
 class pages:
@@ -1165,6 +1165,7 @@ class resolver:
 
     def muchmovies(self, url):
         try:
+            url = url.replace('muchmovies.org', 'buzzfilms.co')
             result = getUrl(url, mobile=True).result
 
             url = common.parseDOM(result, "a", ret="href", attrs = { "data-role": "button" })

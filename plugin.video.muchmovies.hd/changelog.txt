@@ -1,4 +1,12 @@
 ------------------------
+Much Movies HD v1.6.3 (5-Sep-14)
+------------------------
+
+- Fixed issues with new domain.
+- Code cosmetics.
+
+
+------------------------
 Much Movies HD v1.6.2 (27-Jun-14)
 ------------------------
 
