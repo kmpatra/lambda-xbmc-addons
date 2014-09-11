@@ -9,16 +9,17 @@ The origins of streaming
 
 Attributions
 ---------------------
-- GKDecrypter by shani_08 | http://www.xbmchub.com
-- 4orbs theme by Marquerite | http://www.xbmchub.com
-- Aztec theme by azad720 | http://www.xbmchub.com
-- Clean theme by jokster | http://www.xbmchub.com
-- Deep Blue theme by rayw1986 | http://www.xbmchub.com
-- Embossed theme by jokster | http://www.xbmchub.com
-- Dutch translation by dynamic2 | http://www.xbmchub.com
-- French translation by dr1ss | http://www.xbmchub.com
-- Hebrew translation by finalmakerr | http://www.xbmchub.com
-- Portuguese translation by Mafarricos | http://www.xbmchub.com
+- GKDecrypter by shani_08 | http://tvaddons.ag
+- 4orbs theme by Marquerite | http://tvaddons.ag
+- Aztec theme by azad720 | http://tvaddons.ag
+- Clean theme by jokster | http://tvaddons.ag
+- Deep Blue theme by rayw1986 | http://tvaddons.ag
+- Embossed theme by jokster | http://tvaddons.ag
+- GOne theme by jokster | http://tvaddons.ag
+- Dutch translation by dynamic2 | http://tvaddons.ag
+- French translation by dr1ss | http://tvaddons.ag
+- Hebrew translation by finalmakerr | http://tvaddons.ag
+- Portuguese translation by Mafarricos | http://tvaddons.ag
 
 
 License

@@ -18,11 +18,13 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-import datetime,xbmc,xbmcplugin,xbmcgui,xbmcaddon
+import os,datetime,xbmc,xbmcplugin,xbmcgui,xbmcaddon
+watchData = os.path.join(xbmc.translatePath(xbmcaddon.Addon().getAddonInfo("profile")),'watched.list')
 
 class main:
     def __init__(self):
         while (not xbmc.abortRequested):
+
             if xbmcaddon.Addon().getSetting("service_update") == 'true':
                 try:
                     t1 = datetime.datetime.strptime(xbmcaddon.Addon().getSetting("service_run"), "%Y-%m-%d %H:%M:%S.%f")
@@ -36,6 +38,17 @@ class main:
                         xbmcaddon.Addon().setSetting('service_run', datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"))
                 except:
                     pass
+
+            if not (xbmcaddon.Addon().getSetting("trakt_user") == '' or xbmcaddon.Addon().getSetting("trakt_password") == ''):
+                try:
+                    t1 = datetime.datetime.utcfromtimestamp(os.path.getmtime(watchData))
+                    t2 = datetime.datetime.utcnow()
+                    update = abs(t2 - t1) > datetime.timedelta(hours=4)
+                    if update == True: raise Exception()
+                except:
+                    xbmc.executebuiltin('RunPlugin(plugin://plugin.video.genesis/?action=indicator_service)')
+                    xbmc.sleep(30000)
+
             xbmc.sleep(1000)
 
 main()
