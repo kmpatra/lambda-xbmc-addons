@@ -1,4 +1,16 @@
 ------------------------
+Genesis v2.0.1 (16-Sep-14)
+------------------------
+
+- Added more metadata.
+- Added support for posters and banners (Gotham or higher).
+- Fixed issue with latest episodes.
+- Fixed issue with Shush source.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
 Genesis v2.0.0 (11-Sep-14)
 ------------------------
 

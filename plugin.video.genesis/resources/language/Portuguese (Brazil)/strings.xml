@@ -46,10 +46,10 @@
 	<string id="30102">Filmes</string>
 	<string id="30103">TV</string>
 	<string id="30104">Actualizar automaticamente Séries</string>
-	<string id="30105">Add only latest season during update</string>
+	<string id="30105">Adicionar apenas a última temporada durante o update</string>
 	<string id="30106">Intervalo de Actualização</string>
 	<string id="30107">Actualizar biblioteca Kodi depois de adicionar conteúdo</string>
-	<string id="30108">Avoid creating duplicate content</string>
+	<string id="30108">Evitar criar conteúdo duplicado</string>
 	<string id="30120">Contas</string>
 	<string id="30121">Utilizador</string>
 	<string id="30122">Palavra-chave</string>
