@@ -1,4 +1,14 @@
 ------------------------
+Genesis v2.0.2 (16-Sep-14)
+------------------------
+
+- Tweaked movie search.
+- Updated themes.
+- Updated translations.
+- Code cosmetics.
+
+
+------------------------
 Genesis v2.0.1 (16-Sep-14)
 ------------------------
 

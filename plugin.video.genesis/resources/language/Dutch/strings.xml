@@ -6,17 +6,17 @@
 	<string id="30002">Fanart inschakelen</string>
 	<string id="30003">Laatste Afleveringen van Trakt</string>
 	<string id="30004">Downloads</string>
-	<string id="30020">Playback</string>
+	<string id="30020">Afspelen</string>
 	<string id="30021">Automatisch-afspelen</string>
 	<string id="30022">Automatisch-afspelen (Bibliotheek)</string>
 	<string id="30023">HD Hosts</string>
 	<string id="30024">HD Hosts in Automatisch-afspelen</string>
-	<string id="30025">When playback starts...</string>
+	<string id="30025">Wanneer afspelen begint...</string>
 	<string id="30026">Afspelen hervatten</string>
 	<string id="30027">Afspeel Info</string>
-	<string id="30028">When playback ends...</string>
-	<string id="30029">Mark as watched in Kodi library</string>
-	<string id="30030">Mark as watched in Trakt</string>
+	<string id="30028">Wanner afspelen eindigt...</string>
+	<string id="30029">Markeer als gezien in Kodi library</string>
+	<string id="30030">Markeer als gezien in Trakt</string>
 	<string id="30040">Movies</string>
 	<string id="30041">TV</string>
 	<string id="30060">HD Hosts</string>
@@ -46,7 +46,7 @@
 	<string id="30102">Films</string>
 	<string id="30103">Series</string>
 	<string id="30104">Automatisch je abonnementen updaten</string>
-	<string id="30105">Add only latest season during update</string>
+	<string id="30105">Voeg alleen nieuwe afleveringen toe tijdens update</string>
 	<string id="30106">Update interval</string>
 	<string id="30107">Update Bibliotheek na toevoegen van content</string>
 	<string id="30108">Avoid creating duplicate content</string>
@@ -88,8 +88,8 @@
 	<string id="30349">Hervatten</string>
 	<string id="30350">Starten vanaf het begin</string>
 	<!-- Progress -->
-	<string id="30361">Getting information</string>
-	<string id="30362">items found</string>
+	<string id="30361">Informatie ophalen</string>
+	<string id="30362">items gevonden</string>
 	<string id="30363">Update bibliotheek</string>
 	<!-- Misc -->
 	<string id="30381">Volgende Pagina</string>
@@ -114,14 +114,14 @@
 	<string id="30417">TV Series layout vastzetten</string>
 	<string id="30418">Seizoens layout vastzetten</string>
 	<string id="30419">Afleveringen layout vastzetten</string>
-	<string id="30420">Trakt Manager</string>
-	<string id="30421">Add to Collection</string>
-	<string id="30422">Remove from Collection</string>
-	<string id="30423">Add to Watchlist</string>
-	<string id="30424">Remove from Watchlist</string>
-	<string id="30425">Add to new List</string>
-	<string id="30426">Add to</string>
-	<string id="30427">Remove from</string>
+	<string id="30420">Trakt Beheer</string>
+	<string id="30421">Toevoegen aan Collectie</string>
+	<string id="30422">Verwijder van Collectie</string>
+	<string id="30423">Toevoegen aan Volglijst</string>
+	<string id="30424">Verwijder van Volglijst</string>
+	<string id="30425">Toevoegen aan nieuwe lijst</string>
+	<string id="30426">Toevoegen aan</string>
+	<string id="30427">Verwijder van</string>
 	<!-- Description -->
 	<string id="30450">Bekijk van verscheidene bronnen</string>
 	<!-- Labels -->

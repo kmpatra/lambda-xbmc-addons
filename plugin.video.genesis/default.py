@@ -1874,7 +1874,7 @@ class link:
         self.imdb_boxoffice = 'http://akas.imdb.com/search/title?title_type=feature,tv_movie&sort=boxoffice_gross_us,desc&count=25&start=1'
         self.imdb_views = 'http://akas.imdb.com/search/title?title_type=feature,tv_movie&sort=num_votes,desc&count=25&start=1'
         self.imdb_oscars = 'http://akas.imdb.com/search/title?title_type=feature,tv_movie&groups=oscar_best_picture_winners&sort=year,desc&count=25&start=1'
-        self.imdb_search = 'http://akas.imdb.com/search/title?title_type=feature,short,tv_movie,tv_special,video,documentary,game&sort=moviemeter,asc&count=25&start=1&title=%s'
+        self.imdb_search = 'http://akas.imdb.com/search/title?title_type=feature,short,tv_movie,tv_special,video&sort=moviemeter,asc&count=25&start=1&title=%s'
         self.imdb_tv_genres = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=moviemeter,asc&count=25&start=1&genres=%s'
         self.imdb_tv_popular = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&sort=moviemeter,asc&count=25&start=1'
         self.imdb_tv_rating = 'http://akas.imdb.com/search/title?title_type=tv_series,mini_series&num_votes=5000,&sort=user_rating,desc&count=25&start=1'
@@ -2589,6 +2589,15 @@ class movies:
                 votes = common.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
 
+                try: mpaa = common.parseDOM(movie, "span", attrs = { "class": "certificate" })[0]
+                except: mpaa = '0'
+                try: mpaa = common.parseDOM(mpaa, "span", ret="title")[0]
+                except: mpaa = '0'
+                if mpaa == '' or mpaa == 'NOT_RATED': mpaa = '0'
+                mpaa = mpaa.replace('_', '-')
+                mpaa = common.replaceHTMLCodes(mpaa)
+                mpaa = mpaa.encode('utf-8')
+
                 director = common.parseDOM(movie, "span", attrs = { "class": "credit" })
                 try: director = director[0].split('With:', 1)[0].strip()
                 except: director = '0'
@@ -2609,7 +2618,7 @@ class movies:
                 try: tagline = tagline.encode('utf-8')
                 except: pass
 
-                self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': genre, 'url': url, 'poster': poster, 'fanart': '0', 'studio': '0', 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': '0', 'director': director, 'plot': plot, 'plotoutline': tagline, 'tagline': tagline, 'next': next})
+                self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': genre, 'url': url, 'poster': poster, 'fanart': '0', 'studio': '0', 'duration': duration, 'rating': rating, 'votes': votes, 'mpaa': mpaa, 'director': director, 'plot': plot, 'plotoutline': tagline, 'tagline': tagline, 'next': next})
             except:
                 pass
 
@@ -3370,6 +3379,15 @@ class shows:
                 rating = common.replaceHTMLCodes(rating)
                 rating = rating.encode('utf-8')
 
+                try: mpaa = common.parseDOM(show, "span", attrs = { "class": "certificate" })[0]
+                except: mpaa = '0'
+                try: mpaa = common.parseDOM(mpaa, "span", ret="title")[0]
+                except: mpaa = '0'
+                if mpaa == '' or mpaa == 'NOT_RATED': mpaa = '0'
+                mpaa = mpaa.replace('_', '-')
+                mpaa = common.replaceHTMLCodes(mpaa)
+                mpaa = mpaa.encode('utf-8')
+
                 try: plot = common.parseDOM(show, "span", attrs = { "class": "outline" })[0]
                 except: plot = '0'
                 plot = plot.rsplit('<span>', 1)[0].strip()
@@ -3377,7 +3395,7 @@ class shows:
                 plot = common.replaceHTMLCodes(plot)
                 plot = plot.encode('utf-8')
 
-                self.list.append({'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': genre, 'url': url, 'poster': poster, 'banner': poster, 'fanart': '0', 'studio': '0', 'premiered': '0', 'duration': '0', 'rating': rating, 'mpaa': '0', 'plot': plot, 'next': next})
+                self.list.append({'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': genre, 'url': url, 'poster': poster, 'banner': poster, 'fanart': '0', 'studio': '0', 'premiered': '0', 'duration': '0', 'rating': rating, 'mpaa': mpaa, 'plot': plot, 'next': next})
             except:
                 pass
 
