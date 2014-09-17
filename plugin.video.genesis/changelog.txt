@@ -1,4 +1,13 @@
 ------------------------
+Genesis v2.0.3 (17-Sep-14)
+------------------------
+
+- Fixed compability issues with Frodo.
+- Fixed issue with IMDb TV lists.
+- Code cosmetics.
+
+
+------------------------
 Genesis v2.0.2 (16-Sep-14)
 ------------------------
 

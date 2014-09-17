@@ -2157,7 +2157,7 @@ class userlists:
     def shows(self):
         if not (link().trakt_user == '' or link().trakt_password == ''): self.trakt_list()
         if not (link().imdb_user == ''): self.imdb_list()
-        for i in range(0, len(self.list)): self.list[i].update({'image': 'userlists_movies.jpg', 'action': 'shows_userlist'})
+        for i in range(0, len(self.list)): self.list[i].update({'image': 'userlists_movies.jpg', 'action': 'shows_userlist', 'url': self.list[i]['url'].replace(link().imdb_list.split('?', 1)[-1], link().imdb_tv_list.split('?', 1)[-1])})
         index().rootList(self.list)
 
     def trakt_list(self):
@@ -2368,7 +2368,8 @@ class channels:
             if not rating == '0': self.list[i].update({'rating': rating})
 
             votes = str(result['vote_count'])
-            votes = str(format(int(votes),',d'))
+            try: votes = str(format(int(votes),',d'))
+            except: pass
             if votes == '' or votes == None or not self.list[i]['votes'] == '0': votes = '0'
             votes = common.replaceHTMLCodes(votes)
             votes = votes.encode('utf-8')
@@ -2810,7 +2811,8 @@ class movies:
                 rating = rating.encode('utf-8')
 
                 votes = str(movie['vote_count'])
-                votes = str(format(int(votes),',d'))
+                try: votes = str(format(int(votes),',d'))
+                except: pass
                 if votes == '' or votes == None: votes = '0'
                 votes = common.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
@@ -2904,7 +2906,8 @@ class movies:
 
                 try: votes = str(movie['ratings']['votes'])
                 except: votes = '0'
-                votes = str(format(int(votes),',d'))
+                try: votes = str(format(int(votes),',d'))
+                except: pass
                 if votes == '': votes = '0'
                 votes = common.replaceHTMLCodes(votes)
                 votes = votes.encode('utf-8')
@@ -3089,7 +3092,8 @@ class movies:
             if not rating == '0': self.list[i].update({'rating': rating})
 
             votes = str(result['vote_count'])
-            votes = str(format(int(votes),',d'))
+            try: votes = str(format(int(votes),',d'))
+            except: pass
             if votes == '' or votes == None or not self.list[i]['votes'] == '0': votes = '0'
             votes = common.replaceHTMLCodes(votes)
             votes = votes.encode('utf-8')
@@ -3701,7 +3705,6 @@ class shows:
             shows = getUrl(url, timeout='30').result
             shows = json.loads(shows)
         except:
-            self.list = []
             return
 
         for i in range(0, len(self.list)):
