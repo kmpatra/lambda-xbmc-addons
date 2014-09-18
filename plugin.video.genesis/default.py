@@ -4948,8 +4948,7 @@ class primewire:
         self.key_link = 'http://www.primewire.ag/index.php?search'
         self.moviesearch_link = 'http://www.primewire.ag/index.php?search_keywords=%s&key=%s&search_section=1'
         self.tvsearch_link = 'http://www.primewire.ag/index.php?search_keywords=%s&key=%s&search_section=2'
-        self.proxy_base_link = 'http://9proxy.in'
-        self.proxy_link = 'http://9proxy.in/b.php?u=%s&b=28'
+        self.proxy_link = 'http://unblocked.ws'
 
     def mv(self, name, title, year, imdb, hostDict):
         try:
@@ -4958,13 +4957,18 @@ class primewire:
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.moviesearch_link % (urllib.quote_plus(re.sub('\'', '', title)), key)
             except:
-                result = getUrl(self.proxy_link % urllib.quote_plus(urllib.unquote_plus(self.key_link)), referer=self.proxy_base_link).result
+                result = getUrl(self.proxy_link).result
+                proxy = common.parseDOM(result, "a", ret="href")
+                proxy = [i.lower() for i in proxy if 'primewire' in i.lower()][0]
+                self.key_link = self.key_link.replace(self.base_link, proxy)
+                self.moviesearch_link = self.moviesearch_link.replace(self.base_link, proxy)
+                self.base_link = proxy
+
+                result = getUrl(self.key_link).result
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.moviesearch_link % (urllib.quote_plus(re.sub('\'', '', title)), key)
-                query = self.proxy_link % urllib.quote_plus(urllib.unquote_plus(query))
-                self.base_link = self.proxy_base_link
 
-            result = getUrl(query, referer=self.base_link, close=False).result
+            result = getUrl(query).result
             result = result.decode('iso-8859-1').encode('utf-8')
             result = common.parseDOM(result, "div", attrs = { "class": "index_item.+?" })
             result = [i for i in result if any(x in re.compile('title="Watch (.+?)"').findall(i)[0] for x in ['(%s)' % str(year), '(%s)' % str(int(year)+1), '(%s)' % str(int(year)-1)])]
@@ -4975,7 +4979,7 @@ class primewire:
             for i in match[:5]:
                 try:
                     if not i.startswith('http://'): i = '%s%s' % (self.base_link, i)
-                    result = getUrl(i, referer=i).result
+                    result = getUrl(i).result
                     if any(x in resolver().cleantitle_movie(result) for x in [str('>' + resolver().cleantitle_movie(title) + '(%s)' % str(year) + '<')]):
                         match2 = i
                     if any(x in resolver().cleantitle_movie(result) for x in [str('>' + resolver().cleantitle_movie(title) + '<')]):
@@ -4987,22 +4991,19 @@ class primewire:
                     pass
 
             url = match2
-            result = getUrl(url, referer=url).result
+            result = getUrl(url).result
             result = result.decode('iso-8859-1').encode('utf-8')
             links = common.parseDOM(result, "tbody")
 
             for i in links:
                 try:
                     url = common.parseDOM(i, "a", ret="href")[0]
-                    url = urllib.unquote_plus(url)
                     url = re.compile('url=(.+?)&').findall(url)[0]
                     url = base64.urlsafe_b64decode(url.encode('utf-8'))
-                    if 'primewire.ag' in url: raise Exception()
                     url = common.replaceHTMLCodes(url)
                     url = url.encode('utf-8')
 
                     host = common.parseDOM(i, "a", ret="href")[0]
-                    host = urllib.unquote_plus(host)
                     host = re.compile('domain=(.+?)&').findall(host)[0]
                     host = base64.urlsafe_b64decode(host.encode('utf-8'))
                     host = host.rsplit('.', 1)[0]
@@ -5028,13 +5029,18 @@ class primewire:
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.tvsearch_link % (urllib.quote_plus(re.sub('\'', '', show)), key)
             except:
-                result = getUrl(self.proxy_link % urllib.quote_plus(urllib.unquote_plus(self.key_link)), referer=self.proxy_base_link).result
+                result = getUrl(self.proxy_link).result
+                proxy = common.parseDOM(result, "a", ret="href")
+                proxy = [i.lower() for i in proxy if 'primewire' in i.lower()][0]
+                self.key_link = self.key_link.replace(self.base_link, proxy)
+                self.tvsearch_link = self.tvsearch_link.replace(self.base_link, proxy)
+                self.base_link = proxy
+
+                result = getUrl(self.key_link).result
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.tvsearch_link % (urllib.quote_plus(re.sub('\'', '', show)), key)
-                query = self.proxy_link % urllib.quote_plus(urllib.unquote_plus(query))
-                self.base_link = self.proxy_base_link
 
-            result = getUrl(query, referer=self.base_link, close=False).result
+            result = getUrl(query).result
             result = result.decode('iso-8859-1').encode('utf-8')
             result = common.parseDOM(result, "div", attrs = { "class": "index_item.+?" })
             result = [i for i in result if any(x in re.compile('title="Watch (.+?)"').findall(i)[0] for x in ['(%s)' % str(year), '(%s)' % str(int(year)+1), '(%s)' % str(int(year)-1)])]
@@ -5045,7 +5051,7 @@ class primewire:
             for i in match[:5]:
                 try:
                     if not i.startswith('http://'): i = '%s%s' % (self.base_link, i)
-                    result = getUrl(i, referer=i).result
+                    result = getUrl(i).result
                     if any(x in resolver().cleantitle_tv(result) for x in [str('>' + resolver().cleantitle_tv(show) + '(%s)' % str(year) + '<'), str('>' + resolver().cleantitle_tv(show_alt) + '(%s)' % str(year) + '<')]):
                         match2 = i
                     if any(x in resolver().cleantitle_tv(result) for x in [str('>' + resolver().cleantitle_tv(show) + '<'), str('>' + resolver().cleantitle_tv(show_alt) + '<')]):
@@ -5056,29 +5062,22 @@ class primewire:
                 except:
                     pass
 
-            x = match2.split('primewire.ag', 1)[-1].split('&', 1)[0]
-            y = x.replace('/watch-','/tv-').replace('%2Fwatch-','%2Ftv-')
-            z = '/season-%01d-episode-%01d' % (int(season), int(episode))
-            if y.startswith('%2F'): y += urllib.quote_plus(z)
-            else: y += z
-            url = match2.replace(x,y)
+            url = match2.replace('/watch-','/tv-')
+            url += '/season-%01d-episode-%01d' % (int(season), int(episode))
 
-            result = getUrl(url, referer=url).result
+            result = getUrl(url).result
             result = result.decode('iso-8859-1').encode('utf-8')
             links = common.parseDOM(result, "tbody")
 
             for i in links:
                 try:
                     url = common.parseDOM(i, "a", ret="href")[0]
-                    url = urllib.unquote_plus(url)
                     url = re.compile('url=(.+?)&').findall(url)[0]
                     url = base64.urlsafe_b64decode(url.encode('utf-8'))
-                    if 'primewire.ag' in url: raise Exception()
                     url = common.replaceHTMLCodes(url)
                     url = url.encode('utf-8')
 
                     host = common.parseDOM(i, "a", ret="href")[0]
-                    host = urllib.unquote_plus(host)
                     host = re.compile('domain=(.+?)&').findall(host)[0]
                     host = base64.urlsafe_b64decode(host.encode('utf-8'))
                     host = host.rsplit('.', 1)[0]
@@ -5490,10 +5489,9 @@ class shush:
     def tv(self, name, title, year, imdb, tvdb, season, episode, show, show_alt, hostDict):
         try:
             result = getUrl(self.search_link).result
-            result = common.parseDOM(result, "div", attrs = { "class": "showme" })
 
-            url = [common.parseDOM(i, "a", ret="href")[0] for i in result]
-            url = [i.split('showlist=')[-1] for i in url]
+            url = common.parseDOM(result, "a", ret="href")
+            url = [i.split('showlist=')[-1] for i in url if 'showlist=' in i]
             url = [i for i in url if any(x == resolver().cleantitle_tv(i) for x in [resolver().cleantitle_tv(show), resolver().cleantitle_tv(show_alt)])][0]
             url = self.show_link % url
             url = common.replaceHTMLCodes(url)

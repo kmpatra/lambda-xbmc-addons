@@ -49,7 +49,7 @@
 	<string id="30105">Voeg alleen nieuwe afleveringen toe tijdens update</string>
 	<string id="30106">Update interval</string>
 	<string id="30107">Update Bibliotheek na toevoegen van content</string>
-	<string id="30108">Avoid creating duplicate content</string>
+	<string id="30108">Voorkom het creëren van dubbele content</string>
 	<string id="30120">Accounts</string>
 	<string id="30121">Gebruikersnaam</string>
 	<string id="30122">Wachtwoord</string>
@@ -142,7 +142,7 @@
 	<string id="30526">Populair</string>
 	<string id="30527">Meest Gestemt</string>
 	<string id="30528">Oscar Winners</string>
-	<string id="30529">In Theaters</string>
+	<string id="30529">In de Bioscoop</string>
 	<string id="30530">Acteur Zoeken</string>
 	<string id="30531">Zoeken</string>
 	<string id="30541">Genres</string>
