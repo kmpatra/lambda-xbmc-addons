@@ -111,7 +111,7 @@ class main:
         elif action == 'videos_parts':              videoparts().get(name, url, image, date, genre, plot, title, show)
         elif action == 'play':                      resolver().run(url)
 
-        if action is None:
+        if action == None:
             pass
         elif action.startswith('videos'):
             xbmcplugin.setContent(int(sys.argv[1]), 'episodes')
@@ -122,7 +122,7 @@ class main:
 
 class getUrl(object):
     def __init__(self, url, close=True, proxy=None, post=None, mobile=False, referer=None, cookie=None, output='', timeout='10'):
-        if not proxy is None:
+        if not proxy == None:
             proxy_handler = urllib2.ProxyHandler({'http':'%s' % (proxy)})
             opener = urllib2.build_opener(proxy_handler, urllib2.HTTPHandler)
             opener = urllib2.install_opener(opener)
@@ -131,7 +131,7 @@ class getUrl(object):
             cookie_handler = urllib2.HTTPCookieProcessor(cookielib.LWPCookieJar())
             opener = urllib2.build_opener(cookie_handler, urllib2.HTTPBasicAuthHandler(), urllib2.HTTPHandler())
             opener = urllib2.install_opener(opener)
-        if not post is None:
+        if not post == None:
             request = urllib2.Request(url, post)
         else:
             request = urllib2.Request(url,None)
@@ -139,9 +139,9 @@ class getUrl(object):
             request.add_header('User-Agent', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_0 like Mac OS X; en-us) AppleWebKit/532.9 (KHTML, like Gecko) Version/4.0.5 Mobile/8A293 Safari/6531.22.7')
         else:
             request.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:6.0) Gecko/20100101 Firefox/6.0')
-        if not referer is None:
+        if not referer == None:
             request.add_header('Referer', referer)
-        if not cookie is None:
+        if not cookie == None:
             request.add_header('cookie', cookie)
         response = urllib2.urlopen(request, timeout=int(timeout))
         if output == 'cookie':
@@ -425,7 +425,7 @@ class contextMenu:
             views = [int(x) for x in views.split(',')]
             for view in views:
                 label = xbmc.getInfoLabel('Control.GetLabel(%s)' % (view))
-                if not (label == '' or label is None): break
+                if not (label == '' or label == None): break
             file = xbmcvfs.File(viewData)
             read = file.read()
             file.close()
@@ -515,11 +515,11 @@ class videos:
         index().nextList(self.list)
 
     def search(self, query=None):
-        if query is None:
+        if query == None:
             self.query = common.getUserInput(language(30362).encode("utf-8"), '')
         else:
             self.query = query
-        if not (self.query is None or self.query == ''):
+        if not (self.query == None or self.query == ''):
             self.query = link().lfv_search % urllib.quote_plus(self.query)
             self.list = self.lfv_list3(self.query)
             index().videoList(self.list)
@@ -673,10 +673,10 @@ class videoparts:
                 lang = lang.split("-")[-1].strip()
 
                 if 'proxy.link=lfv*' in video:
-                    import decrypter
+                    import GKDecrypter
                     parts = re.compile('proxy[.]link=lfv[*](.+?)&').findall(video)
                     parts = uniqueList(parts).list
-                    parts = [decrypter.decrypter(198,128).decrypt(i,base64.urlsafe_b64decode('Y0ZNSENPOUhQeHdXbkR4cWJQVlU='),'ECB').split('\0')[0] for i in parts]
+                    parts = [GKDecrypter.decrypter(198,128).decrypt(i,base64.urlsafe_b64decode('Y0ZNSENPOUhQeHdXbkR4cWJQVlU='),'ECB').split('\0')[0] for i in parts]
                 else:
                     video = video.replace('"//', '"http://')
                     parts = re.findall('"(http://.+?)"', video, re.I)
@@ -750,7 +750,7 @@ class resolver:
             elif url.startswith(self.videa_base): url = self.videa(url)
             elif url.startswith(self.sapo_base): url = self.sapo(url)
 
-            if url is None: raise Exception()
+            if url == None: raise Exception()
             player().run(url)
             return url
         except:
@@ -876,24 +876,15 @@ class resolver:
     def youtube(self, url):
         try:
             url = url.split("?v=")[-1].split("/")[-1].split("?")[0]
-
             url = 'plugin://plugin.video.youtube/?action=play_video&videoid=%s' % url
-            if index().addon_status('plugin.video.youtube') is None:
-                index().okDialog(language(30321).encode("utf-8"), language(30322).encode("utf-8"))
-                return
-
             return url
         except:
             return
 
     def rutube(self, url):
         try:
-            url = url.split("/")[-1].split("?")[0]
-            url = 'http://rutube.ru/api/play/trackinfo/%s/?format=xml' % url
-
             result = getUrl(url).result
-            url = common.parseDOM(result, "m3u8")[0]
-
+            url = re.compile('"m3u8": "(.+?)"').findall(result)[0]
             return url
         except:
             return
@@ -906,6 +897,7 @@ class resolver:
 
             result = getUrl(url).result
             url = re.compile('video_url="(.+?)"').findall(result)[0]
+            if url.startswith('//'): url = 'http:' + url
 
             return url
         except:
