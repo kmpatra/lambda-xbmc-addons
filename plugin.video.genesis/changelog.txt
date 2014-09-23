@@ -1,4 +1,17 @@
 ------------------------
+Genesis v2.0.5 (23-Sep-14)
+------------------------
+
+- Service now caches in a database.
+- Favourites, views and resume points are saved in a database.
+- Fixed issues with marking content as watched or unwatched.
+- NOTE: It won't work if an application/addon is scrobbling to your account.
+- Fixed issue with Hugefiles resolver.
+- Fixed issue with Shush source.
+- Code cosmetics.
+
+
+------------------------
 Genesis v2.0.4 (18-Sep-14)
 ------------------------
 

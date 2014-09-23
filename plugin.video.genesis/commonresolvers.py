@@ -323,20 +323,16 @@ class resolvers:
                 solution = captcha().numeric(numeric)
                 data.update({'code':solution})
 
-            data = urllib.urlencode(data)
+            html = getUrl(url, post=urllib.urlencode(data)).result
 
-            u = getUrl(url, output='geturl', post=data).result
-            if not url == u: return u
+            data = {}
+            r = re.findall(r'type="hidden" name="(.+?)" value="(.+?)">', html)
+            for name, value in r: data[name] = value
+            data['method_free'] = 'Free Download'
+            request = urllib2.Request(url, urllib.urlencode(data))
+            response = urllib2.urlopen(request)
+            url = response.geturl()
 
-            html = getUrl(url, post=data).result
-
-            sPattern = '''<div id="player_code">.*?<script type='text/javascript'>(eval.+?)</script>'''
-            r = re.findall(sPattern, html, re.DOTALL|re.I)[0]
-            sUnpacked = jsunpack().unpack(r).replace('\\', '')
-
-            url = None
-            try: url = re.findall('file,(.+?)\)\;s1',sUnpacked)[0]
-            except: url = re.findall('name="src"[0-9]*="(.+?)"/><embed',sUnpacked)[0]
             return url
         except:
             return

@@ -22,6 +22,8 @@ import urllib,urllib2,re,os,threading,datetime,time,base64,xbmc,xbmcplugin,xbmcg
 from operator import itemgetter
 try:    import json
 except: import simplejson as json
+try:    from sqlite3 import dbapi2 as database
+except: from pysqlite2 import dbapi2 as database
 try:    import CommonFunctions
 except: import commonfunctionsdummy as CommonFunctions
 try:    import StorageServer
@@ -49,11 +51,8 @@ movieLibrary        = os.path.join(xbmc.translatePath(getSetting("movie_library"
 tvLibrary           = os.path.join(xbmc.translatePath(getSetting("tv_library")),'')
 PseudoTV            = xbmcgui.Window(10000).getProperty('PseudoTVRunning')
 addonLogos          = os.path.join(addonPath,'resources/logos')
-favData             = os.path.join(dataPath,'favourite_movies.list')
-favData2            = os.path.join(dataPath,'favourite_tv.list')
-watchData           = os.path.join(dataPath,'watched.list')
-viewData            = os.path.join(dataPath,'views.list')
-offData             = os.path.join(dataPath,'offset.list')
+addonSettings       = os.path.join(dataPath,'settings.db')
+addonCache          = os.path.join(dataPath,'cache.db')
 
 
 class main:
@@ -124,12 +123,11 @@ class main:
         elif action == 'settings_open':               contextMenu().settings_open()
         elif action == 'settings_urlresolver':        contextMenu().settings_open('script.module.urlresolver')
         elif action == 'settings_metahandler':        contextMenu().settings_open('script.module.metahandler')
-        elif action == 'favourite_movie_add':         contextMenu().favourite_add(favData, name, url, image, imdb, year, refresh=True)
-        elif action == 'favourite_movie_from_search': contextMenu().favourite_add(favData, name, url, image, imdb, year)
-        elif action == 'favourite_movie_delete':      contextMenu().favourite_delete(favData, name, url)
-        elif action == 'favourite_tv_add':            contextMenu().favourite_add(favData2, name, url, image, imdb, year, refresh=True)
-        elif action == 'favourite_tv_from_search':    contextMenu().favourite_add(favData2, name, url, image, imdb, year)
-        elif action == 'favourite_tv_delete':         contextMenu().favourite_delete(favData2, name, url)
+        elif action == 'favourite_movie_add':         contextMenu().favourite_add('Movie', imdb, name, year, image, refresh=True)
+        elif action == 'favourite_movie_from_search': contextMenu().favourite_add('Movie', imdb, name, year, image)
+        elif action == 'favourite_tv_add':            contextMenu().favourite_add('TV Show', imdb, name, year, image, refresh=True)
+        elif action == 'favourite_tv_from_search':    contextMenu().favourite_add('TV Show', imdb, name, year, image)
+        elif action == 'favourite_delete':            contextMenu().favourite_delete(imdb)
         elif action == 'indicator_service':           contextMenu().trakt_indicator()
         elif action == 'trakt_manager':               contextMenu().trakt_manager('movie', name, imdb)
         elif action == 'trakt_tv_manager':            contextMenu().trakt_manager('show', name, imdb)
@@ -335,44 +333,50 @@ class player(xbmc.Player):
             self.episode = '%01d' % int(name.rsplit(' ', 1)[-1].split('E')[-1])
             self.subtitle = subtitles().get(self.name, self.imdb, self.season, self.episode)
 
-    def offset_add(self):
+    def resume_add(self):
         try:
-            file = xbmcvfs.File(offData)
-            read = file.read()
-            file.close()
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write.append('"%s"|"%s"|"%s"' % (self.name, self.imdb, self.currentTime))
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(offData, 'w')
-            file.write(str(write))
-            file.close()
+            record = (self.name, 'tt' + self.imdb, str(self.currentTime))
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("CREATE TABLE IF NOT EXISTS points (""name TEXT, ""imdb_id TEXT, ""resume_point TEXT, ""UNIQUE(name, imdb_id)"");")
+            dbcur.execute("DELETE FROM points WHERE name = '%s' AND imdb_id = '%s'" % (record[0], record[1]))
+            dbcur.execute("INSERT INTO points Values (?, ?, ?)", record)
+            dbcon.commit()
         except:
             return
 
-    def offset_delete(self):
+    def resume_delete(self):
         try:
-            file = xbmcvfs.File(offData)
-            read = file.read()
-            file.close()
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write = [i for i in write if not '"%s"|"%s"|"' % (self.name, self.imdb) in i]
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(offData, 'w')
-            file.write(str(write))
-            file.close()
+            record = (self.name, 'tt' + self.imdb)
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("DELETE FROM points WHERE name = '%s' AND imdb_id = '%s'" % (record[0], record[1]))
+            dbcon.commit()
         except:
             return
 
-    def offset_read(self):
+    def resume_read(self):
         try:
             self.offset = '0'
-            file = xbmcvfs.File(offData)
-            read = file.read()
-            file.close()
-            read = [i for i in read.splitlines(True) if '"%s"|"%s"|"' % (self.name, self.imdb) in i][0]
-            self.offset = re.compile('".+?"[|]".+?"[|]"(.+?)"').findall(read)[0]
+            record = (self.name, 'tt' + self.imdb)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM points WHERE name = '%s' AND imdb_id = '%s'" % (record[0], record[1]))
+            offset = dbcur.fetchone()
+            self.offset = offset[2]
         except:
             return
+
+    def resume_play(self):
+        offset = float(self.offset)
+        if not offset > 0: return
+        minutes, seconds = divmod(offset, 60)
+        hours, minutes = divmod(minutes, 60)
+        offset_time = '%02d:%02d:%02d' % (hours, minutes, seconds)
+        yes = index().yesnoDialog('%s %s' % (language(30348).encode("utf-8"), offset_time), '', self.name, language(30349).encode("utf-8"), language(30350).encode("utf-8"))
+        if yes: self.seekTime(offset)
 
     def change_watched(self):
         if self.content == 'movie':
@@ -447,15 +451,6 @@ class player(xbmc.Player):
             except:
                 pass
 
-    def resume_playback(self):
-        offset = float(self.offset)
-        if not offset > 0: return
-        minutes, seconds = divmod(offset, 60)
-        hours, minutes = divmod(minutes, 60)
-        offset_time = '%02d:%02d:%02d' % (hours, minutes, seconds)
-        yes = index().yesnoDialog('%s %s' % (language(30348).encode("utf-8"), offset_time), '', self.name, language(30349).encode("utf-8"), language(30350).encode("utf-8"))
-        if yes: self.seekTime(offset)
-
     def onPlayBackStarted(self):
         try: self.setSubtitles(self.subtitle)
         except: pass
@@ -467,18 +462,18 @@ class player(xbmc.Player):
             index().infoDialog(elapsedTime, header=self.name)
 
         if getSetting("resume_playback") == 'true':
-            self.offset_read()
-            self.resume_playback()
+            self.resume_read()
+            self.resume_play()
 
     def onPlayBackEnded(self):
         if PseudoTV == 'True': return
-        self.offset_delete()
+        self.resume_delete()
         self.change_watched()
 
     def onPlayBackStopped(self):
         if PseudoTV == 'True': return
-        self.offset_delete()
-        self.offset_add()
+        self.resume_delete()
+        self.resume_add()
         if self.currentTime / self.totalTime >= .9:
             self.change_watched()
 
@@ -567,32 +562,98 @@ class index:
         xbmc.executebuiltin('Container.Refresh')
 
     def container_data(self):
-        if not xbmcvfs.exists(dataPath):
-            xbmcvfs.mkdir(dataPath)
-        if not xbmcvfs.exists(favData):
-            file = xbmcvfs.File(favData, 'w')
-            file.write('')
+        favData, favData2, viewData, offData, watchData = os.path.join(dataPath,'favourite_movies.list'), os.path.join(dataPath,'favourite_tv.list'), os.path.join(dataPath,'views.list'), os.path.join(dataPath,'offset.list'), os.path.join(dataPath,'watched.list')
+        if xbmcvfs.exists(favData) == 0 or xbmcvfs.exists(favData2) == 0 or xbmcvfs.exists(viewData) == 0 or xbmcvfs.exists(offData) == 0: return
+
+        try: xbmcvfs.delete(watchData)
+        except: pass
+
+        try:
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("CREATE TABLE IF NOT EXISTS favourites (""imdb_id TEXT, ""video_type TEXT, ""title TEXT, ""year TEXT, ""tvdb_id TEXT, ""genre TEXT, ""poster TEXT, ""banner TEXT, ""fanart TEXT, ""studio TEXT, ""premiered TEXT, ""duration TEXT, ""rating TEXT, ""votes TEXT, ""mpaa TEXT, ""director TEXT, ""writer TEXT, ""plot TEXT, ""plotoutline TEXT, ""tagline TEXT, ""UNIQUE(imdb_id)"");")
+            dbcur.execute("CREATE TABLE IF NOT EXISTS views (""skin TEXT, ""view_type TEXT, ""view_id TEXT, ""UNIQUE(skin, view_type)"");")
+            dbcur.execute("CREATE TABLE IF NOT EXISTS points (""name TEXT, ""imdb_id TEXT, ""resume_point TEXT, ""UNIQUE(name, imdb_id)"");")
+        except:
+            pass
+        try:
+            file = xbmcvfs.File(offData)
+            read = file.read()
             file.close()
-        if not xbmcvfs.exists(favData2):
-            file = xbmcvfs.File(favData2, 'w')
-            file.write('')
+            try: xbmcvfs.delete(offData)
+            except: pass
+            read = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
+            read = [(i[0], 'tt' + i[1], i[2]) for i in read]
+            for a in read:
+                try:
+                    dbcur.execute("DELETE FROM points WHERE name = '%s'" % (a[0]))
+                    dbcur.execute("INSERT INTO points Values (?, ?, ?)", a)
+                except:
+                    pass
+        except:
+            pass
+        try:
+            file = xbmcvfs.File(viewData)
+            read = file.read()
             file.close()
-        if not xbmcvfs.exists(viewData):
-            file = xbmcvfs.File(viewData, 'w')
-            file.write('')
+            try: xbmcvfs.delete(viewData)
+            except: pass
+            read = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
+            for b in read:
+                try:
+                    dbcur.execute("DELETE FROM views WHERE skin = '%s' AND view_type = '%s'" % (b[0], b[1]))
+                    dbcur.execute("INSERT INTO views Values (?, ?, ?)", b)
+                except:
+                    pass
+        except:
+            pass
+        try:
+            file = xbmcvfs.File(favData)
+            read = file.read()
             file.close()
-        if not xbmcvfs.exists(offData):
-            file = xbmcvfs.File(offData, 'w')
-            file.write('')
+            try: xbmcvfs.delete(favData)
+            except: pass
+            read = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]".+?"[|]"(.+?)"').findall(read)
+            read = [('tt' + i[2], 'Movie', i[0], i[1], '', '', i[3], '', '', '', '', '', '', '', '', '', '', '', '', '') for i in read]
+            for c in read:
+                try:
+                    dbcur.execute("DELETE FROM favourites WHERE imdb_id = '%s'" % (c[0]))
+                    dbcur.execute("INSERT INTO favourites Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", c)
+                except:
+                    pass
+        except:
+            pass
+        try:
+            file = xbmcvfs.File(favData2)
+            read = file.read()
             file.close()
+            try: xbmcvfs.delete(favData2)
+            except: pass
+            read = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]".+?"[|]"(.+?)"').findall(read)
+            read = [('tt' + i[2], 'TV Show', i[0], i[1], '', '', i[3], '', '', '', '', '', '', '', '', '', '', '', '', '') for i in read]
+            for d in read:
+                try:
+                    dbcur.execute("DELETE FROM favourites WHERE imdb_id = '%s'" % (d[0]))
+                    dbcur.execute("INSERT INTO favourites Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", d)
+                except:
+                    pass
+        except:
+            pass
+        try:
+            dbcon.commit()
+        except:
+            pass
 
     def container_view(self, content, viewDict):
         try:
             skin = xbmc.getSkinDir()
-            file = xbmcvfs.File(viewData)
-            read = file.read().replace('\n','')
-            file.close()
-            view = re.compile('"%s"[|]"%s"[|]"(.+?)"' % (skin, content)).findall(read)[0]
+            record = (skin, content)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM views WHERE skin = '%s' AND view_type = '%s'" % (record[0], record[1]))
+            view = dbcur.fetchone()
+            view = view[2]
+            if view == None: raise Exception()
             xbmc.executebuiltin('Container.SetViewMode(%s)' % str(view))
         except:
             try:
@@ -766,16 +827,26 @@ class index:
         if action == 'movies_search': cacheToDisc = True
 
         try:
-            file = xbmcvfs.File(watchData)
-            watchRead = file.read()
-            watchRead = json.loads(watchRead)
-            file.close()
+            favourites = []
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM favourites WHERE video_type ='Movie'")
+            favourites = dbcur.fetchall()
+            favourites = [i[0] for i in favourites]
+            favourites = [re.sub('[^0-9]', '', i) for i in favourites]
         except:
             pass
 
-        file = xbmcvfs.File(favData)
-        favRead = file.read()
-        file.close()
+        try:
+            record = ('movies', getSetting("trakt_user"))
+            dbcon = database.connect(addonCache)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM trakt WHERE info = '%s' AND user = '%s'" % (record[0], record[1]))
+            indicators = dbcur.fetchone()
+            indicators = indicators[2]
+            indicators = json.loads(indicators)
+        except:
+            pass
 
         total = len(movieList)
         for i in movieList:
@@ -805,7 +876,7 @@ class index:
                 except:
                     pass
                 try:
-                    playcount = [i for i in watchRead if i['imdb_id'] == 'tt' + imdb][0]
+                    playcount = [i for i in indicators if i['imdb_id'] == 'tt' + imdb][0]
                     meta.update({'playcount': 1, 'overlay': 7})
                 except:
                     pass
@@ -816,12 +887,12 @@ class index:
                 if not (getSetting("trakt_user") == '' or getSetting("trakt_password") == ''):
                     cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=trakt_manager&name=%s&imdb=%s)' % (sys.argv[0], sysname, sysimdb)))
                 if action == 'movies_favourites':
-                    cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_delete&name=%s&url=%s)' % (sys.argv[0], systitle, sysurl)))
+                    cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&imdb=%s)' % (sys.argv[0], sysimdb)))
                 elif action == 'movies_search':
-                    cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], systitle, sysimdb, sysurl, sysimage, sysyear)))
+                    cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_from_search&imdb=%s&name=%s&year=%s&image=%s)' % (sys.argv[0], sysimdb, systitle, sysyear, sysimage)))
                 else:
-                    if not '"%s"' % url in favRead: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], systitle, sysimdb, sysurl, sysimage, sysyear)))
-                    else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_delete&name=%s&url=%s)' % (sys.argv[0], systitle, sysurl)))
+                    if not imdb in favourites: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_movie_add&imdb=%s&name=%s&year=%s&image=%s)' % (sys.argv[0], sysimdb, systitle, sysyear, sysimage)))
+                    else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&imdb=%s)' % (sys.argv[0], sysimdb)))
                 cm.append((language(30408).encode("utf-8"), 'RunPlugin(%s?action=library_movie_add&name=%s&title=%s&year=%s&imdb=%s&url=%s)' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, sysurl)))
                 cm.append((language(30413).encode("utf-8"), 'Action(Info)'))
                 if not imdb == '0' and not action == 'movies_search':
@@ -868,9 +939,16 @@ class index:
 
         addonFanart = self.addonArt('fanart.jpg')
 
-        file = xbmcvfs.File(favData2)
-        favRead = file.read()
-        file.close()
+        try:
+            favourites = []
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM favourites WHERE video_type ='TV Show'")
+            favourites = dbcur.fetchall()
+            favourites = [i[0] for i in favourites]
+            favourites = [re.sub('[^0-9]', '', i) for i in favourites]
+        except:
+            pass
 
         total = len(showList)
         for i in showList:
@@ -900,12 +978,12 @@ class index:
                 if not (getSetting("trakt_user") == '' or getSetting("trakt_password") == ''):
                     cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=trakt_tv_manager&name=%s&imdb=%s)' % (sys.argv[0], systitle, sysimdb)))
                 if action == 'shows_favourites':
-                    cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_delete&name=%s&url=%s)' % (sys.argv[0], systitle, sysurl))) 
+                    cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&imdb=%s)' % (sys.argv[0], sysimdb))) 
                 elif action.startswith('shows_search'):
-                    cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_from_search&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], systitle, sysimdb, sysurl, sysimage, sysyear)))
+                    cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_from_search&imdb=%s&name=%s&year=%s&image=%s)' % (sys.argv[0], sysimdb, systitle, sysyear, sysimage)))
                 else:
-                    if not '"%s"' % url in favRead: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], systitle, sysimdb, sysurl, sysimage, sysyear)))
-                    else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_delete&name=%s&url=%s)' % (sys.argv[0], systitle, sysurl)))
+                    if not imdb in favourites: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_add&imdb=%s&name=%s&year=%s&image=%s)' % (sys.argv[0], sysimdb, systitle, sysyear, sysimage)))
+                    else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&imdb=%s)' % (sys.argv[0], sysimdb)))
                 cm.append((language(30408).encode("utf-8"), 'RunPlugin(%s?action=library_tv_add&name=%s&year=%s&imdb=%s&tvdb=%s)' % (sys.argv[0], systitle, sysyear, sysimdb, systvdb)))
                 cm.append((language(30414).encode("utf-8"), 'Action(Info)'))
                 if not imdb == '0' and not action == 'shows_search':
@@ -913,11 +991,6 @@ class index:
                 if not imdb == '0' and not action == 'shows_search':
                     cm.append((language(30404).encode("utf-8"), 'RunPlugin(%s?action=watched_shows&name=%s&year=%s&imdb=%s&tvdb=%s)' % (sys.argv[0], systitle, sysyear, sysimdb, systvdb)))
                 cm.append((language(30417).encode("utf-8"), 'RunPlugin(%s?action=view_tvshows)' % (sys.argv[0])))
-
-                if action == 'shows_search':
-                    if '"%s"' % url in favRead: suffix = '[B][F][/B] '
-                    else: suffix = ''
-                    name = suffix + name
 
                 item = xbmcgui.ListItem(name, iconImage="DefaultVideo.png", thumbnailImage=poster)
                 try: item.setArt({'poster': poster, 'tvshow.poster': poster, 'season.poster': poster, 'banner': banner, 'tvshow.banner': banner, 'season.banner': banner})
@@ -955,9 +1028,16 @@ class index:
 
         addonFanart = self.addonArt('fanart.jpg')
 
-        file = xbmcvfs.File(favData2)
-        favRead = file.read()
-        file.close()
+        try:
+            favourites = []
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM favourites WHERE video_type ='TV Show'")
+            favourites = dbcur.fetchall()
+            favourites = [i[0] for i in favourites]
+            favourites = [re.sub('[^0-9]', '', i) for i in favourites]
+        except:
+            pass
 
         total = len(seasonList)
         for i in seasonList:
@@ -986,8 +1066,8 @@ class index:
                 cm.append((language(30405).encode("utf-8"), 'RunPlugin(%s?action=trailer&name=%s)' % (sys.argv[0], sysshow)))
                 if not (getSetting("trakt_user") == '' or getSetting("trakt_password") == ''):
                     cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=trakt_tv_manager&name=%s&imdb=%s)' % (sys.argv[0], sysshow, sysimdb)))
-                if not '"%s"' % url in favRead: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysshow, sysimdb, sysurl, sysimage, sysyear)))
-                else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_delete&name=%s&url=%s)' % (sys.argv[0], sysshow, sysurl)))
+                if not imdb in favourites: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_add&imdb=%s&name=%s&year=%s&image=%s)' % (sys.argv[0], sysimdb, sysshow, sysyear, sysimage)))
+                else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&imdb=%s)' % (sys.argv[0], sysimdb)))
                 cm.append((language(30408).encode("utf-8"), 'RunPlugin(%s?action=library_tv_add&name=%s&year=%s&imdb=%s&tvdb=%s)' % (sys.argv[0], sysshow, sysyear, sysimdb, systvdb)))
                 cm.append((language(30414).encode("utf-8"), 'Action(Info)'))
                 if not imdb == '0':
@@ -1027,16 +1107,26 @@ class index:
         if autoplay == 'true': playbackMenu = language(30410).encode("utf-8")
 
         try:
-            file = xbmcvfs.File(watchData)
-            watchRead = file.read()
-            watchRead = json.loads(watchRead)
-            file.close()
+            favourites = []
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM favourites WHERE video_type ='TV Show'")
+            favourites = dbcur.fetchall()
+            favourites = [i[0] for i in favourites]
+            favourites = [re.sub('[^0-9]', '', i) for i in favourites]
         except:
             pass
 
-        file = xbmcvfs.File(favData2)
-        favRead = file.read()
-        file.close()
+        try:
+            record = ('shows', getSetting("trakt_user"))
+            dbcon = database.connect(addonCache)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM trakt WHERE info = '%s' AND user = '%s'" % (record[0], record[1]))
+            indicators = dbcur.fetchone()
+            indicators = indicators[2]
+            indicators = json.loads(indicators)
+        except:
+            pass
 
         total = len(episodeList)
         for i in episodeList:
@@ -1068,7 +1158,7 @@ class index:
                 except:
                     pass
                 try:
-                    playcount = [i for i in watchRead if i['imdb_id'] == 'tt' + imdb][0]['seasons']
+                    playcount = [i for i in indicators if i['imdb_id'] == 'tt' + imdb][0]['seasons']
                     playcount = [i for i in playcount if i['season'] == int(season)][0]['episodes']
                     playcount = [i for i in playcount if i == int(episode)][0]
                     meta.update({'playcount': 1, 'overlay': 7})
@@ -1079,8 +1169,8 @@ class index:
                 cm.append((playbackMenu, 'RunPlugin(%s?action=toggle_episode_playback&name=%s&title=%s&year=%s&imdb=%s&tvdb=%s&season=%s&episode=%s&show=%s&show_alt=%s&date=%s&genre=%s)' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, systvdb, sysseason, sysepisode, sysshow, sysshow_alt, sysdate, sysgenre)))
                 if not imdb == '0':
                     cm.append((language(30420).encode("utf-8"), 'RunPlugin(%s?action=trakt_tv_manager&name=%s&imdb=%s)' % (sys.argv[0], sysshow, sysimdb)))
-                if not '"%s"' % url in favRead: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_add&name=%s&imdb=%s&url=%s&image=%s&year=%s)' % (sys.argv[0], sysshow, sysimdb, sysurl, sysimage, sysyear)))
-                else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_delete&name=%s&url=%s)' % (sys.argv[0], sysshow, sysurl)))
+                if not imdb in favourites: cm.append((language(30406).encode("utf-8"), 'RunPlugin(%s?action=favourite_tv_add&imdb=%s&name=%s&year=%s&image=%s)' % (sys.argv[0], sysimdb, sysshow, sysyear, sysimage)))
+                else: cm.append((language(30407).encode("utf-8"), 'RunPlugin(%s?action=favourite_delete&imdb=%s)' % (sys.argv[0], sysimdb)))
                 cm.append((language(30408).encode("utf-8"), 'RunPlugin(%s?action=library_tv_add&name=%s&year=%s&imdb=%s&tvdb=%s)' % (sys.argv[0], sysshow, sysyear, sysimdb, systvdb)))
                 cm.append((language(30415).encode("utf-8"), 'Action(Info)'))
                 if not imdb == '0':
@@ -1216,52 +1306,47 @@ class contextMenu:
             for view in views:
                 label = xbmc.getInfoLabel('Control.GetLabel(%s)' % (view))
                 if not (label == '' or label == None): break
-            file = xbmcvfs.File(viewData)
-            read = file.read()
-            file.close()
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write = [i for i in write if not '"%s"|"%s"|"' % (skin, content) in i]
-            write.append('"%s"|"%s"|"%s"' % (skin, content, str(view)))
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(viewData, 'w')
-            file.write(str(write))
-            file.close()
+            record = (skin, content, str(view))
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("CREATE TABLE IF NOT EXISTS views (""skin TEXT, ""view_type TEXT, ""view_id TEXT, ""UNIQUE(skin, view_type)"");")
+            dbcur.execute("DELETE FROM views WHERE skin = '%s' AND view_type = '%s'" % (record[0], record[1]))
+            dbcur.execute("INSERT INTO views Values (?, ?, ?)", record)
+            dbcon.commit()
             viewName = xbmc.getInfoLabel('Container.Viewmode')
             index().infoDialog('%s%s%s' % (language(30301).encode("utf-8"), viewName, language(30302).encode("utf-8")))
         except:
             return
 
-    def favourite_add(self, data, name, url, image, imdb, year, refresh=False):
+    def favourite_add(self, type, imdb, name, year, image, refresh=False):
         try:
+            record = ('tt' + imdb, type, name, year, '', '', image, '', '', '', '', '', '', '', '', '', '', '', '', '')
+
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("CREATE TABLE IF NOT EXISTS favourites (""imdb_id TEXT, ""video_type TEXT, ""title TEXT, ""year TEXT, ""tvdb_id TEXT, ""genre TEXT, ""poster TEXT, ""banner TEXT, ""fanart TEXT, ""studio TEXT, ""premiered TEXT, ""duration TEXT, ""rating TEXT, ""votes TEXT, ""mpaa TEXT, ""director TEXT, ""writer TEXT, ""plot TEXT, ""plotoutline TEXT, ""tagline TEXT, ""UNIQUE(imdb_id)"");")
+            dbcur.execute("DELETE FROM favourites WHERE imdb_id = '%s'" % (record[0]))
+            dbcur.execute("INSERT INTO favourites Values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", record)
+            dbcon.commit()
+
             if refresh == True: index().container_refresh()
-            file = xbmcvfs.File(data)
-            read = file.read()
-            file.close()
-            if '"%s"' % url in read:
-                index().infoDialog(language(30305).encode("utf-8"), name)
-                return
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write.append('"%s"|"%s"|"%s"|"%s"|"%s"' % (name, year, imdb, url, image))
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(data, 'w')
-            file.write(str(write))
-            file.close()
             index().infoDialog(language(30303).encode("utf-8"), name)
         except:
             return
 
-    def favourite_delete(self, data, name, url):
+    def favourite_delete(self, imdb):
         try:
+            record = ['tt' + imdb]
+
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("DELETE FROM favourites WHERE imdb_id = '%s'" % (record[0]))
+            dbcon.commit()
+
             index().container_refresh()
-            file = xbmcvfs.File(data)
-            read = file.read()
-            file.close()
-            write = [i.strip('\n').strip('\r') for i in read.splitlines(True) if i.strip('\r\n')]
-            write = [i for i in write if not '"%s"' % url in i]
-            write = '\r\n'.join(write)
-            file = xbmcvfs.File(data, 'w')
-            file.write(str(write))
-            file.close()
             index().infoDialog(language(30304).encode("utf-8"), name)
         except:
             return
@@ -1337,31 +1422,45 @@ class contextMenu:
         except:
             return
 
-    def trakt_indicator(self):
+    def trakt_indicator(self, content=''):
         try:
+            if content == 'shows': raise Exception()
             post = urllib.urlencode({'username': link().trakt_user, 'password': link().trakt_password})
-
             url = link().trakt_watched % (link().trakt_key, link().trakt_user)
             result = getUrl(url, post=post, timeout='30').result
-            write = json.loads(result)
+            updated = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            record = ('movies', link().trakt_user, result, updated)
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonCache)
+            dbcur = dbcon.cursor()
+            dbcur.execute("CREATE TABLE IF NOT EXISTS trakt (""info TEXT, ""user TEXT, ""result TEXT, ""updated TEXT, ""UNIQUE(info, user)"");")
+            dbcur.execute("DELETE FROM trakt WHERE info = '%s' AND user = '%s'" % (record[0], record[1]))
+            dbcur.execute("INSERT INTO trakt Values (?, ?, ?, ?)", record)
+            dbcon.commit()
+        except:
+            pass
 
+        try:
+            if content == 'movies': raise Exception()
+            post = urllib.urlencode({'username': link().trakt_user, 'password': link().trakt_password})
             url = link().trakt_tv_watched % (link().trakt_key, link().trakt_user)
             result = getUrl(url, post=post, timeout='30').result
-            write += json.loads(result)
-
-            write = json.dumps(write)
-
-            file = xbmcvfs.File(watchData, 'w')
-            file.write(str(write))
-            file.close()
+            updated = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            record = ('shows', link().trakt_user, result, updated)
+            if not xbmcvfs.exists(dataPath): xbmcvfs.mkdir(dataPath)
+            dbcon = database.connect(addonCache)
+            dbcur = dbcon.cursor()
+            dbcur.execute("CREATE TABLE IF NOT EXISTS trakt (""info TEXT, ""user TEXT, ""result TEXT, ""updated TEXT, ""UNIQUE(info, user)"");")
+            dbcur.execute("DELETE FROM trakt WHERE info = '%s' AND user = '%s'" % (record[0], record[1]))
+            dbcur.execute("INSERT INTO trakt Values (?, ?, ?, ?)", record)
+            dbcon.commit()
         except:
-            return
+            pass
 
     def playcount_movies(self, title, year, imdb, watched):
         try:
             metaget.get_meta('movie', title ,year=year)
             metaget.change_watched('movie', '', imdb, season='', episode='', year='', watched=watched)
-            index().container_refresh()
         except:
             pass
 
@@ -1372,15 +1471,17 @@ class contextMenu:
             else: url = 'http://api.trakt.tv/movie/unseen/%s' % link().trakt_key
             post = {"movies": [{"imdb_id": imdb}], "username": link().trakt_user, "password": link().trakt_password}
             result = getUrl(url, post=json.dumps(post), timeout='30').result
+            self.trakt_indicator('movies')
         except:
             pass
+
+        index().container_refresh()
 
     def playcount_episodes(self, imdb, season, episode, watched):
         try:
             metaget.get_meta('tvshow', '', imdb_id=imdb)
             metaget.get_episode_meta('', imdb, season, episode)
             metaget.change_watched('episode', '', imdb, season=season, episode=episode, year='', watched=watched)
-            index().container_refresh()
         except:
             pass
 
@@ -1392,8 +1493,11 @@ class contextMenu:
             else: url = 'http://api.trakt.tv/show/episode/unseen/%s' % link().trakt_key
             post = {"imdb_id": imdb, "episodes": [{"season": season, "episode": episode}], "username": link().trakt_user, "password": link().trakt_password}
             result = getUrl(url, post=json.dumps(post), timeout='30').result
+            self.trakt_indicator('shows')
         except:
             pass
+
+        index().container_refresh()
 
     def playcount_shows(self, name, year, imdb, tvdb, season, watched):
         dialog = xbmcgui.DialogProgress()
@@ -2491,22 +2595,27 @@ class movies:
             index().movieList(self.list)
 
     def favourites(self):
-        file = xbmcvfs.File(favData)
-        read = file.read()
-        file.close()
+        try:
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM favourites WHERE video_type ='Movie'")
+            match = dbcur.fetchall()
+            match = [(i[0], i[2], i[3], i[6]) for i in match]
 
-        match = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
-        for title, year, imdb, url, poster in match:
-            name = '%s (%s)' % (title, year)
-            self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': '0', 'url': url, 'poster': poster, 'fanart': '0', 'studio': '0', 'duration': '0', 'rating': '0', 'votes': '0', 'mpaa': '0', 'director': '0', 'plot': '0', 'plotoutline': '0', 'tagline': '0'})
+            for imdb, title, year, poster in match:
+                name = '%s (%s)' % (title, year)
+                imdb = re.sub('[^0-9]', '', imdb)
+                self.list.append({'name': name, 'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': '0', 'url': '0', 'poster': poster, 'fanart': '0', 'studio': '0', 'duration': '0', 'rating': '0', 'votes': '0', 'mpaa': '0', 'director': '0', 'plot': '0', 'plotoutline': '0', 'tagline': '0'})
 
-        threads = []
-        for i in range(0, len(self.list)): threads.append(Thread(self.tmdb_info, i))
-        [i.start() for i in threads]
-        [i.join() for i in threads]
+            threads = []
+            for i in range(0, len(self.list)): threads.append(Thread(self.tmdb_info, i))
+            [i.start() for i in threads]
+            [i.join() for i in threads]
 
-        self.list = sorted(self.list, key=itemgetter('title'))
-        index().movieList(self.list)
+            self.list = sorted(self.list, key=itemgetter('title'))
+            index().movieList(self.list)
+        except:
+            return
 
     def imdb_list(self, url):
         try:
@@ -3303,22 +3412,28 @@ class shows:
             self.list = self.imdb_list(self.query)
             index().showList(self.list)
 
+
     def favourites(self):
-        file = xbmcvfs.File(favData2)
-        read = file.read()
-        file.close()
+        try:
+            dbcon = database.connect(addonSettings)
+            dbcur = dbcon.cursor()
+            dbcur.execute("SELECT * FROM favourites WHERE video_type ='TV Show'")
+            match = dbcur.fetchall()
+            match = [(i[0], i[2], i[3], i[6]) for i in match]
 
-        match = re.compile('"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"[|]"(.+?)"').findall(read)
-        for title, year, imdb, url, poster in match:
-            self.list.append({'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': '0', 'url': url, 'poster': poster, 'banner': poster, 'fanart': '0', 'studio': '0', 'premiered': '0', 'duration': '0', 'rating': '0', 'mpaa': '0', 'plot': '0'})
+            for imdb, title, year, poster in match:
+                imdb = re.sub('[^0-9]', '', imdb)
+                self.list.append({'title': title, 'year': year, 'imdb': imdb, 'tvdb': '0', 'genre': '0', 'url': '0', 'poster': poster, 'banner': poster, 'fanart': '0', 'studio': '0', 'premiered': '0', 'duration': '0', 'rating': '0', 'mpaa': '0', 'plot': '0'})
 
-        threads = []
-        for i in range(0, len(self.list)): threads.append(Thread(self.tvdb_info, i))
-        [i.start() for i in threads]
-        [i.join() for i in threads]
+            threads = []
+            for i in range(0, len(self.list)): threads.append(Thread(self.tvdb_info, i))
+            [i.start() for i in threads]
+            [i.join() for i in threads]
 
-        self.list = sorted(self.list, key=itemgetter('title'))
-        index().showList(self.list)
+            self.list = sorted(self.list, key=itemgetter('title'))
+            index().showList(self.list)
+        except:
+            return
 
     def imdb_list(self, url):
         try:
@@ -5489,7 +5604,6 @@ class shush:
     def tv(self, name, title, year, imdb, tvdb, season, episode, show, show_alt, hostDict):
         try:
             result = getUrl(self.search_link).result
-
             url = common.parseDOM(result, "a", ret="href")
             url = [i.split('showlist=')[-1] for i in url if 'showlist=' in i]
             url = [i for i in url if any(x == resolver().cleantitle_tv(i) for x in [resolver().cleantitle_tv(show), resolver().cleantitle_tv(show_alt)])][0]
@@ -5498,14 +5612,10 @@ class shush:
             url = url.encode('utf-8')
 
             result = getUrl(url).result
-            result = common.parseDOM(result, "div", attrs = { "class": "list" })
-            result = [i for i in result if ' Season %01d Episode: %01d '% (int(season), int(episode)) in i][0]
-
-            t = common.parseDOM(result, "a")[0]
-            t = t.split(' Season %01d Episode: %01d '% (int(season), int(episode)))[-1].split(' ', 1)[-1]
-            if not resolver().cleantitle_tv(title.encode('utf-8').lower()) == resolver().cleantitle_tv(t.encode('utf-8').lower()): return
-
-            url = common.parseDOM(result, "a", ret="href")[0]
+            url = common.parseDOM(result, "div")
+            url += common.parseDOM(result, "div", attrs = { "class": ".+?" })
+            url = [i for i in url if ' Season %01d Episode: %01d '% (int(season), int(episode)) in i][0]
+            url = common.parseDOM(url, "a", ret="href")[0]
             url = '%s/%s' % (self.base_link, url)
             url = common.replaceHTMLCodes(url)
             url = url.encode('utf-8')
