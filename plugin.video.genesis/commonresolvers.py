@@ -75,6 +75,7 @@ class resolvers:
 
             if '/vk.com' in url:                url = self.vk(url)
             elif 'mail.ru' in url:              url = self.mailru(url)
+            elif 'streamin.to' in url:          url = self.streamin(url)
             elif 'videomega.tv' in url:         url = self.videomega(url)
             elif 'docs.google.com' in url:      url = self.googledocs(url)
             elif 'picasaweb.google.com' in url: url = self.picasaweb(url)
@@ -150,6 +151,16 @@ class resolvers:
             result = getUrl(url).result
             url = re.compile('videoSrc = "(.+?)"').findall(result)[0]
             url = getUrl(url, output='geturl').result
+            return url
+        except:
+            return
+
+    def streamin(self, url):
+        try:
+            url = url.replace('streamin.to/', 'streamin.to/embed-')
+            if not url.endswith('.html'): url = url + '.html'
+            result = getUrl(url, mobile=True).result
+            url = re.compile("file:'(.+?)'").findall(result)[0]
             return url
         except:
             return

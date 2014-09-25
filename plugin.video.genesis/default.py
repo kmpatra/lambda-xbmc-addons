@@ -664,15 +664,15 @@ class index:
 
     def settings_reset(self):
         try:
-            if getSetting("settings_version") == '2.0.0': return
+            if getSetting("settings_version") == '2.0.6': return
             settings = os.path.join(addonPath,'resources/settings.xml')
             file = xbmcvfs.File(settings)
             read = file.read()
             file.close()
-            setSetting('appearance', common.parseDOM(read, "setting", ret="default", attrs = {"id": 'appearance'})[0])
-            for i in range (1,14): setSetting('hosthd' + str(i), common.parseDOM(read, "setting", ret="default", attrs = {"id": 'hosthd' + str(i)})[0])
+            #setSetting('appearance', common.parseDOM(read, "setting", ret="default", attrs = {"id": 'appearance'})[0])
+            #for i in range (1,14): setSetting('hosthd' + str(i), common.parseDOM(read, "setting", ret="default", attrs = {"id": 'hosthd' + str(i)})[0])
             for i in range (1,21): setSetting('host' + str(i), common.parseDOM(read, "setting", ret="default", attrs = {"id": 'host' + str(i)})[0])
-            setSetting('settings_version', '2.0.0')
+            setSetting('settings_version', '2.0.6')
         except:
             return
 
@@ -4739,7 +4739,7 @@ class resolver:
 
     def sources_filter(self):
         #hd_rank = ['VK', 'Videomega', 'Popcornered', 'Muchmovies', 'Shush', 'YIFY', 'Noobroom', 'Firedrive', 'Movreel', 'Billionuploads', '180upload', 'Hugefiles', 'Einthusan']
-        #sd_rank = ['Ororo', 'Videomega', 'Noobroom', 'Firedrive', 'Putlocker', 'Sockshare', 'iShared', 'Movreel', 'Mightyupload', 'VK', 'Mailru', 'Movshare', 'Promptfile', 'Vodlocker', 'Played', 'Gorillavid', 'Bestreams', 'Daclips', 'Divxstage', 'Vidbull']
+        #sd_rank = ['Ororo', 'Firedrive', 'Putlocker', 'Sockshare', 'Streamin', 'Noobroom', 'iShared', 'Movreel', 'Mightyupload', 'VK', 'Mailru', 'Movshare', 'Promptfile', 'Vodlocker', 'Played', 'Gorillavid', 'Bestreams', 'Daclips', 'Divxstage', 'Vidbull']
         hd_rank = [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13")]
         sd_rank = [getSetting("host1"), getSetting("host2"), getSetting("host3"), getSetting("host4"), getSetting("host5"), getSetting("host6"), getSetting("host7"), getSetting("host8"), getSetting("host9"), getSetting("host10"), getSetting("host11"), getSetting("host12"), getSetting("host13"), getSetting("host14"), getSetting("host15"), getSetting("host16"), getSetting("host17"), getSetting("host18"), getSetting("host19"), getSetting("host20")]
 
@@ -4880,11 +4880,11 @@ class resolver:
         'sockshare',
         'stagevu',
         'streamcloud',
+        'streamin',
         'thefile',
         'uploadc',
         'vidbull',
         'videobb',
-        'videomega',
         'videoweed',
         'videozed',
         #'vidhog',
@@ -5068,22 +5068,22 @@ class primewire:
     def mv(self, name, title, year, imdb, hostDict):
         try:
             try:
-                result = getUrl(self.key_link).result
+                result = getUrl(self.key_link, mobile=True).result
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.moviesearch_link % (urllib.quote_plus(re.sub('\'', '', title)), key)
             except:
-                result = getUrl(self.proxy_link).result
+                result = getUrl(self.proxy_link, mobile=True).result
                 proxy = common.parseDOM(result, "a", ret="href")
                 proxy = [i.lower() for i in proxy if 'primewire' in i.lower()][0]
                 self.key_link = self.key_link.replace(self.base_link, proxy)
                 self.moviesearch_link = self.moviesearch_link.replace(self.base_link, proxy)
                 self.base_link = proxy
 
-                result = getUrl(self.key_link).result
+                result = getUrl(self.key_link, mobile=True).result
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.moviesearch_link % (urllib.quote_plus(re.sub('\'', '', title)), key)
 
-            result = getUrl(query).result
+            result = getUrl(query, mobile=True).result
             result = result.decode('iso-8859-1').encode('utf-8')
             result = common.parseDOM(result, "div", attrs = { "class": "index_item.+?" })
             result = [i for i in result if any(x in re.compile('title="Watch (.+?)"').findall(i)[0] for x in ['(%s)' % str(year), '(%s)' % str(int(year)+1), '(%s)' % str(int(year)-1)])]
@@ -5094,7 +5094,7 @@ class primewire:
             for i in match[:5]:
                 try:
                     if not i.startswith('http://'): i = '%s%s' % (self.base_link, i)
-                    result = getUrl(i).result
+                    result = getUrl(i, mobile=True).result
                     if any(x in resolver().cleantitle_movie(result) for x in [str('>' + resolver().cleantitle_movie(title) + '(%s)' % str(year) + '<')]):
                         match2 = i
                     if any(x in resolver().cleantitle_movie(result) for x in [str('>' + resolver().cleantitle_movie(title) + '<')]):
@@ -5106,7 +5106,7 @@ class primewire:
                     pass
 
             url = match2
-            result = getUrl(url).result
+            result = getUrl(url, mobile=True).result
             result = result.decode('iso-8859-1').encode('utf-8')
             links = common.parseDOM(result, "tbody")
 
@@ -5140,22 +5140,22 @@ class primewire:
     def tv(self, name, title, year, imdb, tvdb, season, episode, show, show_alt, hostDict):
         try:
             try:
-                result = getUrl(self.key_link).result
+                result = getUrl(self.key_link, mobile=True).result
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.tvsearch_link % (urllib.quote_plus(re.sub('\'', '', show)), key)
             except:
-                result = getUrl(self.proxy_link).result
+                result = getUrl(self.proxy_link, mobile=True).result
                 proxy = common.parseDOM(result, "a", ret="href")
                 proxy = [i.lower() for i in proxy if 'primewire' in i.lower()][0]
                 self.key_link = self.key_link.replace(self.base_link, proxy)
                 self.tvsearch_link = self.tvsearch_link.replace(self.base_link, proxy)
                 self.base_link = proxy
 
-                result = getUrl(self.key_link).result
+                result = getUrl(self.key_link, mobile=True).result
                 key = common.parseDOM(result, "input", ret="value", attrs = { "name": "key" })[0]
                 query = self.tvsearch_link % (urllib.quote_plus(re.sub('\'', '', show)), key)
 
-            result = getUrl(query).result
+            result = getUrl(query, mobile=True).result
             result = result.decode('iso-8859-1').encode('utf-8')
             result = common.parseDOM(result, "div", attrs = { "class": "index_item.+?" })
             result = [i for i in result if any(x in re.compile('title="Watch (.+?)"').findall(i)[0] for x in ['(%s)' % str(year), '(%s)' % str(int(year)+1), '(%s)' % str(int(year)-1)])]
@@ -5166,7 +5166,7 @@ class primewire:
             for i in match[:5]:
                 try:
                     if not i.startswith('http://'): i = '%s%s' % (self.base_link, i)
-                    result = getUrl(i).result
+                    result = getUrl(i, mobile=True).result
                     if any(x in resolver().cleantitle_tv(result) for x in [str('>' + resolver().cleantitle_tv(show) + '(%s)' % str(year) + '<'), str('>' + resolver().cleantitle_tv(show_alt) + '(%s)' % str(year) + '<')]):
                         match2 = i
                     if any(x in resolver().cleantitle_tv(result) for x in [str('>' + resolver().cleantitle_tv(show) + '<'), str('>' + resolver().cleantitle_tv(show_alt) + '<')]):
@@ -5180,7 +5180,7 @@ class primewire:
             url = match2.replace('/watch-','/tv-')
             url += '/season-%01d-episode-%01d' % (int(season), int(episode))
 
-            result = getUrl(url).result
+            result = getUrl(url, mobile=True).result
             result = result.decode('iso-8859-1').encode('utf-8')
             links = common.parseDOM(result, "tbody")
 
@@ -5621,15 +5621,25 @@ class shush:
             url = url.encode('utf-8')
 
             result = getUrl(url).result
-            FlashVars = common.parseDOM(result, "param", ret="value", attrs = { "name": "FlashVars" })[0]
-            player = re.compile('plugins=(.+?)/proxy[.]swf').findall(FlashVars)[-1]
-            player += '/plugins_player.php'
-            url = re.compile('proxy[.]link=(.+?)&').findall(FlashVars)[-1]
-            post = urllib.urlencode({'url': url, 'iheader': 'true', 'ihttpheader': 'true', 'isslverify': 'true', 'iagent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:22.0) Gecko/20100101 Firefox/22.0'})
-            result = getUrl(player, post=post).result
-            url = re.compile('"url":"(.+?)"').findall(result)
-            url = [i for i in url if 'videoplayback?' in i][-1]
-            url = getUrl(url, output='geturl').result
+            url = re.compile('proxy[.]link=(.+?)&').findall(result)[-1]
+
+            if url.startswith('http'):
+                player = 'http://player.shush.tv/p/plugins_player.php'
+                post = urllib.urlencode({'url': url})
+                result = getUrl(player, post=post).result
+                url = re.compile('"url":"(.+?)"').findall(result)
+                url = [i for i in url if 'videoplayback?' in i][-1]
+                url = getUrl(url, output='geturl').result
+            else:
+                import GKDecrypter
+                url = url.split('*', 1)[-1]
+                url = GKDecrypter.decrypter(198,128).decrypt(url,base64.urlsafe_b64decode('djRBdVhhalplRm83akFNZ1VOWkI='),'ECB').split('\0')[0]
+
+            import commonresolvers
+            if 'docs.google.com' in url:
+                url = commonresolvers.resolvers().googledocs(url)
+            elif 'picasaweb.google.com' in url:
+                url = commonresolvers.resolvers().picasaweb(url)
 
             if not any(x in url for x in ['&itag=22&', '&itag=37&', '&itag=38&', '&itag=45&', '&itag=84&', '&itag=102&', '&itag=120&', '&itag=121&']): return
 
