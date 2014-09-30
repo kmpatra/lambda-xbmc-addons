@@ -4907,7 +4907,7 @@ class icefilms:
         self.moviesearch_link = '/movies/a-z/%s'
         self.tvsearch_link = '/tv/a-z/%s'
         self.video_link = '/membersonly/components/com_iceplayer/video.php?vid=%s'
-        self.post_link = '/membersonly/components/com_iceplayer/video.phpAjaxResp.php'
+        self.resp_link = '/membersonly/components/com_iceplayer/video.phpAjaxResp.php'
 
     def get_movie(self, imdb, title, year):
         try:
@@ -5023,7 +5023,10 @@ class icefilms:
 
     def resolve(self, url):
         try:
-            result = getUrl(self.post_link, post=url).result
+            post = url
+            url = self.base_link + self.resp_link
+            result = getUrl(url, post=post).result
+
             url = result.split("?url=", 1)[-1]
             url = urllib.unquote_plus(url)
 
