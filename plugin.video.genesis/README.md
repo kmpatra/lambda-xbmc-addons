@@ -17,8 +17,8 @@ Attributions
 - Embossed theme by jokster | http://tvaddons.ag
 - GOne theme by jokster | http://tvaddons.ag
 - Dutch translation by dynamic2 | http://tvaddons.ag
-- French translation by dr1ss | http://tvaddons.ag
 - Hebrew translation by finalmakerr | http://tvaddons.ag
+- Polish translation by kodishu | http://tvaddons.ag
 - Portuguese translation by Mafarricos | http://tvaddons.ag
 
 

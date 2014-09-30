@@ -1,4 +1,20 @@
 ------------------------
+Genesis v2.1.0 (30-Sep-14)
+------------------------
+
+- Added support for caching sources.
+- Added support for caching hosts.
+- Re-work of all available sources.
+- Added Iwatchonline source.
+- Removed Flixanity and PutlockerTV sources.
+- Host selection is now using a Dialogue.
+- NOTE: Host selection in a Folder can be enabled in playback settings.
+- Added Polish translation.
+- Tweaked playback.
+- Code cosmetics.
+
+
+------------------------
 Genesis v2.0.6 (25-Sep-14)
 ------------------------
 

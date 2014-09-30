@@ -14,24 +14,25 @@
 
 	<category label="30020">
 		<setting id="autoplay" type="bool" label="30021" default="false"/>
-		<setting id="autoplay_library" type="bool" label="30022" default="false"/>
-		<setting id="play_hd" type="bool" label="30023" default="true"/>
-		<setting id="autoplay_hd" type="bool" label="30024" default="false" enable="!eq(-1,false)"/>
-		<setting type="lsep" label="30025"/>
-		<setting id="resume_playback" type="bool" label="30026" default="true"/>
-		<setting id="playback_info" type="bool" label="30027" default="false"/>
+		<setting id="host_select" type="enum" label="30022" lvalues="30023|30024" default="0" enable="eq(-1,false)"/>
+		<setting id="autoplay_library" type="bool" label="30025" default="false"/>
+		<setting id="play_hd" type="bool" label="30026" default="true"/>
+		<setting id="autoplay_hd" type="bool" label="30027" default="false" enable="!eq(-1,false)"/>
 		<setting type="lsep" label="30028"/>
-		<setting id="watched_library" type="bool" label="30029" default="true"/>
+		<setting id="resume_playback" type="bool" label="30029" default="true"/>
+		<setting id="playback_info" type="bool" label="30030" default="false"/>
+		<setting type="lsep" label="30031"/>
+		<setting id="watched_library" type="bool" label="30032" default="true"/>
 		<setting id="trakt_user" type="text" default="" visible="false"/>
 		<setting id="trakt_password" type="text" default="" visible="false"/>
-		<setting id="watched_trakt" type="bool" label="30030" visible="!eq(-1,)+!eq(-2,)" default="true"/>
+		<setting id="watched_trakt" type="bool" label="30033" visible="!eq(-1,)+!eq(-2,)" default="true"/>
 	</category>
 
 	<category label="30040">
 		<setting id="icefilms" type="bool" label="Icefilms" default="true"/>
 		<setting id="primewire" type="bool" label="Primewire" default="true"/>
 		<setting id="movie25" type="bool" label="Movie25" default="true"/>
-		<setting id="flixanity" type="bool" label="Flixanity" default="true"/>
+		<setting id="iwatchonline" type="bool" label="Iwatchonline" default="true"/>
 		<setting id="movieshd" type="bool" label="MoviesHD" default="true"/>
 		<setting id="popcornered" type="bool" label="Popcornered" default="true"/>
 		<setting id="muchmovies" type="bool" label="Muchmovies" default="true"/>
@@ -40,7 +41,7 @@
 		<setting id="istreamhd" type="bool" label="iStreamHD" default="true"/>
 		<setting id="simplymovies" type="bool" label="Simplymovies" default="true"/>
 		<setting id="moviestorm" type="bool" label="Moviestorm" default="true"/>
-		<setting id="noobroom" type="bool" label="Noobroom" default="true"/>
+		<setting id="noobroom" type="bool" label="Noobroom" default="false"/>
 		<setting id="einthusan" type="bool" label="Einthusan (India)" default="false"/>
 	</category>
 
@@ -48,13 +49,12 @@
 		<setting id="icefilms_tv" type="bool" label="Icefilms" default="true"/>
 		<setting id="primewire_tv" type="bool" label="Primewire" default="true"/>
 		<setting id="watchseries_tv" type="bool" label="Watchseries" default="true"/>
-		<setting id="flixanity_tv" type="bool" label="Flixanity" default="true"/>
+		<setting id="iwatchonline_tv" type="bool" label="Iwatchonline" default="true"/>
 		<setting id="shush_tv" type="bool" label="Shush" default="true"/>
 		<setting id="ororo_tv" type="bool" label="Ororo" default="true"/>
-		<setting id="putlocker_tv" type="bool" label="PutlockerTV" default="true"/>
-		<setting id="clickplay_tv" type="bool" label="Clickplay" default="true"/>
 		<setting id="vkbox_tv" type="bool" label="VKBox" default="true"/>
 		<setting id="istreamhd_tv" type="bool" label="iStreamHD" default="true"/>
+		<setting id="clickplay_tv" type="bool" label="Clickplay" default="true"/>
 		<setting id="simplymovies_tv" type="bool" label="Simplymovies" default="true"/>
 		<setting id="moviestorm_tv" type="bool" label="Moviestorm" default="true"/>
 		<setting id="noobroom_tv" type="bool" label="Noobroom" default="false"/>
