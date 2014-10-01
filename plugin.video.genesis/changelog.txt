@@ -1,4 +1,15 @@
 ------------------------
+Genesis v2.1.2 (1-Oct-14)
+------------------------
+
+- Re-work of channel listings.
+- Added Film4 and TCM.
+- Tweaked trending movies/tv shows.
+- Fixed issue with SD Hosts.
+- Code cosmetics.
+
+
+------------------------
 Genesis v2.1.1 (1-Oct-14)
 ------------------------
 

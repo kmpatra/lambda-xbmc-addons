@@ -763,11 +763,8 @@ class index:
 
         addonFanart = self.addonArt('fanart.jpg')
 
-        autoplay = getSetting("autoplay")
-        if PseudoTV == 'True': autoplay = 'true'
-
         playbackMenu = language(30409).encode("utf-8")
-        if autoplay == 'true': playbackMenu = language(30410).encode("utf-8")
+        if getSetting("autoplay") == 'true': playbackMenu = language(30410).encode("utf-8")
 
         total = len(channelList)
         for i in channelList:
@@ -775,7 +772,6 @@ class index:
                 channel, title, year, imdb, genre, url, poster, fanart, studio, duration, rating, votes, mpaa, director, plot, plotoutline, tagline = i['name'], i['title'], i['year'], i['imdb'], i['genre'], i['url'], i['poster'], i['fanart'], i['studio'], i['duration'], i['rating'], i['votes'], i['mpaa'], i['director'], i['plot'], i['plotoutline'], i['tagline']
 
                 if fanart == '0' or not getSetting("fanart") == 'true': fanart = addonFanart
-                if duration == '0': duration == '120'
 
                 thumb = '%s/%s.png' % (addonLogos, channel)
                 name = '%s (%s)' % (title, year)
@@ -787,12 +783,7 @@ class index:
                 meta = dict((k,v) for k, v in meta.iteritems() if not v == '0')
                 sysmeta = urllib.quote_plus(json.dumps(meta))
 
-                if not autoplay == 'false':
-                    u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
-                    isFolder = False
-                else:
-                    u = '%s?action=get_host&name=%s&title=%s&year=%s&imdb=%s&url=%s&meta=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, sysurl, sysmeta)
-                    isFolder = True
+                u = '%s?action=play&name=%s&title=%s&year=%s&imdb=%s&url=%s&t=%s' % (sys.argv[0], sysname, systitle, sysyear, sysimdb, sysurl, datetime.datetime.now().strftime("%Y%m%d%H%M%S%f"))
 
                 cm = []
                 cm.append((playbackMenu, 'RunPlugin(%s?action=toggle_movie_playback&name=%s&title=%s&imdb=%s&year=%s)' % (sys.argv[0], sysname, systitle, sysimdb, sysyear)))
@@ -806,7 +797,7 @@ class index:
                 item.setProperty("Video", "true")
                 item.setProperty("IsPlayable", "true")
                 item.addContextMenuItems(cm, replaceItems=True)
-                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=isFolder)
+                xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=u,listitem=item,totalItems=total,isFolder=False)
             except:
                 pass
 
@@ -2329,21 +2320,10 @@ class channels:
         self.sky_programme_link = 'http://tv.sky.com/programme/channel/%s/%s/%s.json'
 
     def movies(self):
+        channelDict = [('01', 'Sky Premiere', '1409'), ('02', 'Sky Premiere +1', '1823'), ('03', 'Sky Showcase', '1814'), ('04', 'Sky Greats', '1815'), ('05', 'Sky Disney', '1838'), ('06', 'Sky Family', '1808'), ('07', 'Sky Action', '1001'), ('08', 'Sky Comedy', '1002'), ('09', 'Sky Crime', '1818'), ('10', 'Sky Drama', '1816'), ('11', 'Sky Sci Fi', '1807'), ('12', 'Sky Select', '1811'), ('13', 'Film4', '1627'), ('14', 'TCM', '5605')] 
+
         threads = []
-
-        threads.append(Thread(self.sky_list, '01', 'Sky Premiere', '1409'))
-        threads.append(Thread(self.sky_list, '02', 'Sky Premiere +1', '1823'))
-        threads.append(Thread(self.sky_list, '03', 'Sky Showcase', '1814'))
-        threads.append(Thread(self.sky_list, '04', 'Sky Greats', '1815'))
-        threads.append(Thread(self.sky_list, '05', 'Sky Disney', '1838'))
-        threads.append(Thread(self.sky_list, '06', 'Sky Family', '1808'))
-        threads.append(Thread(self.sky_list, '07', 'Sky Action', '1001'))
-        threads.append(Thread(self.sky_list, '08', 'Sky Comedy', '1002'))
-        threads.append(Thread(self.sky_list, '09', 'Sky Crime', '1818'))
-        threads.append(Thread(self.sky_list, '10', 'Sky Drama', '1816'))
-        threads.append(Thread(self.sky_list, '11', 'Sky Sci Fi', '1807'))
-        threads.append(Thread(self.sky_list, '12', 'Sky Select', '1811'))
-
+        for i in channelDict: threads.append(Thread(self.sky_list, i[0], i[1], i[2]))
         [i.start() for i in threads]
         [i.join() for i in threads]
 
@@ -2354,11 +2334,6 @@ class channels:
 
         self.list = [i for i in self.list if not i['imdb'] == '0']
         self.list = sorted(self.list, key=itemgetter('num'))
-
-        threads = []
-        for i in range(0, len(self.list)): threads.append(Thread(self.tmdb_info, i))
-        [i.start() for i in threads]
-        [i.join() for i in threads]
 
         index().channelList(self.list)
 
@@ -2384,7 +2359,7 @@ class channels:
             result = [i for i in result if i['url'] == match][0]
 
             year = result['d']
-            year = re.findall('.+?[(](\d{4})[)]', year)[0].strip()
+            year = re.findall('[(](\d{4})[)]', year)[0].strip()
             year = year.encode('utf-8')
 
             title = result['t']
@@ -2392,7 +2367,30 @@ class channels:
             title = common.replaceHTMLCodes(title)
             title = title.encode('utf-8')
 
-            self.list.append({'name': channel, 'title': title, 'year': year, 'imdb': '0', 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': '0', 'url': '0', 'poster': '0', 'fanart': '0', 'studio': '0', 'duration': '0', 'rating': '0', 'votes': '0', 'mpaa': '0', 'director': '0', 'plot': '0', 'plotoutline': '0', 'tagline': '0', 'num': num})
+            try: duration = re.compile('[(](\d+?) mins[)]').findall(result['d'])[0]
+            except: duration = '120'
+            duration = str(duration)
+            if duration == '': duration = '120'
+            duration = common.replaceHTMLCodes(duration)
+            duration = duration.encode('utf-8')
+
+            mpaa = result['rr']
+            if mpaa == '' : mpaa = '0'
+            mpaa = common.replaceHTMLCodes(mpaa)
+            mpaa = mpaa.encode('utf-8')
+
+            plot = result['d']
+            plot = plot.rsplit('.', 1)[0].strip()
+            if not plot.endswith('.'): plot += '.'
+            if plot == '.': plot = '0'
+            plot = common.replaceHTMLCodes(plot)
+            plot = plot.encode('utf-8')
+
+            tagline = re.compile('[.!?][\s]{1,2}(?=[A-Z])').split(plot)[0]
+            try: tagline = tagline.encode('utf-8')
+            except: pass
+
+            self.list.append({'name': channel, 'title': title, 'year': year, 'imdb': '0', 'tvdb': '0', 'season': '0', 'episode': '0', 'show': '0', 'show_alt': '0', 'date': '0', 'genre': '0', 'url': '0', 'poster': '0', 'fanart': '0', 'studio': '0', 'duration': duration, 'rating': '0', 'votes': '0', 'mpaa': mpaa, 'director': '0', 'plot': plot, 'plotoutline': tagline, 'tagline': tagline, 'num': num})
         except:
             return
 
@@ -2405,8 +2403,11 @@ class channels:
             result = getUrl(search, timeout='10').result
             result = json.loads(result)
             for x in result.keys(): match += result[x]
-            clean = '\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\.|\?)|\s'
-            match = [x for x in match if re.sub(clean, '', title).lower() == re.sub(clean, '', x['title']).lower() and any(x['title_description'].startswith(y) for y in [str(year), str(int(year)+1), str(int(year)-1)])][0]
+
+            title = self.cleantitle_movie(title)
+            years = [str(year), str(int(year)+1), str(int(year)-1)]
+            match = [x for x in match if title == self.cleantitle_movie(x['title'])]
+            match = [x for x in match if any(x['title_description'].startswith(y) for y in years)][0]
 
             title = match['title']
             title = common.replaceHTMLCodes(title)
@@ -2424,78 +2425,9 @@ class channels:
         except:
             pass
 
-    def tmdb_info(self, i):
-        try:
-            url = link().tmdb_info % (self.list[i]['imdb'], link().tmdb_key)
-            result = getUrl(url, timeout='10').result
-            result = json.loads(result)
-
-            poster = result['poster_path']
-            if poster == '' or poster == None: poster = '0'
-            if not poster == '0': poster = '%s%s' % (link().tmdb_image2, poster)
-            poster = common.replaceHTMLCodes(poster)
-            poster = poster.encode('utf-8')
-            if not poster == '0': self.list[i].update({'poster': poster})
-
-            fanart = result['backdrop_path']
-            if fanart == '' or fanart == None: fanart = '0'
-            if not fanart == '0': fanart = '%s%s' % (link().tmdb_image, fanart)
-            fanart = common.replaceHTMLCodes(fanart)
-            fanart = fanart.encode('utf-8')
-            if not fanart == '0': self.list[i].update({'fanart': fanart})
-
-            genre = result['genres']
-            try: genre = [x['name'] for x in genre]
-            except: genre = '0'
-            if genre == '' or genre == None or genre == []: genre = '0'
-            genre = " / ".join(genre)
-            genre = common.replaceHTMLCodes(genre)
-            genre = genre.encode('utf-8')
-            if not genre == '0': self.list[i].update({'genre': genre})
-
-            studio = result['production_companies']
-            try: studio = [x['name'] for x in studio][0]
-            except: studio = '0'
-            if studio == '' or studio == None: studio = '0'
-            studio = common.replaceHTMLCodes(studio)
-            studio = studio.encode('utf-8')
-            if not studio == '0': self.list[i].update({'studio': studio})
-
-            try: duration = str(result['runtime'])
-            except: duration = '0'
-            if duration == '' or duration == None or not self.list[i]['duration'] == '0': duration = '0'
-            duration = common.replaceHTMLCodes(duration)
-            duration = duration.encode('utf-8')
-            if not duration == '0': self.list[i].update({'duration': duration})
-
-            rating = str(result['vote_average'])
-            if rating == '' or rating == None or not self.list[i]['rating'] == '0': rating = '0'
-            rating = common.replaceHTMLCodes(rating)
-            rating = rating.encode('utf-8')
-            if not rating == '0': self.list[i].update({'rating': rating})
-
-            votes = str(result['vote_count'])
-            try: votes = str(format(int(votes),',d'))
-            except: pass
-            if votes == '' or votes == None or not self.list[i]['votes'] == '0': votes = '0'
-            votes = common.replaceHTMLCodes(votes)
-            votes = votes.encode('utf-8')
-            if not votes == '0': self.list[i].update({'votes': votes})
-
-            plot = result['overview']
-            if plot == '' or plot == None: plot = '0'
-            plot = common.replaceHTMLCodes(plot)
-            plot = plot.encode('utf-8')
-            if not plot == '0': self.list[i].update({'plot': plot})
-
-            tagline = result['tagline']
-            if (tagline == '' or tagline == None) and not plot == '0': tagline = plot.split('.', 1)[0]
-            elif tagline == '' or tagline == None: tagline = '0'
-            tagline = common.replaceHTMLCodes(tagline)
-            tagline = tagline.encode('utf-8')
-            if not tagline == '0': self.list[i].update({'tagline': tagline})
-        except:
-            pass
+    def cleantitle_movie(self, title):
+        title = re.sub('\n|([[].+?[]])|([(].+?[)])|\s(vs|v[.])\s|(:|;|-|"|,|\'|\.|\?)|\s', '', title).lower()
+        return title
 
     def uk_datetime(self):
         dt = datetime.datetime.utcnow() + datetime.timedelta(hours = 0)
@@ -2573,7 +2505,7 @@ class movies:
         #self.list = self.trakt_list(link().trakt_trending % link().trakt_key)
         try: self.list = cache2(self.trakt_list, link().trakt_trending % link().trakt_key)
         except: return
-        index().movieList(self.list[:100])
+        index().movieList(self.list[:500])
 
     def trakt_collection(self):
         self.list = self.trakt_list(link().trakt_collection % (link().trakt_key, link().trakt_user))
@@ -3391,7 +3323,7 @@ class shows:
         #self.list = self.trakt_list(link().trakt_tv_trending % link().trakt_key)
         try: self.list = cache2(self.trakt_list, link().trakt_tv_trending % link().trakt_key)
         except: return
-        index().showList(self.list[:100])
+        index().showList(self.list[:500])
 
     def trakt_collection(self):
         self.list = self.trakt_list(link().trakt_tv_collection % (link().trakt_key, link().trakt_user))
@@ -4742,6 +4674,9 @@ class resolver:
         hd_rank = [getSetting("hosthd1"), getSetting("hosthd2"), getSetting("hosthd3"), getSetting("hosthd4"), getSetting("hosthd5"), getSetting("hosthd6"), getSetting("hosthd7"), getSetting("hosthd8"), getSetting("hosthd9"), getSetting("hosthd10"), getSetting("hosthd11"), getSetting("hosthd12"), getSetting("hosthd13")]
         sd_rank = [getSetting("host1"), getSetting("host2"), getSetting("host3"), getSetting("host4"), getSetting("host5"), getSetting("host6"), getSetting("host7"), getSetting("host8"), getSetting("host9"), getSetting("host10"), getSetting("host11"), getSetting("host12"), getSetting("host13"), getSetting("host14"), getSetting("host15"), getSetting("host16"), getSetting("host17"), getSetting("host18"), getSetting("host19"), getSetting("host20")]
 
+        hd_rank = uniqueList(hd_rank).list
+        sd_rank = uniqueList(sd_rank).list
+
         for i in range(len(self.sources)): self.sources[i]['source'] = self.sources[i]['source'].lower()
         self.sources = sorted(self.sources, key=itemgetter('source'))
 
@@ -4754,8 +4689,8 @@ class resolver:
         filter = []
         filter += [i for i in self.sources if i['quality'] == 'HD']
         filter += [i for i in self.sources if i['quality'] == 'SD']
-        filter += [i for i in self.sources if i['quality'] == 'SCR']
-        filter += [i for i in self.sources if i['quality'] == 'CAM']
+        if len(filter) < 10: filter += [i for i in self.sources if i['quality'] == 'SCR']
+        if len(filter) < 10: filter += [i for i in self.sources if i['quality'] == 'CAM']
         self.sources = filter
 
         if getSetting("play_hd") == 'false':
