@@ -843,6 +843,14 @@
 			<url>mmsh://a323.l6160932322.c61609.e.lm.akamaistream.net/D/323/61609/v0001/reflector:32322</url>
 			<base>http://www.zougla.gr/</base>
 		</radio>
+		<radio active="True">
+			<name>Christianity</name>
+			<band></band>
+			<genre>Religion</genre>
+			<area>Internet</area>
+			<url>http://s1.fastcast4u.com:9326/</url>
+			<base>http://www.christianity.gr/</base>
+		</radio>
 	</area>
 
 	<area name="AEGEAN">
