@@ -566,6 +566,13 @@
 			<base>http://www.patrisnews.com/ort-live</base>
 			<epg>30664</epg>
 		</channel>
+		<channel active="True">
+			<name>FOS TV</name>
+			<type></type>
+			<url>mms://wm1.gmlogic.com/ch-patra</url>
+			<base>http://www.patras-church.gr/</base>
+			<epg>30687</epg>
+		</channel>
 		<channel active="False">
 			<name>MESOGEIOS TV</name>
 			<type></type>
